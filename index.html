@@ -293,9 +293,9 @@
       <p class="eyebrow fold">About</p>
       <p class="hint" style="margin-top:0">
         <b style="color:var(--text)">VeilCast VTT</b> — free and open source.<br>
-        <a href="https://github.com/cr-lolo/veilcast-vtt" target="_blank" rel="noopener"
+        <a href="https://github.com/cr-lolo/VeilCast-VTT" target="_blank" rel="noopener"
            style="color:var(--measure)">Source code and updates</a><br>
-        <a href="https://ko-fi.com/" target="_blank" rel="noopener"
+        <a href="https://ko-fi.com/daredain" target="_blank" rel="noopener"
            style="color:var(--fog)">Support the project ☕</a>
       </p>
       <p class="hint" style="margin-top:9px;opacity:.7">
@@ -541,11 +541,13 @@
   </div>
   <div class="grp" id="grp-oclusion">
     <select id="wallModo">
-      <option value="segmento">Segment</option>
+      <option value="segmento">Single segment</option>
+      <option value="polisegmento">Multi-segment wall</option>
       <option value="poligono">Closed polygon</option>
     </select>
     <label style="display:flex;align-items:center;gap:5px">Walls only<input id="soloParedes" type="checkbox"></label>
     <span id="wallCuenta" style="font-family:var(--mono);font-size:11px">0 paredes</span>
+    <span style="font-family:var(--mono);font-size:10px;color:var(--muted)">Click: add vertex · Double-click or Enter: finish</span>
     <button id="wallPuerta" class="ghost">Open / close</button>
     <button id="wallBorrar" class="ghost">Delete <kbd>Del</kbd></button>
     <button id="wallVaciar" class="ghost">Clear all</button>
@@ -3083,6 +3085,8 @@ cv.addEventListener('pointerdown', e=>{
     if(w && !S.wallDraft){ S.wallSel=w; draw(); return; }
     if(!S.wallDraft) S.wallDraft={pts:[], modo:S.wallModo};
     S.wallDraft.pts.push(snapPoint(wp));
+    /* Segmento único: se cierra al segundo clic.
+       Polisegmento y polígono: se acumulan vértices hasta doble clic o Enter. */
     if(S.wallModo==='segmento' && S.wallDraft.pts.length>=2) cerrarPared();
     draw(); return;
   }
@@ -3856,7 +3860,7 @@ const ATAJOS = [
   ['Vision', [
     ['Drag token','Recalculates visibility'],
     ['Del','Delete selected wall'],
-    ['Double click','Close wall polygon']
+    ['Double click / Enter','Finish segment or close polygon']
   ]],
   ['Measurement shapes', [
     ['R','Line'], ['C','Circle'], ['N','Cone'], ['Q','Square'], ['W','Wall'], ['D','Freehand']
