@@ -96,6 +96,8 @@ They are downloaded from the JB2A repository at runtime and are not redistribute
 
 Condition icons from **[game-icons.net](https://game-icons.net)**.
 
+**AI DISCLAIMER**: The js and HTML code of VeilCast was written with the assistance of Claude Code.
+
 ---
 
 ## Support
