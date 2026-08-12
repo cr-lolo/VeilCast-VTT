@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2026 Daredain
+Copyright (c) 2026 cr-lolo
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,3 +19,15 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+---
+
+Third-party assets:
+
+Animated effects are provided by JB2A (Jules & Ben's Animated Assets) under
+CC BY-NC-SA 4.0 and are downloaded at runtime from their public repository.
+They are not redistributed with this software.
+https://jb2a.com
+
+Condition icons are from game-icons.net, licensed CC BY 3.0.
+https://game-icons.net
