@@ -7,7 +7,7 @@ screen laid flat in the table — with real miniatures on top of it. It runs ent
 your browser, needs no account, no subscription and no cloud, and every map you load
 stays on your own machine.
 
-👉 **[Launch VeilCast](https://cr-lolo.github.io/veilcast-vtt/)** — no install required
+👉 **[Launch VeilCast](https://cr-lolo.github.io/VeilCast-VTT/)** — no install required
 
 ---
 
@@ -68,7 +68,7 @@ That single assumption changes the whole design:
 
 ## Getting started
 
-1. Open **[the app](https://cr-lolo.github.io/veilcast-vtt/)** in a Chromium-based
+1. Open **[the app](https://cr-lolo.github.io/VeilCast-VTT/)** in a Chromium-based
    browser (Chrome, Brave, Edge).
 2. Click **Install as app** in the Table tab for a windowed, offline-capable install.
 3. Add a map in the Library tab, then calibrate a square with `K`.
@@ -101,7 +101,7 @@ Condition icons from **[game-icons.net](https://game-icons.net)**.
 ## Support
 
 VeilCast is free and always will be. If it earns its place at your table and you'd
-like to support the work, there's a [Ko-fi](https://ko-fi.com/) — entirely optional,
+like to support the work, there's a [Ko-fi](https://ko-fi.com/daredain) — entirely optional,
 and it goes straight back into the roadmap.
 
 ---
