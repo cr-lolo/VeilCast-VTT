@@ -21,7 +21,11 @@
   }
   *{box-sizing:border-box}
   html,body{height:100%;margin:0;overflow:hidden;background:var(--ink);color:var(--text);
-    font-family:var(--sans);-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+    font-family:var(--sans);-webkit-tap-highlight-color:transparent}
+  /* Antes esto estaba en body y no dejaba copiar ni un nombre de campaña. Solo lo
+     necesitan las superficies que se arrastran. */
+  #stage,#rail,#ctxbar,#tabs,.lib,#catgrid,.ini,.eyebrow.fold{
+    -webkit-user-select:none;user-select:none}
   #stage{position:absolute;inset:0;display:block;touch-action:none}
 
   /* ---------- panel lateral ---------- */
@@ -47,6 +51,37 @@
   .eyebrow.closed .chev{transform:rotate(-90deg)}
   .fbody{overflow:hidden}
   #library{max-height:300px;overflow-y:auto;padding-right:2px}
+  /* Flotante sobre el mapa, a la izquierda del carril y por debajo de la franja de
+     aviso: en la columna de 344 px salía estrechísimo y tapaba los botones de la
+     biblioteca, que es justo lo que hay que usar en el paso uno. */
+  #onboard{position:absolute;top:52px;right:74px;z-index:12;width:320px;display:none;
+    background:rgba(17,23,34,.96);border:1px solid var(--line);border-radius:10px;
+    backdrop-filter:blur(6px);padding:14px 16px 12px;
+    box-shadow:0 12px 32px rgba(0,0,0,.45)}
+  #onboard.on{display:block}
+  #onboard h4{margin:0 0 10px;font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--measure);font-weight:600}
+  #onboard p{margin:11px 0 0;font-size:11px;line-height:1.45;color:var(--muted)}
+  #onboardCerrar{position:absolute;top:7px;right:8px;padding:1px 6px;font-size:13px;
+    background:transparent;border:none;color:var(--muted)}
+  #onboardCerrar:hover{color:var(--text)}
+  #onboardNunca{margin-top:10px;width:100%;font-size:11px;padding:6px;background:transparent}
+  #pasos{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px;counter-reset:paso}
+  /* La fila tiene tres piezas —el número, el título y la explicación— pero solo dos
+     columnas, así que la explicación caía en la segunda fila de la columna de 18 px y se
+     partía letra a letra. Va explícitamente a la columna ancha. */
+  #pasos li{counter-increment:paso;display:grid;grid-template-columns:18px 1fr;
+    column-gap:10px;row-gap:3px;align-items:baseline;font-size:12.5px;color:var(--muted)}
+  #pasos li::before{content:counter(paso);font-family:var(--mono);font-size:10px;
+    color:var(--muted);text-align:center;border:1px solid var(--line);border-radius:50%;
+    width:18px;height:18px;line-height:16px}
+  #pasos li.ok{color:var(--muted)}
+  #pasos li.ok::before{content:'✓';color:#0B111A;background:var(--frame);border-color:var(--frame)}
+  #pasos li.ok b{text-decoration:line-through;color:var(--muted);font-weight:500}
+  #pasos li.now::before{border-color:var(--measure);color:var(--measure)}
+  #pasos b{grid-column:2;color:var(--text);font-weight:600}
+  #pasos span{grid-column:2;font-size:11px;line-height:1.45;color:var(--muted)}
+  #sinCalibrar{color:var(--fog)}
   #inilist{max-height:330px;overflow-y:auto}
   #fxlist{max-height:200px;overflow-y:auto}
   .eyebrow{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0 0 9px;font-weight:600}
@@ -80,6 +115,8 @@
   .lib button .tp{position:absolute;top:3px;left:3px;background:rgba(5,7,11,.8);border-radius:3px;
     font-size:8px;font-family:var(--mono);padding:1px 4px;letter-spacing:.06em}
   .lib button.on .tp{color:var(--frame)}
+  .lib button.arrastrando{opacity:.35}
+  .lib button.destino{box-shadow:0 0 0 2px var(--measure)}
 
   /* ---------- lista de efectos ---------- */
   .fxrow{display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid rgba(39,52,74,.6);font-size:12px}
@@ -198,12 +235,17 @@
   #rail button.fx.on{background:rgba(224,163,60,.16);border-color:var(--fog);color:#FBE3B4}
 
   /* ---------- barra contextual ---------- */
-  #ctxbar{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);z-index:11;
+  /* La barra vive en el hueco que queda entre el panel y la columna de la derecha, no
+     centrada en la ventana: así no se mete debajo de la chuleta ni de la escala. */
+  #ctxbar{position:absolute;left:var(--panel-w);right:322px;bottom:16px;
+    margin:0 auto;width:fit-content;max-width:100%;z-index:11;
     display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;
     background:rgba(17,23,34,.94);border:1px solid var(--line);backdrop-filter:blur(6px);
-    font-size:12px;color:var(--muted);max-width:min(920px,88vw);flex-wrap:wrap;justify-content:center}
+    font-size:12px;color:var(--muted);flex-wrap:wrap;justify-content:center}
+  #panel.hidden ~ #ctxbar{left:8px}
   #ctxbar.empty{display:none}
-  #pista{position:absolute;right:16px;bottom:16px;z-index:11;max-width:290px;
+  /* Columna de la derecha: la chuleta encima y la escala debajo, sin pisarse. */
+  #pista{position:absolute;right:16px;bottom:52px;z-index:11;max-width:290px;
     background:rgba(17,23,34,.94);border:1px solid var(--line);border-radius:8px;
     backdrop-filter:blur(6px);padding:10px 12px;font-size:11.5px;line-height:1.5;
     color:var(--muted);display:none}
@@ -216,6 +258,9 @@
     line-height:1.2;background:transparent;border:none;color:var(--muted)}
   #pistaCerrar:hover{color:var(--text)}
   #ctxbar .grp{display:none;align-items:center;gap:8px}
+  #ctxbar .sepv{width:1px;align-self:stretch;background:var(--line);margin:0 2px}
+  #ctxbar .danger{color:#D9A08E}
+  #ctxbar .danger:hover{background:rgba(224,96,60,.14);border-color:var(--danger)}
   #ctxbar .grp.on{display:flex}
   #ctxbar select,#ctxbar input[type=number]{width:auto;min-width:74px}
   #ctxbar input[type=range]{width:110px}
@@ -228,11 +273,11 @@
   /* ---------- hud ---------- */
   #readout{position:absolute;z-index:9;pointer-events:none;font-family:var(--mono);font-size:14px;font-weight:600;
     background:rgba(8,10,15,.82);border:1px solid var(--line);border-radius:4px;padding:4px 8px;white-space:nowrap;display:none}
-  #toast{position:absolute;bottom:78px;left:50%;transform:translateX(-50%);z-index:12;
+  #toast{position:absolute;bottom:132px;left:50%;transform:translateX(-50%);z-index:12;
     background:rgba(8,10,15,.94);border:1px solid var(--line);border-radius:var(--radius);
     padding:9px 14px;font-size:12px;font-family:var(--mono);opacity:0;transition:opacity .25s;pointer-events:none}
   #toast.show{opacity:1}
-  #scalebar{position:absolute;right:70px;bottom:18px;z-index:9;pointer-events:none;
+  #scalebar{position:absolute;right:16px;bottom:18px;z-index:9;pointer-events:none;
     font-family:var(--mono);font-size:10px;color:var(--muted);text-align:right}
   #scalebar .bar{height:6px;border:1px solid var(--muted);border-top:none;margin-top:3px}
   #toggle{position:absolute;top:10px;left:10px;z-index:12;width:34px;height:34px;padding:0;
@@ -249,11 +294,11 @@
 <div id="readout"></div>
 <div id="empty"><div>Add a map or image to the library to get started.<br>
   <span style="font-size:11px">You can also drag files onto this window.</span></div></div>
-<div id="aviso" style="display:none;position:absolute;top:0;left:var(--panel-w);right:0;z-index:14;
+<div id="aviso" role="alert" style="display:none;position:absolute;top:0;left:var(--panel-w);right:0;z-index:14;
   background:rgba(224,96,60,.16);border-bottom:1px solid var(--danger);color:#F6C9BC;
   padding:8px 14px;font-size:12px"></div>
 <div id="scalebar"><span id="sbLabel"></span><div class="bar" id="sbBar"></div></div>
-<div id="toast"></div>
+<div id="toast" role="status" aria-live="polite"></div>
 
 <aside id="panel">
   <div class="brand">
@@ -490,16 +535,16 @@
 
 <!-- carril de herramientas -->
 <div id="rail">
-  <button data-tool="pan" title="Pan view (V)"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/><path d="M9 6l3-3 3 3M9 18l3 3 3-3M6 9l-3 3 3 3M18 9l3 3-3 3"/></svg><span class="k">V</span></button>
-  <button data-tool="sel" title="Select and move (S)"><svg viewBox="0 0 24 24"><path d="M5 3l6 17 2.5-6.5L20 11z"/></svg><span class="k">S</span></button>
+  <button data-tool="pan" aria-label="Pan view (V)" title="Pan view (V)"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/><path d="M9 6l3-3 3 3M9 18l3 3 3-3M6 9l-3 3 3 3M18 9l3 3-3 3"/></svg><span class="k">V</span></button>
+  <button data-tool="sel" aria-label="Select and move (S)" title="Select and move (S)"><svg viewBox="0 0 24 24"><path d="M5 3l6 17 2.5-6.5L20 11z"/></svg><span class="k">S</span></button>
   <div class="sep"></div>
-  <button data-tool="measure" title="Measure (M)"><svg viewBox="0 0 24 24"><path d="M3 15l12-12 6 6-12 12z"/><path d="M7 11l2 2M10 8l2 2M13 5l2 2"/></svg><span class="k">M</span></button>
+  <button data-tool="measure" aria-label="Measure (M)" title="Measure (M)"><svg viewBox="0 0 24 24"><path d="M3 15l12-12 6 6-12 12z"/><path d="M7 11l2 2M10 8l2 2M13 5l2 2"/></svg><span class="k">M</span></button>
   <div class="sep"></div>
-  <button data-tool="effect" class="fx" title="Effects (X)"><svg viewBox="0 0 24 24"><path d="M4 20h16M6 16c2-3 4 1 6-2s3 2 6-1"/><path d="M12 3v4M9 5l3-2 3 2"/></svg><span class="k">X</span></button>
-  <button data-tool="fog" class="fx" title="Fog of war (F)"><svg viewBox="0 0 24 24"><path d="M4 15h16M6 11h12M8 19h8"/><circle cx="12" cy="7" r="3"/></svg><span class="k">F</span></button>
-  <button data-tool="oclusion" title="Occlusion walls (Y)"><svg viewBox="0 0 24 24"><path d="M3 20h18"/><path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/></svg><span class="k">Y</span></button>
-  <button data-tool="token" title="Player tokens (J)"><svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg><span class="k">J</span></button>
-  <button data-tool="pointer" title="Table pointer (P)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg><span class="k">P</span></button>
+  <button data-tool="effect" class="fx" aria-label="Effects (X)" title="Effects (X)"><svg viewBox="0 0 24 24"><path d="M4 20h16M6 16c2-3 4 1 6-2s3 2 6-1"/><path d="M12 3v4M9 5l3-2 3 2"/></svg><span class="k">X</span></button>
+  <button data-tool="fog" class="fx" aria-label="Fog of war (F)" title="Fog of war (F)"><svg viewBox="0 0 24 24"><path d="M4 15h16M6 11h12M8 19h8"/><circle cx="12" cy="7" r="3"/></svg><span class="k">F</span></button>
+  <button data-tool="oclusion" aria-label="Occlusion walls (Y)" title="Occlusion walls (Y)"><svg viewBox="0 0 24 24"><path d="M3 20h18"/><path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/></svg><span class="k">Y</span></button>
+  <button data-tool="token" aria-label="Player tokens (J)" title="Player tokens (J)"><svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg><span class="k">J</span></button>
+  <button data-tool="pointer" aria-label="Table pointer (P)" title="Table pointer (P)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg><span class="k">P</span></button>
 </div>
 
 <!-- barra contextual -->
@@ -515,7 +560,9 @@
     </select>
     <span style="display:flex;align-items:center;gap:5px">Fix
       <input id="medDist" type="number" min="0" step="5" placeholder="—" style="width:62px"></span>
+    <span class="sepv"></span>
     <span id="swatches" style="display:flex;gap:6px"></span>
+    <span class="sepv"></span>
     <select id="snapSel" title="Snap while measuring"><option value="none">Free</option><option value="center">Square center</option><option value="corner">Square corner</option></select>
     <button id="btnAnchor" class="ghost">Anchor origin <kbd>O</kbd></button>
     <label style="display:flex;align-items:center;gap:5px">Keep<input id="persist" type="checkbox"></label>
@@ -552,13 +599,16 @@
       <option value="poligono">Closed polygon</option>
     </select>
     <select id="snapSelWall" title="Snap when drawing walls"><option value="none">Free</option><option value="center">Square center</option><option value="corner">Square corner</option></select>
+    <span class="sepv"></span>
     <label style="display:flex;align-items:center;gap:5px">Walls only<input id="soloParedes" type="checkbox"></label>
     <span id="wallCuenta" style="font-family:var(--mono);font-size:11px">0 walls</span>
+    <span class="sepv"></span>
     <button id="wallNuevo" class="ghost" title="Start walls anywhere, even on top of an existing one">New wall</button>
     <button id="wallPuerta" class="ghost">Open / close</button>
     <button id="wallDir" class="ghost" title="Cycle which side this segment blocks from">One-way</button>
-    <button id="wallBorrar" class="ghost">Delete wall <kbd>Del</kbd></button>
-    <button id="wallVaciar" class="ghost">Clear all</button>
+    <span class="sepv"></span>
+    <button id="wallBorrar" class="ghost danger">Delete wall <kbd>Del</kbd></button>
+    <button id="wallVaciar" class="ghost danger">Clear all</button>
   </div>
   <div class="grp" id="grp-token">
     <select id="tokenJug" title="Player placed on click"></select>
@@ -596,13 +646,22 @@
 </div>
 <div id="tip"></div>
 
+<div id="onboard">
+  <button id="onboardCerrar" title="Hide for now">×</button>
+  <h4>Getting started</h4>
+  <ol id="pasos"></ol>
+  <p>Until the square is calibrated and the monitor size is set, what the table shows is
+    not to scale. This closes itself once all four are done.</p>
+  <button id="onboardNunca">Don’t show this again</button>
+</div>
+
 <div id="pista">
   <button id="pistaCerrar" title="Hide (comes back when you pick the tool again)">×</button>
   <h4 id="pistaTitulo"></h4>
   <ul id="pistaCuerpo"></ul>
 </div>
 
-<div id="conc" class="hide">
+<div id="conc" class="hide" role="dialog" aria-modal="true">
   <div class="card">
     <h2>Concentration save</h2>
     <p id="concTxt" style="font-size:14px;line-height:1.55;margin:0 0 16px;color:var(--text)"></p>
@@ -613,7 +672,7 @@
   </div>
 </div>
 
-<div id="multi" class="hide">
+<div id="multi" class="hide" role="dialog" aria-modal="true">
   <div class="card">
     <h2>Apply damage to several</h2>
     <label>Damage<input id="multiAmt" type="number" step="1" value="0"></label>
@@ -627,7 +686,7 @@
   </div>
 </div>
 
-<div id="dlgTexto" class="hide">
+<div id="dlgTexto" class="hide" role="dialog" aria-modal="true">
   <div class="card">
     <h2 id="dtTitulo">Title</h2>
     <label id="dtEtiqueta">Name<input id="dtValor" type="text"></label>
@@ -638,7 +697,7 @@
   </div>
 </div>
 
-<div id="dlgConfirmar" class="hide">
+<div id="dlgConfirmar" class="hide" role="dialog" aria-modal="true">
   <div class="card">
     <h2 id="dcTitulo">Confirm</h2>
     <p id="dcTexto" style="font-size:13px;line-height:1.55;margin:0 0 16px;color:var(--text)"></p>
@@ -657,7 +716,7 @@
   <button data-op="borrar" class="peligro">Delete campaign</button>
 </div>
 
-<div id="jugador" class="hide">
+<div id="jugador" class="hide" role="dialog" aria-modal="true">
   <div class="card">
     <h2 id="jgTitulo">New player</h2>
     <div class="two">
@@ -680,7 +739,7 @@
   </div>
 </div>
 
-<div id="atajos" class="hide">
+<div id="atajos" class="hide" role="dialog" aria-modal="true">
   <div class="card" style="width:min(720px,90vw);max-height:82vh;overflow-y:auto">
     <h2>Keyboard shortcuts</h2>
     <div id="atajosCuerpo" style="display:grid;grid-template-columns:1fr 1fr;gap:18px"></div>
@@ -690,7 +749,7 @@
   </div>
 </div>
 
-<div id="modal" class="hide">
+<div id="modal" class="hide" role="dialog" aria-modal="true">
   <div class="card">
     <h2 id="mdTitle">New combatant</h2>
     <label>Name<input id="mdName" type="text" placeholder="Wounded ogre"></label>
@@ -1429,6 +1488,7 @@ async function importarUVTT(file){
 
   /* La escala viene dada: no hay que calibrar nada a mano. */
   escena.cal.gridPx = ppg;
+  escena.cal.hecha = true;          // el archivo ya trae la escala
 
   const aPx = p => ({x:p.x*ppg, y:p.y*ppg});
   const muros = [];
@@ -1861,10 +1921,16 @@ function drawInitiative(c,W,H,dpr){
   const I=S.ini;
   if(!I.show || !I.list.length) return;
   c.setTransform(dpr,0,0,dpr,0,0);
-  const u = Math.max(15, Math.min(34, H/26)) * I.scale;
+  let u = Math.max(15, Math.min(34, H/26)) * I.scale;
+  const rows=I.list.length;
+  /* Con muchos combatientes la tarjeta se salía por abajo de la pantalla de la mesa y el
+     final del orden simplemente no se veía. Se encoge lo justo para caber. */
+  const alto = un => un*0.5*2 + un*1.5 + rows*un*1.25;
+  const tope = H - 24;
+  if(alto(u) > tope) u = Math.max(9, u * tope/alto(u));
   const pad = u*0.5;
-  const w = u*10.5, rows=I.list.length;
-  const h = pad*2 + u*1.5 + rows*u*1.25;
+  const w = u*10.5;
+  const h = alto(u);
   const x = I.corner.includes('l') ? pad : W-w-pad;
   const y = I.corner.startsWith('t') ? pad : H-h-pad;
   const ti = turnIdx();
@@ -1901,7 +1967,10 @@ function drawInitiative(c,W,H,dpr){
     const barW = (I.hpMode==='all' || (I.hpMode==='pj' && m.type==='pj')) && m.hpMax>0 ? u*3.1 : 0;
     const maxName = w - u*1.6 - barW - (m.cond?m.cond.length*u*0.85:0);
     let name = m.name;
-    while(name.length>3 && c.measureText(name).width>maxName) name=name.slice(0,-1);
+    if(c.measureText(name).width>maxName){
+      while(name.length>1 && c.measureText(name+'…').width>maxName) name=name.slice(0,-1);
+      name += '…';
+    }
     if(name!==m.name) name=name.slice(0,-1)+'…';
     c.fillText(name, x+pad+u*1.2, ry+u*0.64);
 
@@ -2128,17 +2197,40 @@ async function guardarEstado(){
                                     activa:sc()?sc().id:null});
   await dbPut('state', {id:'app', camp:CAMP.id, ini:S.ini, activa:sc()?sc().id:null,
     fx:{favoritos:CAT.favoritos, recientes:CAT.recientes, activas:CAT.activas},
-    tokensMesa:S.tokensMesa,
+    tokensMesa:S.tokensMesa, plegadas:S.plegadas||[], pasosNunca:!!S.pasosNunca,
     mesa:{dpi:T.dpi, diag:parseFloat($('diagIn').value)||27, cover:T.cover,
-          bright:T.bright, contrast:T.contrast, hpMode:S.ini.hpMode}});
+          bright:T.bright, contrast:T.contrast, hpMode:S.ini.hpMode,
+          diagHecha:!!T.diagHecha, mesaAbierta:!!T.mesaAbierta}});
 }
+/* Si el navegador deja de aceptar escrituras —lo normal es quedarse sin espacio— antes
+   esto solo se veía en la consola: la partida seguía como si nada y se perdía entera al
+   recargar. Ahora se dice, y no se quita hasta que vuelva a guardar bien. */
+function avisoGuardado(err){
+  const a=$('aviso');
+  if(!err){
+    if(a.dataset.motivo==='guardado'){ a.style.display='none'; a.dataset.motivo=''; }
+    return;
+  }
+  const lleno = err && (err.name==='QuotaExceededError' ||
+                        /quota|exceed/i.test(err.message||''));
+  a.dataset.motivo='guardado';
+  a.style.display='block';
+  a.textContent = lleno
+    ? 'Storage is full, so nothing is being saved. Export a backup now from the Library tab, then delete scenes you no longer need.'
+    : 'Could not save to browser storage, so changes since the last save are not being kept. Export a backup to be safe.';
+}
+
 async function volcar(){
   try{
     if(SUCIO.escena){ SUCIO.escena=false; await guardarEscenaMeta(sc()); }
     if(SUCIO.niebla){ SUCIO.niebla=false; await guardarNiebla(sc()); }
     if(SUCIO.estado){ SUCIO.estado=false; await guardarEstado(); }
     if(SUCIO.campana){ SUCIO.campana=false; await guardarCampana(); }
-  }catch(err){ console.error('Save error:', err); }
+    avisoGuardado(null);
+  }catch(err){
+    console.error('Save error:', err);
+    avisoGuardado(err);
+  }
 }
 setInterval(volcar, 4000);
 addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='hidden') volcar(); });
@@ -2253,6 +2345,23 @@ async function selectScene(i){
   tocarEstado();
 }
 
+let arrastreEscena=null;
+async function reordenarEscena(origen, destino){
+  const lista=LIB.scenes;
+  /* Soltar algo sobre sí mismo: al sacarlo de la lista su destino deja de existir y el
+     splice acabaría metiéndolo al final. El arrastre ya lo evita, pero la función no
+     debería depender de eso. */
+  if(origen===destino) return;
+  const from=lista.indexOf(origen), to=lista.indexOf(destino);
+  if(from<0 || to<0) return;
+  lista.splice(from,1);
+  lista.splice(lista.indexOf(destino) + (from<to ? 1 : 0), 0, origen);
+  arrastreEscena=null;
+  lista.forEach((x,k)=>{ x.orden=k; });
+  renderLibrary();
+  if(DB.ok) for(const x of lista) await guardarEscenaMeta(x);
+}
+
 function renderLibrary(){
   const g=$('library'); g.innerHTML='';
   const q=(LIB.filtro||'').trim().toLowerCase();
@@ -2270,10 +2379,26 @@ function renderLibrary(){
       s.name.replace(/\.[^.]+$/,'').slice(0,20)+'</span>';
     b.onclick=()=> s.type==='image' ? elegirImagen(s) : selectScene(i);
     b.oncontextmenu=ev=>{ ev.preventDefault(); borrarEscena(i); };
+    /* Arrastrar para ordenar: el campo «orden» ya existía y ya se usa al cargar, así que
+       basta con reescribirlo. */
+    b.draggable=true;
+    b.ondragstart=ev=>{ arrastreEscena=s; b.classList.add('arrastrando');
+                        ev.dataTransfer.effectAllowed='move'; };
+    b.ondragend=()=>{ b.classList.remove('arrastrando');
+                      document.querySelectorAll('.lib button.destino')
+                              .forEach(x=>x.classList.remove('destino')); };
+    b.ondragover=ev=>{ if(arrastreEscena && arrastreEscena!==s){ ev.preventDefault();
+                       b.classList.add('destino'); } };
+    b.ondragleave=()=>b.classList.remove('destino');
+    b.ondrop=ev=>{ ev.preventDefault(); b.classList.remove('destino');
+                   if(arrastreEscena && arrastreEscena!==s) reordenarEscena(arrastreEscena, s); };
     g.appendChild(b);
   });
   $('libHint').style.display = LIB.scenes.length ? 'none' : 'block';
   actualizarEspacio();
+  /* Aquí, y no en cada sitio que añade o quita escenas: esta función ya se llama en
+     todos ellos, así que la lista de primeros pasos se mantiene sola. */
+  renderPasos();
 }
 
 /* Las imágenes no sustituyen al mapa: se muestran superpuestas en la mesa
@@ -2493,6 +2618,49 @@ function renderFxList(){
 }
 
 
+/* ============ primeros pasos ============ */
+/* La escala real es lo que distingue a esta aplicación, y depende de dos números que
+   nadie pide: la calibración de la casilla y las pulgadas del monitor. Sin esto se puede
+   montar una mesa entera sin enterarse de que no está a escala. La lista se marca sola y
+   desaparece cuando ya no hace falta. */
+function hitoCalibrado(){
+  return escenasCampana().some(x => x.type==='map' && x.cal && x.cal.hecha);
+}
+/* Dos niveles de descarte: la cruz calla la ayuda hasta la próxima campaña o recarga,
+   y «Don't show this again» la apaga para siempre. Los pasos 1 y 2 son de cada campaña,
+   así que una campaña nueva la trae de vuelta sola —salvo que se haya apagado del todo. */
+let pasosOcultos=false;
+function renderPasos(){
+  const caja=$('onboard');
+  const pasos = [
+    {ok: escenasCampana().some(x=>x.type==='map'),
+     t:'Add a map', d:'Any image works, or a .uvtt file with its walls already in it.'},
+    {ok: hitoCalibrado(),
+     t:'Calibrate a square', d:'Press K and drag across one square of the map, so the app knows how big a square is.'},
+    {ok: !!T.diagHecha,
+     t:'Set your monitor size', d:'In the Table tab, enter the diagonal of the screen lying on the table.'},
+    {ok: !!T.mesaAbierta,
+     t:'Open the table view', d:'Drag it to that screen and click it for full screen.'}
+  ];
+  if(S.pasosNunca || pasosOcultos || pasos.every(p=>p.ok)){ caja.classList.remove('on'); return; }
+  caja.classList.add('on');
+  const ol=$('pasos'); ol.innerHTML='';
+  let primeroPendiente=true;
+  for(const p of pasos){
+    const li=document.createElement('li');
+    li.className = p.ok ? 'ok' : (primeroPendiente ? 'now' : '');
+    if(!p.ok) primeroPendiente=false;
+    const b=document.createElement('b'); b.textContent=p.t;
+    const d=document.createElement('span'); d.textContent=p.d;
+    li.append(b,d); ol.appendChild(li);
+  }
+}
+$('onboardCerrar').onclick=()=>{ pasosOcultos=true; renderPasos(); };
+$('onboardNunca').onclick=()=>{
+  S.pasosNunca=true; tocarEstado(); renderPasos();
+  toast('Getting started hidden. It comes back if you start a new campaign from scratch… unless you keep this off.');
+};
+
 /* ============ campañas ============ */
 /* Una campaña agrupa sus escenas, sus jugadores y el estado del combate.
    Los puntos de vida de los jugadores son los de la campaña: lo que pasa en el
@@ -2512,6 +2680,7 @@ async function crearCampana(nombre){
   const c={id:'c'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),
            name:nombre||'Untitled campaign', players:[], created:Date.now()};
   CAMP.lista.push(c);
+  pasosOcultos=false;         // campaña nueva: la ayuda vuelve a estar disponible
   if(DB.ok) await dbPut('camps', {...c});
   return c;
 }
@@ -2790,6 +2959,7 @@ function pushIniUndo(){ push('ini'); }
 function undoIni(){ undo(); }
 function applyDamage(m, amount, queue){
   if(amount<=0) return;
+  const yaCaido = m.hpMax>0 && (m.hp||0)<=0 && m.type!=='enemigo';
   const absorbed = Math.min(m.temp||0, amount);
   m.temp = (m.temp||0) - absorbed;
   const rest = amount - absorbed;
@@ -2800,18 +2970,33 @@ function applyDamage(m, amount, queue){
       if(!m.cond.includes('inconsciente')) m.cond.push('inconsciente');
     }
     if(hasCond(m,'concentracion')) toggleCondSilent(m,'concentracion');
+    /* Recibir daño estando ya a cero es una salvación fallida. */
+    if(yaCaido) anotarSalvacion(m, 2);
   } else if(hasCond(m,'concentracion') && amount>0){
     const cd = Math.min(30, Math.max(10, Math.floor(amount/2)));
     queue.push({m, cd, dmg:amount});
   }
 }
+/* Tres éxitos estabilizan, tres fallos matan. Antes las marcas solo daban vueltas y el
+   recuento lo llevaba el DM de cabeza. */
+function estadoSalvaciones(m){
+  const sv=m.saves||[];
+  const ok=sv.filter(v=>v===1).length, ko=sv.filter(v=>v===2).length;
+  return ko>=3 ? 'dead' : ok>=3 ? 'stable' : null;
+}
+function anotarSalvacion(m, valor){
+  m.saves = m.saves || [0,0,0,0,0,0];
+  const i = m.saves.indexOf(0);
+  if(i>=0) m.saves[i]=valor;
+}
+
 function toggleCondSilent(m,id){
   m.cond=m.cond||[]; const i=m.cond.indexOf(id); if(i>=0) m.cond.splice(i,1);
 }
 function applyHeal(m, amount){
   if(amount<=0) return;
   const was0 = m.hp<=0;
-  m.hp = Math.min(m.hpMax||Infinity, (m.hp||0) + amount);
+  m.hp = Math.min(m.hpMax>0 ? m.hpMax : (m.hp||0)+amount, (m.hp||0) + amount);
   if(was0 && m.hp>0){
     m.saves=[0,0,0,0,0,0];
     toggleCondSilent(m,'inconsciente');
@@ -2828,6 +3013,8 @@ function applyTo(m, mode, amount){
   sincronizarJugador(m);
   renderIniList(); draw();
   if(queue.length) showConc(queue);
+  const fin=estadoSalvaciones(m);
+  if(mode==='dmg' && fin==='dead') toast(m.name+' has failed three death saves.');
 }
 
 /* --- aviso de concentración --- */
@@ -2947,15 +3134,31 @@ function buildStrip(m){
     m.saves = m.saves || [0,0,0,0,0,0];
     const sv=document.createElement('div'); sv.className='saves';
     const lb=document.createElement('span'); lb.textContent='Death saves';
+    /* El desenlace, en el sitio donde se marcan: contar tres a ojo era el trabajo que
+       esta fila tenía que quitar. */
+    const fin=document.createElement('b');
+    const pintarFin=()=>{
+      const e=estadoSalvaciones(m);
+      fin.textContent = e==='dead' ? 'Dead' : e==='stable' ? 'Stable' : '';
+      fin.style.color = e==='dead' ? 'var(--danger)' : 'var(--frame)';
+      fin.style.marginLeft='auto';
+    };
+    pintarFin();
     const pips=document.createElement('div'); pips.className='pips';
     m.saves.forEach((v,i)=>{
       const b=document.createElement('button');
       b.className='pip'+(v===1?' ok':v===2?' ko':'');
       b.title='Empty → success → failure';
-      b.onclick=()=>{ m.saves[i]=(m.saves[i]+1)%3; sincronizarJugador(m); renderIniList(); };
+      b.onclick=()=>{
+        m.saves[i]=(m.saves[i]+1)%3;
+        const antes=estadoSalvaciones(m);
+        sincronizarJugador(m); renderIniList();
+        if(antes==='dead') toast(m.name+' is dead.');
+        else if(antes==='stable') toast(m.name+' is stable.');
+      };
       pips.appendChild(b);
     });
-    sv.append(lb,pips); st.appendChild(sv);
+    sv.append(lb,pips,fin); st.appendChild(sv);
   }
   return st;
 }
@@ -3162,6 +3365,7 @@ async function openTable(){
     if(el.requestFullscreen) el.requestFullscreen().catch(()=>{});
     const t=w.document.getElementById('tip'); if(t) t.style.opacity='0';
   });
+  T.mesaAbierta=true; tocarEstado(); renderPasos();
   autoDpi(); sizeTable(); applyFilter(); syncTableUI();
 
   if(pantalla){
@@ -3521,6 +3725,7 @@ function endPointer(e){
     const n=Math.max(1,parseInt($('calSquares').value)||1);
     const px=dist(S.draft.a,S.draft.b)/n;
     if(px>2){ cal().gridPx=Math.round(px*100)/100; $('gridPx').value=cal().gridPx;
+      cal().hecha=true; renderPasos();
       toast('Square calibrated: '+cal().gridPx+' px = '+fmt(cal().unitVal)); }
     S.draft=null; setTool('pan'); updateScaleBar(); draw(); return;
   }
@@ -3691,8 +3896,10 @@ EFFECTS.forEach((fx,i)=>{
 });
 
 /* ============ controles ============ */
-$('gridPx').oninput=e=>{ cal().gridPx=Math.max(4,parseFloat(e.target.value)||50); tocarEscena(); updateScaleBar(); draw(); };
-$('unitVal').oninput=e=>{ cal().unitVal=parseFloat(e.target.value)||5; tocarEscena(); updateScaleBar(); draw(); };
+$('gridPx').oninput=e=>{ cal().gridPx=Math.max(4,parseFloat(e.target.value)||50);
+  cal().hecha=true; tocarEscena(); updateScaleBar(); renderPasos(); draw(); };
+$('unitVal').oninput=e=>{ cal().unitVal=Math.max(0.1, parseFloat(e.target.value)||5);
+  tocarEscena(); updateScaleBar(); draw(); };
 $('unitName').oninput=e=>{ cal().unitName=e.target.value||'ft'; tocarEscena(); updateScaleBar(); draw(); };
 $('ruleSel').onchange=e=>{ cal().rule=e.target.value; tocarEscena(); draw(); };
 $('gridOx').oninput=e=>{ cal().ox=parseFloat(e.target.value)||0; tocarEscena(); draw(); };
@@ -3931,7 +4138,7 @@ $('iniSize').oninput=e=>{ S.ini.scale=e.target.value/100; $('iniSizeLbl').textCo
 $('iniHp').onchange=e=>{ S.ini.hpMode=e.target.value; draw(); };
 
 $('btnTable').onclick=()=>{ tableOpen()?closeTable():openTable(); };
-$('diagIn').oninput=autoDpi;
+$('diagIn').oninput=()=>{ T.diagHecha=true; tocarEstado(); renderPasos(); autoDpi(); };
 $('dpiIn').oninput=e=>{ T.dpi=Math.max(20,parseFloat(e.target.value)||96); tocarEstado(); updateTableInfo(); };
 $('btnTestGrid').onclick=()=>{ T.test=!T.test; $('btnTestGrid').classList.toggle('on',T.test); draw(); };
 $('btnFrame').onclick=()=>{ S.tool==='frame'?setTool('pan'):setTool('frame'); };
@@ -4181,6 +4388,21 @@ function toast(msg){
 }
 
 /* ============ diálogos propios ============ */
+/* Los siete diálogos comparten estructura, así que la trampa de foco se pone una vez:
+   sin ella el tabulador se escapa a la página de detrás, que sigue ahí y es operable. */
+const DIALOGOS = ['modal','jugador','atajos','conc','multi','dlgTexto','dlgConfirmar'];
+const FOCUSABLE = 'button,input,select,textarea,a[href],[tabindex]:not([tabindex="-1"])';
+for(const id of DIALOGOS){
+  $(id).addEventListener('keydown', e=>{
+    if(e.key!=='Tab') return;
+    const campos=[...$(id).querySelectorAll(FOCUSABLE)].filter(el=>el.offsetParent!==null);
+    if(!campos.length) return;
+    const primero=campos[0], ultimo=campos[campos.length-1];
+    if(e.shiftKey && document.activeElement===primero){ ultimo.focus(); e.preventDefault(); }
+    else if(!e.shiftKey && document.activeElement===ultimo){ primero.focus(); e.preventDefault(); }
+  });
+}
+
 /* Sustituyen a prompt() y confirm() del navegador, que rompen la estética
    y en pantalla completa quedan fuera de sitio. */
 let dlgResolver=null;
@@ -4286,15 +4508,26 @@ function abrirAtajos(){ renderAtajos(); $('atajos').classList.remove('hide'); }
 /* Cada encabezado marcado como plegable envuelve al resto de su sección para
    poder ocultarla: con muchas escenas o muchos combatientes el panel se hacía largo. */
 function prepararPlegado(){
+  /* El estado se guarda por el título de la sección: quien recoge el panel se lo
+     encuentra recogido la próxima vez, en lugar de tener que repetirlo cada sesión. */
+  const cerradas = new Set(S.plegadas||[]);
   document.querySelectorAll('.eyebrow.fold').forEach(h=>{
+    const clave=(h.textContent||'').trim();     // antes de meter el chevrón
     const cuerpo=document.createElement('div');
     cuerpo.className='fbody';
     while(h.nextSibling) cuerpo.appendChild(h.nextSibling);
     h.parentNode.appendChild(cuerpo);
     h.insertAdjacentHTML('afterbegin','<span class="chev">▼</span>');
-    h.onclick=()=>{
-      const cerrada=h.classList.toggle('closed');
+    const aplicar=cerrada=>{
+      h.classList.toggle('closed',cerrada);
       cuerpo.style.display = cerrada ? 'none' : '';
+    };
+    aplicar(cerradas.has(clave));
+    h.onclick=()=>{
+      const cerrada=!h.classList.contains('closed');
+      aplicar(cerrada);
+      if(cerrada) cerradas.add(clave); else cerradas.delete(clave);
+      S.plegadas=[...cerradas]; tocarEstado();
     };
   });
 }
@@ -4334,7 +4567,6 @@ if(navigator.storage && navigator.storage.persist){
 }
 
 async function arrancar(){
-  prepararPlegado();
   setTool('pan');
   resize();
 
@@ -4348,6 +4580,14 @@ async function arrancar(){
       ? 'You are opening this file directly from disk. Browser storage is unavailable, so nothing you import will be saved. Please use the hosted version instead.'
       : 'Could not open browser storage. The session will work, but nothing will be saved.';
   }
+
+  /* El plegado se lee antes de montar las secciones, o se montarían todas abiertas y
+     el estado guardado llegaría tarde. */
+  if(DB.ok){
+    const previo = await dbGet('state','app');
+    if(previo && Array.isArray(previo.plegadas)) S.plegadas = previo.plegadas;
+  }
+  prepararPlegado();
 
   if(DB.ok){
     /* Campañas: si no hay ninguna, se crea una y se le asignan las escenas previas. */
@@ -4380,6 +4620,7 @@ async function arrancar(){
         iniUid=Math.max(1,...S.ini.list.map(m=>m.id||0), 0)+1;
       }
       if(st.tokensMesa){ S.tokensMesa=st.tokensMesa; $('tokensMesa').value=S.tokensMesa; }
+      S.pasosNunca=!!st.pasosNunca;
       if(st.fx){
         CAT.favoritos=st.fx.favoritos||[]; CAT.recientes=st.fx.recientes||[];
         CAT.activas=st.fx.activas!==false; $('animOn').checked=CAT.activas;
@@ -4393,6 +4634,7 @@ async function arrancar(){
         $('brIn').value=Math.round(T.bright*100); $('coIn').value=Math.round(T.contrast*100);
         $('brLbl').textContent=Math.round(T.bright*100)+'%'; $('coLbl').textContent=Math.round(T.contrast*100)+'%';
         if(st.mesa.hpMode){ S.ini.hpMode=st.mesa.hpMode; $('iniHp').value=st.mesa.hpMode; }
+        T.diagHecha=!!st.mesa.diagHecha; T.mesaAbierta=!!st.mesa.mesaAbierta;
       }
     }
     renderJugadores(); renderLibrary(); renderFxList(); renderIniList();
