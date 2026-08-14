@@ -407,8 +407,8 @@
         <button id="fogNone">Reveal all</button>
       </div>
       <button id="fogReset" class="wide" style="margin-top:6px">Reset exploration</button>
-      <label class="field"><span>Opacity for you</span><span id="opLbl" style="font-family:var(--mono);font-size:11px">100%</span></label>
-      <input id="fogOpacity" type="range" min="20" max="100" value="100">
+      <label class="field"><span>Opacity for you</span><span id="opLbl" style="font-family:var(--mono);font-size:11px">50%</span></label>
+      <input id="fogOpacity" type="range" min="20" max="100" value="50">
     </section>
   </div>
 
@@ -808,7 +808,10 @@ const S = {
   medForma:'line', medDist:0,
   wallDraft:null, selParedes:[], wallModo:'segmento', wallNuevo:false, soloParedes:false,
   tokenSel:null, tokensMesa:'ocultos', verVision:true, verLuces:true,
-  fogMode:'hide', fogShape:'brush', brush:75, fogOpacity:1,
+  fogMode:'hide', fogShape:'brush', brush:75,
+  /* La niebla arranca a medias en tu pantalla: opaca del todo, un mapa recién cargado
+     parecía no estar cargando nada. En la mesa se sigue viendo entera. */
+  fogOpacity:0.5,
   fxPreset:EFFECTS[0], animSel:null, fxGeo:'circle', fxAlpha:1, fxBlend:'normal', wallW:1,
   sel:null, selMulti:[], portapapeles:[], redo:[], anchor:null,
   ini:{list:[], turnId:null, selId:null, mode:'dmg', entry:null, undo:[],
