@@ -1,7 +1,7 @@
 /* VeilCast VTT — service worker
    Caches the app so it starts instantly and works offline.
-   Bump VERSION whenever index.html changes. */
-const VERSION = 'veilcast-v1';
+   Bump VERSION in the commit that ships a change, not on every edit. */
+const VERSION = 'veilcast-v2';
 const ASSETS = [
   './',
   './index.html',

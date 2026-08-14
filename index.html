@@ -85,8 +85,6 @@
   .fxrow{display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid rgba(39,52,74,.6);font-size:12px}
   .fxrow .dot{width:10px;height:10px;border-radius:2px;flex:none}
   .fxrow .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .fxrow .rd{font-family:var(--mono);font-size:11px;color:var(--muted);min-width:28px;text-align:right}
-  .fxrow.spent .rd{color:var(--danger)}
   .fxrow button{padding:3px 6px;font-size:11px}
 
   /* ---------- iniciativa ---------- */
@@ -205,6 +203,18 @@
     background:rgba(17,23,34,.94);border:1px solid var(--line);backdrop-filter:blur(6px);
     font-size:12px;color:var(--muted);max-width:min(920px,88vw);flex-wrap:wrap;justify-content:center}
   #ctxbar.empty{display:none}
+  #pista{position:absolute;right:16px;bottom:16px;z-index:11;max-width:290px;
+    background:rgba(17,23,34,.94);border:1px solid var(--line);border-radius:8px;
+    backdrop-filter:blur(6px);padding:10px 12px;font-size:11.5px;line-height:1.5;
+    color:var(--muted);display:none}
+  #pista.on{display:block}
+  #pista h4{margin:0 0 6px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--measure);font-weight:600}
+  #pista ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:3px}
+  #pista b{color:var(--text);font-weight:600;font-family:var(--mono);font-size:10.5px}
+  #pistaCerrar{position:absolute;top:6px;right:7px;padding:1px 6px;font-size:12px;
+    line-height:1.2;background:transparent;border:none;color:var(--muted)}
+  #pistaCerrar:hover{color:var(--text)}
   #ctxbar .grp{display:none;align-items:center;gap:8px}
   #ctxbar .grp.on{display:flex}
   #ctxbar select,#ctxbar input[type=number]{width:auto;min-width:74px}
@@ -256,11 +266,11 @@
     <p id="brandInfo">no scene</p>
   </div>
   <div id="tabs">
+    <button data-tab="table">Table</button>
     <button data-tab="lib" class="on">Library</button>
     <button data-tab="scene">Scene</button>
     <button data-tab="fx">Effects</button>
     <button data-tab="combat">Combat</button>
-    <button data-tab="table">Table</button>
   </div>
 
   <!-- ============ BIBLIOTECA ============ -->
@@ -355,17 +365,6 @@
       <label class="field"><span>Opacity for you</span><span id="opLbl" style="font-family:var(--mono);font-size:11px">100%</span></label>
       <input id="fogOpacity" type="range" min="20" max="100" value="100">
     </section>
-    <section>
-      <p class="eyebrow fold">Active effects</p>
-      <div id="fxlist"></div>
-      <p class="hint" id="fxHint">No effects on the map. Pick the effects tool in the right-hand rail.</p>
-      <div class="grid2" style="margin-top:8px">
-        <button id="btnRound">Next round</button>
-        <button id="btnClearFx" class="ghost">Clear effects</button>
-      </div>
-      <button id="btnClearAll" class="wide ghost" style="margin-top:6px">Clear entire map</button>
-      <label class="field"><span>Round</span><span id="roundNum" style="font-family:var(--mono);font-size:13px;color:var(--text)">1</span></label>
-    </section>
   </div>
 
   <!-- ============ EFECTOS ============ -->
@@ -377,15 +376,15 @@
         <option value="">All levels</option>
         <option value="__fav">★ Favorites</option>
         <option value="__rec">Recently used</option>
-        <option value="Truco">Cantrips</option>
-        <option value="Nivel 1">Level 1</option>
-        <option value="Nivel 2">Level 2</option>
-        <option value="Nivel 3">Level 3</option>
-        <option value="Nivel 4">Level 4</option>
-        <option value="Nivel 5">Level 5</option>
-        <option value="Nivel 6">Level 6</option>
-        <option value="Nivel 7">Level 7</option>
-        <option value="Genéricos">Generic</option>
+        <option value="Cantrip">Cantrips</option>
+        <option value="Level 1">Level 1</option>
+        <option value="Level 2">Level 2</option>
+        <option value="Level 3">Level 3</option>
+        <option value="Level 4">Level 4</option>
+        <option value="Level 5">Level 5</option>
+        <option value="Level 6">Level 6</option>
+        <option value="Level 7">Level 7</option>
+        <option value="Generic">Generic</option>
       </select>
       <label class="field"><span>Play animations</span><input id="animOn" type="checkbox" checked></label>
       <p class="hint" id="catCuenta" style="margin:8px 0 0">—</p>
@@ -393,6 +392,13 @@
       <p class="hint" id="catHint">Loading catalog…</p>
       <p class="hint" style="margin-top:10px;opacity:.75" id="catFuente"></p>
       <p class="hint">Only what you use gets downloaded, and it stays saved for future sessions. Right-click an effect to mark it as a favorite.</p>
+    </section>
+    <section>
+      <p class="eyebrow fold">Active effects</p>
+      <div id="fxlist"></div>
+      <p class="hint" id="fxHint">No effects on the map. Pick the effects tool in the right-hand rail.</p>
+      <button id="btnClearFx" class="wide ghost" style="margin-top:8px">Clear effects</button>
+      <button id="btnClearAll" class="wide ghost" style="margin-top:6px">Clear entire map</button>
     </section>
   </div>
 
@@ -412,7 +418,7 @@
     <section>
       <p class="eyebrow fold">Initiative order</p>
       <div id="inilist"></div>
-      <p class="hint" id="iniHint">Sin combatientes. Añade a los personajes y a los enemigos para que el orden aparezca en la mesa.</p>
+      <p class="hint" id="iniHint">No combatants yet. Add the characters and the enemies so the order shows up on the table.</p>
       <button id="btnAddIni" class="wide" style="margin-top:9px">Add combatant</button>
       <div class="grid2" style="margin-top:6px">
         <button id="btnNextTurn">Next turn <kbd>T</kbd></button>
@@ -510,7 +516,7 @@
     <span style="display:flex;align-items:center;gap:5px">Fix
       <input id="medDist" type="number" min="0" step="5" placeholder="—" style="width:62px"></span>
     <span id="swatches" style="display:flex;gap:6px"></span>
-    <select id="snapSel"><option value="none">Free</option><option value="center">Square center</option><option value="corner">Square corner</option></select>
+    <select id="snapSel" title="Snap while measuring"><option value="none">Free</option><option value="center">Square center</option><option value="corner">Square corner</option></select>
     <button id="btnAnchor" class="ghost">Anchor origin <kbd>O</kbd></button>
     <label style="display:flex;align-items:center;gap:5px">Keep<input id="persist" type="checkbox"></label>
     <span id="wallWrap" style="display:none;align-items:center;gap:5px">Width<input id="wallW" type="number" min="0.5" step="0.5" value="1" style="width:58px"></span>
@@ -523,6 +529,7 @@
       <option value="lighter">Additive</option>
       <option value="multiply">Multiply</option>
     </select>
+    <select id="snapSelFx" title="Snap when placing effects"><option value="none">Free</option><option value="center">Square center</option><option value="corner">Square corner</option></select>
     <span style="display:flex;align-items:center;gap:5px">Opacity<input id="fxAlpha" type="range" min="20" max="100" value="100" style="width:76px"></span>
     <select id="fxGeo">
       <option value="circle">Circle</option>
@@ -531,13 +538,12 @@
       <option value="wall">Wall</option>
       <option value="poly">Free outline</option>
     </select>
-    <span style="display:flex;align-items:center;gap:5px">Rounds<input id="fxRounds" type="number" min="0" step="1" value="0" style="width:58px"></span>
   </div>
   <div class="grp" id="grp-fog">
     <button id="fogHide" class="ghost">Hide</button>
     <button id="fogShow" class="ghost">Reveal</button>
     <select id="fogShape"><option value="brush">Brush</option><option value="cells">Squares</option><option value="rect">Rectangle</option><option value="lasso">Lasso</option></select>
-    <span id="brushWrap" style="display:flex;align-items:center;gap:6px">Size<input id="brushSize" type="range" min="10" max="400" value="75"><span id="brushLbl" style="font-family:var(--mono);font-size:11px;min-width:64px">1,5 casillas</span></span>
+    <span id="brushWrap" style="display:flex;align-items:center;gap:6px">Size<input id="brushSize" type="range" min="10" max="400" value="75"><span id="brushLbl" style="font-family:var(--mono);font-size:11px;min-width:64px">1.5 squares</span></span>
   </div>
   <div class="grp" id="grp-oclusion">
     <select id="wallModo">
@@ -545,17 +551,20 @@
       <option value="polisegmento">Multi-segment wall</option>
       <option value="poligono">Closed polygon</option>
     </select>
+    <select id="snapSelWall" title="Snap when drawing walls"><option value="none">Free</option><option value="center">Square center</option><option value="corner">Square corner</option></select>
     <label style="display:flex;align-items:center;gap:5px">Walls only<input id="soloParedes" type="checkbox"></label>
-    <span id="wallCuenta" style="font-family:var(--mono);font-size:11px">0 paredes</span>
-    <span style="font-family:var(--mono);font-size:10px;color:var(--muted)">Click: add vertex · Double-click or Enter: finish</span>
+    <span id="wallCuenta" style="font-family:var(--mono);font-size:11px">0 walls</span>
+    <button id="wallNuevo" class="ghost" title="Start walls anywhere, even on top of an existing one">New wall</button>
     <button id="wallPuerta" class="ghost">Open / close</button>
-    <button id="wallBorrar" class="ghost">Delete <kbd>Del</kbd></button>
+    <button id="wallDir" class="ghost" title="Cycle which side this segment blocks from">One-way</button>
+    <button id="wallBorrar" class="ghost">Delete wall <kbd>Del</kbd></button>
     <button id="wallVaciar" class="ghost">Clear all</button>
   </div>
   <div class="grp" id="grp-token">
     <select id="tokenJug" title="Player placed on click"></select>
     <span style="display:flex;align-items:center;gap:5px">Vision
       <input id="tokenVision" type="number" min="0" step="5" value="30" style="width:58px"></span>
+    <select id="snapSelToken" title="Snap when placing tokens"><option value="none">Free</option><option value="center">Square center</option><option value="corner">Square corner</option></select>
     <select id="tokensMesa" title="Table visibility">
       <option value="ocultos">Hidden on table</option>
       <option value="punto">Small dot</option>
@@ -586,6 +595,12 @@
   <button id="overlayVolver" style="padding:4px 9px;font-size:11px">Back to map</button>
 </div>
 <div id="tip"></div>
+
+<div id="pista">
+  <button id="pistaCerrar" title="Hide (comes back when you pick the tool again)">×</button>
+  <h4 id="pistaTitulo"></h4>
+  <ul id="pistaCuerpo"></ul>
+</div>
 
 <div id="conc" class="hide">
   <div class="card">
@@ -678,7 +693,7 @@
 <div id="modal" class="hide">
   <div class="card">
     <h2 id="mdTitle">New combatant</h2>
-    <label>Nombre<input id="mdName" type="text" placeholder="Wounded ogre"></label>
+    <label>Name<input id="mdName" type="text" placeholder="Wounded ogre"></label>
     <div class="two">
       <label>Initiative<input id="mdInit" type="number" step="1" value="10"></label>
       <label>Current HP<input id="mdHp" type="number" step="1" value="10"></label>
@@ -727,13 +742,16 @@ const EFFECTS = [
 /* ============ estado ============ */
 const S = {
   view:{x:0,y:0,k:1},
-  tool:'pan', color:COLORS[0], snap:'none', persist:false, showGrid:false,
+  tool:'pan', color:COLORS[0], persist:false, showGrid:false,
+  /* El ajuste a la rejilla es de cada herramienta: medir a pulso no tiene por qué
+     desencajar las paredes ni los tokens. */
+  snap:{measure:'none', effect:'center', oclusion:'corner', token:'center'},
   medForma:'line', medDist:0,
-  wallDraft:null, wallSel:null, wallModo:'segmento', soloParedes:false,
+  wallDraft:null, selParedes:[], wallModo:'segmento', wallNuevo:false, soloParedes:false,
   tokenSel:null, tokensMesa:'ocultos', verVision:true, verLuces:true,
   fogMode:'hide', fogShape:'brush', brush:75, fogOpacity:1,
-  fxPreset:EFFECTS[0], animSel:null, fxGeo:'circle', fxAlpha:1, fxBlend:'normal', fxRounds:0, wallW:1,
-  sel:null, selMulti:[], portapapeles:[], redo:[], anchor:null, round:1,
+  fxPreset:EFFECTS[0], animSel:null, fxGeo:'circle', fxAlpha:1, fxBlend:'normal', wallW:1,
+  sel:null, selMulti:[], portapapeles:[], redo:[], anchor:null,
   ini:{list:[], turnId:null, selId:null, mode:'dmg', entry:null, undo:[],
        show:true, corner:'tr', scale:1, hpMode:'pj'},
   pointers:new Map(), pinch:null, spaceDown:false, panning:null, drawing:null,
@@ -758,11 +776,20 @@ const w2s = (p,v=S.view) => ({x:p.x*v.k+v.x, y:p.y*v.k+v.y});
 const s2w = (p,v=S.view) => ({x:(p.x-v.x)/v.k, y:(p.y-v.y)/v.k});
 const dist = (a,b) => Math.hypot(b.x-a.x,b.y-a.y);
 
-function snapPoint(p){
+/* Herramientas sin ajuste propio —anclar el origen, mover un tirador— usan el de
+   medir, que es de donde vienen. */
+function snapDe(tool){
+  if(tool==='effect')   return S.snap.effect;
+  if(tool==='oclusion') return S.snap.oclusion;
+  if(tool==='token')    return S.snap.token;
+  return S.snap.measure;
+}
+function snapPoint(p, modo){
+  const m = modo || snapDe(S.tool);
   const c=cal(), g=c.gridPx, ox=c.ox||0, oy=c.oy||0;
-  if(S.snap==='none' || !g) return p;
+  if(m==='none' || !g) return p;
   const rx=p.x-ox, ry=p.y-oy;
-  if(S.snap==='corner') return {x:Math.round(rx/g)*g+ox, y:Math.round(ry/g)*g+oy};
+  if(m==='corner') return {x:Math.round(rx/g)*g+ox, y:Math.round(ry/g)*g+oy};
   return {x:(Math.floor(rx/g)+0.5)*g+ox, y:(Math.floor(ry/g)+0.5)*g+oy};
 }
 function measure(a,b){
@@ -774,7 +801,7 @@ function measure(a,b){
   else { const lo=Math.min(dx,dy), hi=Math.max(dx,dy); sq=hi+Math.floor(lo/2); }
   return sq*c.unitVal;
 }
-function fmt(v){ return (Math.round(v*10)/10).toString().replace('.',',')+' '+cal().unitName; }
+function fmt(v){ return (Math.round(v*10)/10).toString()+' '+cal().unitName; }
 
 /* ============ texturas procedurales ============ */
 const PAT = new Map();
@@ -863,8 +890,11 @@ async function prepararAnim(id, e){
     }
     const v = document.createElement('video');
     v.muted = true; v.loop = true; v.playsInline = true; v.autoplay = true;
-    v.src = URL.createObjectURL(rec.blob);
+    const url = URL.createObjectURL(rec.blob);
+    e.url = url; v.src = url;
     await new Promise((res,rej)=>{ v.onloadeddata=res; v.onerror=rej; });
+    /* Puede haberse soltado mientras descargaba: entonces no se monta nada. */
+    if(e.descartado){ URL.revokeObjectURL(url); return; }
     const cn = document.createElement('canvas');
     cn.width = v.videoWidth; cn.height = v.videoHeight;
     e.video = v; e.lienzo = cn; e.ctx = cn.getContext('2d');
@@ -872,10 +902,34 @@ async function prepararAnim(id, e){
     v.play().catch(()=>{});
     draw();
   }catch(err){
+    if(e.url) URL.revokeObjectURL(e.url);
+    if(e.descartado) return;
     console.error('Could not prepare effect', id, err);
     e.descargando = false; e.error = true;
     toast('Could not download that effect. Are you online?');
   }
+}
+
+/* Suelta un efecto: para el vídeo y libera su URL. El blob sigue en la base de datos,
+   así que volver a usarlo no vuelve a descargar nada. */
+function soltarAnim(id){
+  const e = ANIM[id];
+  if(!e) return;
+  e.descartado = true;
+  if(e.video){ e.video.pause(); e.video.removeAttribute('src'); e.video.load(); }
+  if(e.url) URL.revokeObjectURL(e.url);
+  delete ANIM[id];
+}
+
+/* Un vídeo sigue decodificando aunque su efecto ya no esté en el mapa, y eso no se
+   recupera solo. Se sueltan los que la escena actual no usa. */
+function limpiarAnimaciones(){
+  const enUso = new Set();
+  const s = sc();
+  if(s && s.shapes) for(const sh of s.shapes) if(sh.anim) enUso.add(sh.anim);
+  if(S.draft && S.draft.anim) enUso.add(S.draft.anim);
+  if(S.animSel) enUso.add(S.animSel.p);   // el elegido en el catálogo, a punto de colocarse
+  for(const id of Object.keys(ANIM)) if(!enUso.has(id)) soltarAnim(id);
 }
 
 /* Copia el fotograma actual del vídeo al lienzo intermedio. */
@@ -1056,7 +1110,6 @@ function shapeLabel(s){
     if(s.anim) return null;   // la animación ya identifica el efecto
     let t=s.name;
     if(g==='poly' && s.pts) t += ' · '+Math.round(polySquares(s.pts))+' squares';
-    if(s.rounds!=null) t += ' · '+(s.rounds>0 ? s.rounds+' rds' : 'expires');
     return t;
   }
   const d = s.fija!=null ? s.fija : measure(s.a,s.b);
@@ -1078,6 +1131,35 @@ function shapeLabel(s){
    día se importa uno, las paredes del archivo y las trazadas a mano conviven. */
 const paredes = () => { const s=sc(); return s ? (s.walls || (s.walls=[])) : []; };
 
+/* Un muro es una cadena de segmentos: el segmento i va del vértice i al i+1, y en
+   los polígonos cerrados el último vuelve al primero. Las puertas se marcan segmento
+   a segmento, así que un pasillo trazado de una vez puede abrirse solo por un tramo. */
+const segCount = w => { const n=w.pts.length; return n<2 ? 0 : (w.closed && n>2 ? n : n-1); };
+const segPts   = (w,i) => [w.pts[i], w.pts[(i+1) % w.pts.length]];
+
+/* Cada segmento guarda su estado: «abierto» es una puerta, y «dir» de qué lado
+   bloquea —0 por los dos, +1 o -1 solo por uno—. Se rellena la primera vez que se
+   consulta, convirtiendo lo que hubiera antes: «abiertos» (lista de índices) o, más
+   atrás, «abierta» como marca de todo el muro. Así entran igual los muros guardados
+   y los portales UVTT. */
+function segsDe(w){
+  const n = segCount(w);
+  if(!Array.isArray(w.segs)){
+    const abiertos = Array.isArray(w.abiertos) ? w.abiertos
+                   : (w.abierta ? Array.from({length:n},(_,i)=>i) : []);
+    w.segs = Array.from({length:n}, (_,i)=>({abierto: abiertos.includes(i), dir:0}));
+    delete w.abierta; delete w.abiertos;
+  }
+  /* Si cambia el número de vértices se conserva lo que encaje por índice. */
+  if(w.segs.length !== n){
+    const viejo = w.segs;
+    w.segs = Array.from({length:n}, (_,i)=>viejo[i] || {abierto:false, dir:0});
+  }
+  return w.segs;
+}
+const segAbierto = (w,i) => { const t=segsDe(w)[i]; return !!(t && t.abierto); };
+const segDir     = (w,i) => { const t=segsDe(w)[i]; return t ? (t.dir||0) : 0; };
+
 function distPuntoSegmento(p, a, b){
   const dx=b.x-a.x, dy=b.y-a.y;
   const l2=dx*dx+dy*dy;
@@ -1086,12 +1168,15 @@ function distPuntoSegmento(p, a, b){
   t=Math.max(0,Math.min(1,t));
   return Math.hypot(p.x-(a.x+t*dx), p.y-(a.y+t*dy));
 }
+/* Devuelve el segmento concreto que se ha tocado, no solo el muro. */
 function paredEn(wp, tol){
   const lista=paredes();
-  for(let i=lista.length-1;i>=0;i--){
-    const w=lista[i], n=w.pts.length;
-    for(let j=0;j<n-1;j++) if(distPuntoSegmento(wp,w.pts[j],w.pts[j+1])<=tol) return w;
-    if(w.closed && n>2 && distPuntoSegmento(wp,w.pts[n-1],w.pts[0])<=tol) return w;
+  for(let k=lista.length-1;k>=0;k--){
+    const w=lista[k], n=segCount(w);
+    for(let i=0;i<n;i++){
+      const [a,b]=segPts(w,i);
+      if(distPuntoSegmento(wp,a,b)<=tol) return {pared:w, seg:i};
+    }
   }
   return null;
 }
@@ -1101,18 +1186,67 @@ function verticeEn(wp, tol){
       if(dist(wp,w.pts[i])<=tol) return {pared:w, i};
   return null;
 }
+/* Mete un vértice en medio de un segmento y devuelve su índice. El tramo partido se
+   convierte en dos, así que los índices de los que venían detrás suben uno: por eso se
+   parte también la lista de estados, y no se toca el orden a mano. Las dos mitades
+   heredan lo que tuviera el tramo original, puerta y sentido incluidos. */
+/* La selección de oclusión es una lista de tramos {pared, seg}: lo normal es querer
+   varios a la vez —un pasillo entero en un sentido, todos los lados de una sala— y un
+   solo tramo no es más que una lista de uno. */
+const segSeleccionado   = (w,i) => S.selParedes.some(t=>t.pared===w && t.seg===i);
+const paredSeleccionada = w => S.selParedes.some(t=>t.pared===w);
+const paredesSeleccionadas = () => [...new Set(S.selParedes.map(t=>t.pared))];
+function limpiarSeleccionParedes(){ S.selParedes=[]; }
+/* Huella barata del estado de las paredes: cambia si se mueve un vértice, se abre una
+   puerta o se invierte un sentido. Recorrerla cuesta muchísimo menos que relanzar los
+   rayos, y al calcularse sola evita tener que acordarse de invalidar la caché en cada
+   sitio que toca un muro. */
+function huellaParedes(){
+  let h=0;
+  for(const w of paredes()){
+    h = (h*31 + w.pts.length + (w.closed?1:0))|0;
+    for(const p of w.pts) h = (h*31 + Math.round(p.x*4)*7 + Math.round(p.y*4))|0;
+    if(Array.isArray(w.segs))
+      for(const t of w.segs) h = (h*31 + (t.abierto?1:0) + (t.dir||0)*3)|0;
+  }
+  return h;
+}
+function seleccionarSegmento(w,i,sumar){
+  if(!sumar){ S.selParedes=[{pared:w, seg:i}]; return; }
+  const k=S.selParedes.findIndex(t=>t.pared===w && t.seg===i);
+  if(k<0) S.selParedes.push({pared:w, seg:i}); else S.selParedes.splice(k,1);
+}
+function seleccionarPared(w){
+  S.selParedes = Array.from({length:segCount(w)}, (_,i)=>({pared:w, seg:i}));
+}
+
+/* Copia profunda de las paredes: puntos y estado por segmento. Ocupa poco al lado de
+   una instantánea de niebla, así que cabe en el historial sin más cuidado. */
+function clonarParedes(lista){
+  return (lista||[]).map(w=>{
+    const c={...w, pts:w.pts.map(p=>({...p}))};
+    if(Array.isArray(w.segs)) c.segs=w.segs.map(t=>({...t}));
+    return c;
+  });
+}
+
+function insertarVertice(w, seg, p){
+  const t = segsDe(w)[seg];                    // fuerza la migración antes de tocar nada
+  if(!t) return null;
+  const heredado = {abierto:t.abierto, dir:t.dir};
+  w.pts.splice(seg+1, 0, p);
+  w.segs.splice(seg+1, 0, heredado);
+  return seg+1;
+}
+
 function cerrarPared(){
   const d=S.wallDraft;
   if(!d || d.pts.length<2){ S.wallDraft=null; draw(); return; }
-  paredes().push({pts:d.pts, closed: d.modo==='poligono' && d.pts.length>2});
-  S.wallDraft=null; tocarEscena(); recalcularVision(); draw();
+  push('walls');
+  paredes().push({pts:d.pts, closed: d.modo==='poligono' && d.pts.length>2, segs:[]});
+  S.wallDraft=null; tocarEscena(); recalcularVision(); draw(); syncCtxBar();
   toast('Wall added. '+paredes().length+' in this scene.');
 }
-function borrarPared(w){
-  const lista=paredes(); const i=lista.indexOf(w);
-  if(i>=0){ lista.splice(i,1); S.wallSel=null; tocarEscena(); recalcularVision(); draw(); }
-}
-
 function drawParedes(c, view, dpr, o){
   const lista=paredes();
   const d=S.wallDraft;
@@ -1121,20 +1255,41 @@ function drawParedes(c, view, dpr, o){
   c.setTransform(dpr*view.k,0,0,dpr*view.k, dpr*view.x, dpr*view.y);
   c.lineCap='round'; c.lineJoin='round';
 
+  /* Cada segmento se pinta por separado: solo así una puerta abierta se distingue
+     del resto del muro al que pertenece. */
   for(const w of lista){
-    const sel = w===S.wallSel;
-    c.beginPath();
-    c.moveTo(w.pts[0].x, w.pts[0].y);
-    for(let i=1;i<w.pts.length;i++) c.lineTo(w.pts[i].x, w.pts[i].y);
-    if(w.closed) c.closePath();
-    c.strokeStyle = w.abierta ? 'rgba(139,224,122,.85)'
-      : sel ? '#5AD2E8' : (S.soloParedes ? 'rgba(207,243,250,.95)' : 'rgba(207,243,250,.55)');
-    c.lineWidth = (sel?3.4:2.2)/view.k;
-    if(w.abierta) c.setLineDash([9/view.k,7/view.k]);
-    c.stroke();
-    c.setLineDash([]);
+    const nSeg = segCount(w);
+    for(let i=0;i<nSeg;i++){
+      const [a,b] = segPts(w,i);
+      const abierto = segAbierto(w,i);
+      const sel = segSeleccionado(w,i);
+      c.beginPath();
+      c.moveTo(a.x,a.y); c.lineTo(b.x,b.y);
+      c.strokeStyle = abierto ? 'rgba(139,224,122,.85)'
+        : sel ? '#5AD2E8' : (S.soloParedes ? 'rgba(207,243,250,.95)' : 'rgba(207,243,250,.55)');
+      c.lineWidth = (sel?3.4:2.2)/view.k;
+      if(abierto) c.setLineDash([9/view.k,7/view.k]);
+      c.stroke();
+      c.setLineDash([]);
+
+      /* Un tramo de un solo sentido lleva marcas cortas por el lado desde el que tapa:
+         el normal (-sy, sx) apunta al lado positivo, y dir elige cuál de los dos. */
+      const d = segDir(w,i);
+      if(d){
+        const sx=b.x-a.x, sy=b.y-a.y, L=Math.hypot(sx,sy)||1;
+        const nx=(-sy/L)*d, ny=(sx/L)*d, largo=7/view.k;
+        c.beginPath();
+        for(const f of [0.25,0.5,0.75]){
+          const px=a.x+sx*f, py=a.y+sy*f;
+          c.moveTo(px,py); c.lineTo(px+nx*largo, py+ny*largo);
+        }
+        c.strokeStyle = abierto ? 'rgba(139,224,122,.9)' : 'rgba(224,163,60,.95)';
+        c.lineWidth = 1.6/view.k;
+        c.stroke();
+      }
+    }
     if(S.tool==='oclusion'){
-      c.fillStyle = sel ? '#5AD2E8' : 'rgba(207,243,250,.8)';
+      c.fillStyle = paredSeleccionada(w) ? '#5AD2E8' : 'rgba(207,243,250,.8)';
       for(const p of w.pts){ c.beginPath(); c.arc(p.x,p.y,3.4/view.k,0,Math.PI*2); c.fill(); }
     }
   }
@@ -1256,12 +1411,12 @@ const EXT_UVTT = /\.(uvtt|dd2vtt|df2vtt)$/i;
 async function importarUVTT(file){
   let d;
   try{ d = JSON.parse(await file.text()); }
-  catch(err){ toast('«'+file.name+'» no es un archivo UVTT válido.'); return null; }
+  catch(err){ toast('"'+file.name+'" is not a valid UVTT file.'); return null; }
 
   const res = d.resolution || {};
   const ppg = res.pixels_per_grid || 100;
   const b64 = (d.image||'').split(',').pop();
-  if(!b64){ toast('El archivo no lleva imagen incrustada.'); return null; }
+  if(!b64){ toast('The file has no embedded image.'); return null; }
 
   const bin = atob(b64);
   const bytes = new Uint8Array(bin.length);
@@ -1282,12 +1437,15 @@ async function importarUVTT(file){
   for(const grupo of (d.objects_line_of_sight||[]))
     if(grupo && grupo.length>1) muros.push({pts:grupo.map(aPx), closed:true});
 
-  /* Los portales entran como paredes que se pueden abrir: son las puertas. */
+  /* Los portales entran como paredes que se pueden abrir: son las puertas. Un portal
+     abierto en el archivo llega con todos sus tramos abiertos. */
   let puertas=0;
   for(const pr of (d.portals||[])){
     const b = pr.bounds||[];
     if(b.length<2) continue;
-    muros.push({pts:b.map(aPx), closed:false, abierta: pr.closed===false, puerta:true});
+    const pts=b.map(aPx);
+    muros.push({pts, closed:false, puerta:true,
+                abiertos: pr.closed===false ? pts.map((_,i)=>i).slice(0,pts.length-1) : []});
     puertas++;
   }
   escena.walls = muros;
@@ -1306,8 +1464,8 @@ async function importarUVTT(file){
   await guardarEscenaMeta(escena);
   syncSceneInputs(); renderLibrary(); recalcularVision(); draw();
 
-  toast('«'+escena.name.replace(/\.[^.]+$/,'')+'»: '+muros.length+' paredes, '+
-        puertas+' puertas y '+escena.lights.length+' luces. Casilla de '+ppg+' px.');
+  toast('"'+escena.name.replace(/\.[^.]+$/,'')+'": '+muros.length+' walls, '+
+        puertas+' doors and '+escena.lights.length+' lights. Square of '+ppg+' px.');
   return escena;
 }
 
@@ -1335,16 +1493,24 @@ function drawLuces(c, view, dpr){
    define el polígono de lo visible; lo que queda detrás de una pared no se revela. */
 
 const EPS = 0.0004;
+/* Un rayo que arranca justo encima de una pared choca con ella a distancia cero y el
+   polígono se cierra sobre el propio token: se quedaría ciego. Se exige avanzar algo
+   antes de contar el choque, así que estar sobre un muro lo vuelve transparente en vez
+   de dejar sin vista. Con el ajuste por herramienta (tokens al centro, paredes a la
+   esquina) es difícil llegar aquí, pero no imposible. */
+const EPS_T = 1e-6;
 const RAYOS_BASE = 96;        // rayos repartidos para redondear el borde de visión
 
 /* Todas las paredes de la escena convertidas a segmentos sueltos. */
 function segmentosMapa(){
   const out=[];
   for(const w of paredes()){
-    if(w.abierta) continue;            // una pared abierta —una puerta— no bloquea
-    const n=w.pts.length;
-    for(let i=0;i<n-1;i++) out.push({a:w.pts[i], b:w.pts[i+1]});
-    if(w.closed && n>2) out.push({a:w.pts[n-1], b:w.pts[0]});
+    const n=segCount(w);
+    for(let i=0;i<n;i++){
+      if(segAbierto(w,i)) continue;    // un segmento abierto —una puerta— no bloquea
+      const [a,b]=segPts(w,i);
+      out.push({a, b, dir:segDir(w,i)});
+    }
   }
   return out;
 }
@@ -1354,9 +1520,15 @@ function chocaRayo(ox, oy, dx, dy, s){
   const sx=s.b.x-s.a.x, sy=s.b.y-s.a.y;
   const den = dx*sy - dy*sx;
   if(Math.abs(den) < 1e-9) return null;         // paralelos
+  /* Un muro de un solo sentido solo tapa si quien mira está en su lado. El signo del
+     producto cruzado del segmento con el origen del rayo dice en qué lado cae. */
+  if(s.dir){
+    const lado = sx*(oy-s.a.y) - sy*(ox-s.a.x);
+    if(Math.sign(lado) !== s.dir) return null;  // transparente desde este lado
+  }
   const t = ((s.a.x-ox)*sy - (s.a.y-oy)*sx) / den;
   const u = ((s.a.x-ox)*dy - (s.a.y-oy)*dx) / den;
-  if(t < 0 || u < 0 || u > 1) return null;
+  if(t < EPS_T || u < 0 || u > 1) return null;
   return t;
 }
 
@@ -1369,12 +1541,20 @@ function poligonoVisible(origen, radio, segs){
     return dmin <= radio;
   });
 
+  /* Los rayos se ordenan por ángulo para recorrer el contorno de una vez. Como
+     atan2 devuelve (-π, π] y los rayos de reparto van en [0, 2π), hay que llevar
+     todo a la misma vuelta antes de ordenar: si no, las esquinas de ángulo
+     negativo —las que quedan por encima del token— caen al principio de la lista,
+     el polígono se solapa consigo mismo y la luz atraviesa la pared. */
+  const norm = a => { a %= Math.PI*2; return a < 0 ? a + Math.PI*2 : a; };
+
   const angulos=[];
   for(let i=0;i<RAYOS_BASE;i++) angulos.push((i/RAYOS_BASE)*Math.PI*2);
   for(const s of cerca){
     for(const p of [s.a, s.b]){
       const ang = Math.atan2(p.y-origen.y, p.x-origen.x);
-      angulos.push(ang - EPS, ang, ang + EPS);   // justo antes, en, y justo después de la esquina
+      /* justo antes, en, y justo después de la esquina */
+      angulos.push(norm(ang - EPS), norm(ang), norm(ang + EPS));
     }
   }
   angulos.sort((x,y)=>x-y);
@@ -1453,6 +1633,7 @@ function visionEnMovimiento(j, pos){
 }
 
 /* Contorno de lo que ve el token seleccionado, solo en tu pantalla. */
+let visionCache = {clave:null, poly:null};
 function drawVision(c, view, dpr){
   /* No pintar mientras el token está en movimiento: el polígono de rayos
      sobraría visualmente y ya se ve el efecto en la niebla. */
@@ -1460,7 +1641,14 @@ function drawVision(c, view, dpr){
   const j=S.tokenSel; if(!j || !S.verVision) return;
   const t=tokenDe(j); if(!t) return;
   const radio=radioVision(j); if(radio<=0) return;
-  const poly=poligonoVisible(t, radio, segmentosMapa());
+  /* Este contorno se redibuja en cada fotograma mientras haya animaciones sonando, y
+     lanzar los rayos de nuevo cada vez no aporta nada: solo cambia si se mueve el token,
+     cambia su alcance o se tocan las paredes. */
+  const clave = (sc()||{}).id+'|'+j.id+'|'+t.x+','+t.y+'|'+radio+'|'+huellaParedes();
+  if(visionCache.clave !== clave){
+    visionCache = {clave, poly:poligonoVisible(t, radio, segmentosMapa())};
+  }
+  const poly = visionCache.poly;
   if(poly.length<3) return;
   c.save();
   c.setTransform(dpr*view.k,0,0,dpr*view.k, dpr*view.x, dpr*view.y);
@@ -1500,7 +1688,7 @@ function renderScene(c, view, W, H, dpr, o){
       c.globalAlpha=o.fogOpacity;
       c.setTransform(dpr*view.k,0,0,dpr*view.k, dpr*view.x, dpr*view.y);
       c.imageSmoothingEnabled=false;
-      c.drawImage(s.fogCv,0,0);
+      c.drawImage(s.fogCv,0,0,s.w,s.h);
       c.restore();
     }
     const all = S.draft ? s.shapes.concat([S.draft]) : s.shapes;
@@ -1550,7 +1738,6 @@ function drawGrid(c,view,dpr,W,H,bright){
 function drawShape(c,view,dpr,s,isDraft,o){
   const g=s.geo||s.type;
   let alpha=1;
-  if(s.kind==='effect' && s.rounds===0) alpha = 0.45+0.55*Math.abs(Math.sin(performance.now()/380));
 
   /* Los efectos animados se pintan con el fotograma actual de su vídeo. */
   if(s.anim){
@@ -1665,7 +1852,7 @@ function drawTableFrame(c,view,dpr){
   c.lineWidth = S.tool==='frame' ? 2.5 : 1.5;
   c.setLineDash([9,6]); c.strokeRect(x,y,wW*view.k,wH*view.k); c.setLineDash([]);
   if(S.tool==='frame'){ c.fillStyle='rgba(139,224,122,.08)'; c.fillRect(x,y,wW*view.k,wH*view.k); }
-  c.font='600 11px ui-monospace, Menlo, monospace'; c.fillStyle='#8BE07A'; c.fillText('MESA',x+8,y+18);
+  c.font='600 11px ui-monospace, Menlo, monospace'; c.fillStyle='#8BE07A'; c.fillText('TABLE',x+8,y+18);
   c.restore();
 }
 function hpColor(f){ return f>0.5 ? '#8BE07A' : f>0.25 ? '#E0A33C' : '#E0603C'; }
@@ -1915,18 +2102,31 @@ async function guardarEscenaMeta(s){
     lights:s.lights||[], ambiente:s.ambiente||null, updated:Date.now()
   });
 }
+/* La niebla vive a la resolución a la que se guarda, no a la del mapa. Antes se ampliaba
+   al cargar y se reducía al guardar, y ese ida y vuelta difuminaba un poco más lo
+   explorado en cada sesión. El contexto lleva la escala puesta, así que todo lo demás
+   sigue pintando en píxeles de mapa sin enterarse de nada. */
+function crearNiebla(s){
+  const f = Math.min(1, MAX_NIEBLA/Math.max(s.w,s.h));
+  s.fogCv = document.createElement('canvas');
+  s.fogCv.width  = Math.max(1, Math.round(s.w*f));
+  s.fogCv.height = Math.max(1, Math.round(s.h*f));
+  s.fogCtx = s.fogCv.getContext('2d');
+  s.fogCtx.setTransform(f,0,0,f,0,0);
+}
+
 async function guardarNiebla(s){
   if(!DB.ok || !s || s.type!=='map' || !s.fogCv) return;
-  const cn = Math.max(s.w,s.h)>MAX_NIEBLA ? escalar(s.fogCv,s.w,s.h,MAX_NIEBLA) : s.fogCv;
-  const b = await blobDeCanvas(cn,'image/png');
+  /* Ya está a la resolución de disco: se guarda tal cual, sin volver a remuestrear. */
+  const b = await blobDeCanvas(s.fogCv,'image/png');
   if(b) await dbPut('blobs',{key:s.id+':fog', blob:b});
 }
 async function guardarEstado(){
   if(!DB.ok) return;
   /* Estado propio de la campaña activa. */
-  if(CAMP.id) await dbPut('state', {id:'camp:'+CAMP.id, round:S.round, ini:S.ini,
+  if(CAMP.id) await dbPut('state', {id:'camp:'+CAMP.id, ini:S.ini,
                                     activa:sc()?sc().id:null});
-  await dbPut('state', {id:'app', camp:CAMP.id, round:S.round, ini:S.ini, activa:sc()?sc().id:null,
+  await dbPut('state', {id:'app', camp:CAMP.id, ini:S.ini, activa:sc()?sc().id:null,
     fx:{favoritos:CAT.favoritos, recientes:CAT.recientes, activas:CAT.activas},
     tokensMesa:S.tokensMesa,
     mesa:{dpi:T.dpi, diag:parseFloat($('diagIn').value)||27, cover:T.cover,
@@ -1954,8 +2154,7 @@ async function cargarEscena(s){
     s.w = s.img.width || s.img.naturalWidth;
     s.h = s.img.height || s.img.naturalHeight;
     if(s.type==='map'){
-      s.fogCv=document.createElement('canvas'); s.fogCv.width=s.w; s.fogCv.height=s.h;
-      s.fogCtx=s.fogCv.getContext('2d');
+      crearNiebla(s);
       const fog = await dbGet('blobs', s.id+':fog');
       if(fog){
         const fi=await cargarImagen(fog.blob);
@@ -2000,7 +2199,7 @@ let uid=1;
 /* Da de alta una escena a partir de un archivo: guarda el binario, genera la
    miniatura y reescala si la imagen es desproporcionada para la pantalla. */
 async function addSceneFile(file, type){
-  if(!/^image\//.test(file.type)){ toast('«'+file.name+'» no es una imagen.'); return null; }
+  if(!/^image\//.test(file.type)){ toast('"'+file.name+'" is not an image.'); return null; }
   try{
     const bmp = await cargarBitmap(file);
     const w = bmp.width || bmp.naturalWidth, h = bmp.height || bmp.naturalHeight;
@@ -2040,11 +2239,12 @@ async function selectScene(i){
   if(LIB.scenes[i].type==='image'){ elegirImagen(LIB.scenes[i]); return; }
   await volcar();   // no dejar cambios de la escena anterior sin guardar
   LIB.idx=i; S.sel=null; S.draft=null; S.lasso=null; S.history=[];
-  S.wallDraft=null; S.wallSel=null; S.tokenSel=null;
+  S.wallDraft=null; limpiarSeleccionParedes(); S.tokenSel=null;
   T.fadeT=performance.now();
   const s=sc();
   await cargarEscena(s);
   liberarOtras();
+  limpiarAnimaciones();
   syncSceneInputs();
   $('empty').style.display='none';
   $('brandInfo').textContent = s.name.replace(/\.[^.]+$/,'').slice(0,28)+' · '+s.w+'×'+s.h;
@@ -2066,7 +2266,7 @@ function renderLibrary(){
     }
     if(i===LIB.idx) b.classList.add('on');
     b.title=s.name;
-    b.innerHTML='<span class="tp">'+(s.type==='map'?'MAPA':'IMG')+'</span><span class="nm">'+
+    b.innerHTML='<span class="tp">'+(s.type==='map'?'MAP':'IMG')+'</span><span class="nm">'+
       s.name.replace(/\.[^.]+$/,'').slice(0,20)+'</span>';
     b.onclick=()=> s.type==='image' ? elegirImagen(s) : selectScene(i);
     b.oncontextmenu=ev=>{ ev.preventDefault(); borrarEscena(i); };
@@ -2088,7 +2288,7 @@ function renderBandeja(){
   if(!s){ b.style.display='none'; return; }
   b.style.display='block';
   $('bandejaNom').textContent = s.name.replace(/\.[^.]+$/,'').slice(0,30);
-  $('bandejaMostrar').textContent = (T.overlay===s.id) ? 'Quitar de la pantalla' : 'Mostrar en pantalla';
+  $('bandejaMostrar').textContent = (T.overlay===s.id) ? 'Remove from screen' : 'Show on screen';
 }
 async function mostrarImagen(s){
   if(T.overlay===s.id){ ocultarImagen(); return; }
@@ -2112,7 +2312,9 @@ function actualizarAvisoOverlay(){
 
 async function borrarEscena(i){
   const s=LIB.scenes[i]; if(!s) return;
-  if(!confirm('Remove "'+s.name+'" from the library?\nIts fog and effects will be deleted too.')) return;
+  if(!await pedirConfirmar('Remove scene',
+      '"'+s.name+'" will be removed from the library, along with its fog and effects. This cannot be undone.',
+      'Remove', true)) return;
   if(s.thumbUrl) URL.revokeObjectURL(s.thumbUrl);
   liberarEscena(s);
   LIB.scenes.splice(i,1);
@@ -2144,6 +2346,10 @@ function syncSceneInputs(){
 }
 
 /* ============ historial unificado ============ */
+/* Mientras se rehace, el propio push() no debe vaciar la pila de rehacer: si lo
+   hiciera solo se podría rehacer un paso. */
+let rehaciendo=false;
+
 function push(kind){
   if(kind==='ini'){
     S.history.push({kind:'ini', scene:'*',
@@ -2152,14 +2358,23 @@ function push(kind){
     return;
   }
   const s=sc(); if(!s || s.type!=='map') return;
+  /* Una edición nueva invalida lo que quedara por rehacer en ESTA escena: esa rama
+     ya no lleva a ninguna parte. Cada mapa tiene su propia línea temporal, así que
+     las ramas de los demás se quedan intactas. */
+  if(!rehaciendo) S.redo = S.redo.filter(r => r.scene !== s.id);
   if(kind==='fog'){
-    const cn=document.createElement('canvas'); cn.width=s.w; cn.height=s.h;
+    /* La instantánea se guarda a la misma resolución que en disco: a tamaño de mapa
+       un solo lienzo llega a 67 MB y se conservan varios. La niebla tiene el borde
+       difuso, así que bajar la resolución no se nota. Mapas pequeños se copian tal cual,
+       porque escalar() no amplía. */
+    const cn=document.createElement('canvas');
+    cn.width=s.fogCv.width; cn.height=s.fogCv.height;
     cn.getContext('2d').drawImage(s.fogCv,0,0);
     S.history.push({kind:'fog', scene:s.id, img:cn});
-    /* Cada instantánea de niebla es un lienzo del tamaño del mapa: se guardan
-       pocas para no comerse la memoria con mapas grandes. */
     const fogs=S.history.filter(h=>h.kind==='fog');
-    while(fogs.length>6){ const v=fogs.shift(); S.history.splice(S.history.indexOf(v),1); }
+    while(fogs.length>4){ const v=fogs.shift(); S.history.splice(S.history.indexOf(v),1); }
+  } else if(kind==='walls'){
+    S.history.push({kind:'walls', scene:s.id, arr:clonarParedes(s.walls)});
   } else {
     S.history.push({kind:'shapes', scene:s.id, arr:s.shapes.map(x=>({...x}))});
   }
@@ -2168,15 +2383,25 @@ function push(kind){
 function instantanea(){
   const s=sc();
   if(!s || s.type!=='map') return null;
-  return {shapes:s.shapes.map(x=>({...x})), ini:S.ini.list.map(m=>({...m}))};
+  /* La escena va marcada: una instantánea solo puede volver al mapa del que salió. */
+  return {scene:s.id, shapes:s.shapes.map(x=>({...x})), walls:clonarParedes(s.walls),
+          ini:S.ini.list.map(m=>({...m}))};
 }
 function rehacer(){
-  if(!S.redo.length){ toast('Nothing to redo.'); return; }
-  const e=S.redo.pop();
-  const s=sc(); if(!s) return;
+  const s=sc();
+  /* Se rehace la última entrada de esta escena; las de otros mapas se quedan
+     donde están, esperando a que se vuelva a ellos. */
+  let i=-1;
+  for(let k=S.redo.length-1;k>=0;k--) if(s && S.redo[k].scene===s.id){ i=k; break; }
+  if(i<0){ toast('Nothing to redo.'); return; }
+  const e=S.redo.splice(i,1)[0];
+  rehaciendo=true;
   push('shapes');
+  rehaciendo=false;
   s.shapes.length=0; e.shapes.forEach(x=>s.shapes.push(x));
-  S.sel=null; S.selMulti=[]; tocarEscena(); renderFxList(); draw();
+  if(e.walls) s.walls = clonarParedes(e.walls);
+  S.sel=null; S.selMulti=[]; limpiarSeleccionParedes();
+  tocarEscena(); renderFxList(); recalcularVision(); syncCtxBar(); draw();
   toast('Redone.');
 }
 function undo(){
@@ -2194,7 +2419,16 @@ function undo(){
     toast('Combat change undone.'); return;
   }
   if(!s) return;
-  if(e.kind==='fog'){ s.fogCtx.clearRect(0,0,s.w,s.h); s.fogCtx.drawImage(e.img,0,0); tocarNiebla(); }
+  /* La instantánea puede venir reducida: se estira al tamaño del mapa, igual que al
+     cargarla del disco. */
+  if(e.kind==='fog'){ s.fogCtx.clearRect(0,0,s.w,s.h); s.fogCtx.drawImage(e.img,0,0,s.w,s.h); tocarNiebla(); }
+  else if(e.kind==='walls'){
+    if(antes) S.redo.push(antes);
+    if(S.redo.length>12) S.redo.shift();
+    s.walls = e.arr;
+    limpiarSeleccionParedes(); S.wallDraft=null;
+    tocarEscena(); recalcularVision(); syncCtxBar();
+  }
   else {
     if(antes) S.redo.push(antes);
     if(S.redo.length>12) S.redo.shift();
@@ -2205,8 +2439,23 @@ function undo(){
 }
 
 /* ============ niebla ============ */
+/* En modo dinámico la niebla se rehace entera desde los tokens en cada recálculo, así
+   que pintarla a mano se borraba solo un instante después, sin explicación. Mejor no
+   hacer nada y decirlo. */
+let avisoDinamica=0;
+function fogPintable(){
+  if(modoNiebla()!=='dinamica') return true;
+  const ahora=performance.now();
+  if(ahora-avisoDinamica>2500){
+    avisoDinamica=ahora;
+    toast('Dynamic fog is rebuilt from the tokens, so painting it has no effect. Switch to manual or exploration to paint.');
+  }
+  return false;
+}
+
 function fogOp(fn){
   const s=sc(); if(!s||s.type!=='map') return;
+  if(!fogPintable()) return;
   tocarNiebla();
   const c=s.fogCtx;
   c.globalCompositeOperation = S.fogMode==='hide' ? 'source-over' : 'destination-out';
@@ -2229,26 +2478,18 @@ function renderFxList(){
   const fx=shapes().filter(s=>s.kind==='effect');
   fx.forEach(s=>{
     const row=document.createElement('div');
-    row.className='fxrow'+(s.rounds===0?' spent':'');
+    row.className='fxrow';
     const dot=document.createElement('div'); dot.className='dot'; dot.style.background=s.color;
     const nm=document.createElement('div'); nm.className='nm'; nm.textContent=s.name;
-    const rd=document.createElement('div'); rd.className='rd';
-    rd.textContent = s.rounds==null ? '∞' : s.rounds+'as';
     const eye=document.createElement('button'); eye.textContent = s.hidden?'○':'●'; eye.title='Show on table';
     eye.onclick=()=>{ s.hidden=!s.hidden; renderFxList(); draw(); };
     const del=document.createElement('button'); del.textContent='×'; del.title='Remove';
-    del.onclick=()=>{ push('shapes'); const a=sc().shapes; a.splice(a.indexOf(s),1); if(S.sel===s) S.sel=null; renderFxList(); draw(); };
+    del.onclick=()=>{ push('shapes'); const a=sc().shapes; a.splice(a.indexOf(s),1);
+      if(S.sel===s) S.sel=null; renderFxList(); limpiarAnimaciones(); draw(); };
     row.onmouseenter=()=>{ S.sel=s; draw(); };
-    row.append(dot,nm,rd,eye,del); box.appendChild(row);
+    row.append(dot,nm,eye,del); box.appendChild(row);
   });
   $('fxHint').style.display = fx.length ? 'none' : 'block';
-  $('roundNum').textContent=S.round;
-}
-function advanceRound(){
-  push('shapes');
-  S.round++;
-  for(const s of shapes()) if(s.kind==='effect' && s.rounds!=null && s.rounds>0) s.rounds--;
-  renderFxList(); renderIniList(); draw();
 }
 
 
@@ -2280,12 +2521,8 @@ async function cambiarCampana(id){
   CAMP.id=id;
   LIB.idx=-1; LIB.imgSel=null; S.sel=null; S.history=[];
   S.ini={...S.ini, list:[], turnId:null, selId:null, entry:null, undo:[]};
-  S.round=1;
   const est = await dbGet('state','camp:'+id);
-  if(est){
-    S.round=est.round||1;
-    if(est.ini) S.ini={...S.ini, ...est.ini, selId:null, entry:null, undo:[]};
-  }
+  if(est && est.ini) S.ini={...S.ini, ...est.ini, selId:null, entry:null, undo:[]};
   renderCampSelector(); renderJugadores(); renderIniList(); renderLibrary();
   const escenas=escenasCampana();
   if(escenas.length){
@@ -2319,7 +2556,7 @@ function renderSelectorTokens(){
   lista.forEach(j=>{
     const o=document.createElement('option');
     o.value=j.id;
-    o.textContent = j.character + (tokenDe(j) ? ' ·  on map' : ' ·  not placed');
+    o.textContent = j.character + (tokenDe(j) ? ' · on map' : ' · not placed');
     if(S.tokenSel===j) o.selected=true;
     sel.appendChild(o);
   });
@@ -2347,8 +2584,10 @@ function renderJugadores(){
     const ed=document.createElement('button'); ed.className='ed'; ed.textContent='✎';
     ed.onclick=ev=>{ ev.stopPropagation(); abrirJugador(j); };
     const del=document.createElement('button'); del.className='x'; del.textContent='×';
-    del.onclick=ev=>{ ev.stopPropagation();
-      if(!confirm('Remove '+j.character+' from the campaign?')) return;
+    del.onclick=async ev=>{ ev.stopPropagation();
+      if(!await pedirConfirmar('Remove player',
+          j.character+' will be removed from this campaign, together with their hit points and token.',
+          'Remove', true)) return;
       lista.splice(i,1);
       S.ini.list=S.ini.list.filter(m=>m.pid!==j.id);
       tocarCampana(); renderJugadores(); renderIniList(); draw(); };
@@ -2384,10 +2623,12 @@ function sincronizarTodos(){ S.ini.list.forEach(sincronizarJugador); }
 
 /* --- descanso largo --- */
 let respaldoDescanso=null;
-function descansoLargo(){
+async function descansoLargo(){
   const lista=jugadores();
   if(!lista.length){ toast('No players in this campaign.'); return; }
-  if(!confirm('Apply a long rest?\n\nEvery character returns to full hit points, loses temporary HP and has their conditions removed.')) return;
+  if(!await pedirConfirmar('Long rest',
+      'Every character returns to full hit points, loses temporary HP and has their conditions removed. This can be undone.',
+      'Rest')) return;
   respaldoDescanso = lista.map(j=>({...j, cond:[...(j.cond||[])], saves:[...(j.saves||[0,0,0,0,0,0])]}));
   lista.forEach(j=>{ j.hp=j.hpMax; j.temp=0; j.cond=[]; j.saves=[0,0,0,0,0,0]; });
   S.ini.list.forEach(m=>{
@@ -2598,8 +2839,8 @@ function showConc(q){
 function nextConc(){
   if(!concQueue.length){ $('conc').classList.add('hide'); return; }
   const c=concQueue[0];
-  $('concTxt').innerHTML = '<b>'+c.m.name+'</b> ha recibido '+c.dmg+' de daño y debe superar una '+
-    'salvación de Constitución de <b>CD '+c.cd+'</b> para mantener la concentración.';
+  $('concTxt').innerHTML = '<b>'+c.m.name+'</b> took '+c.dmg+' damage and must succeed on a '+
+    '<b>DC '+c.cd+'</b> Constitution saving throw to keep concentration.';
   $('conc').classList.remove('hide');
 }
 $('concOk').onclick=()=>{ concQueue.shift(); nextConc(); };
@@ -2669,7 +2910,6 @@ function renderIniList(){
     if(m.id===S.ini.selId) box.appendChild(buildStrip(m));
   });
   $('iniHint').style.display = S.ini.list.length ? 'none' : 'block';
-  $('roundNum').textContent=S.round;
 }
 
 function buildStrip(m){
@@ -2681,11 +2921,11 @@ function buildStrip(m){
     b.onclick=()=>{ S.ini.mode=key; renderIniList(); };
     return b;
   };
-  modes.append(mk('dmg','Damage','dmg'), mk('heal','Curar','heal'), mk('temp','Temporal','temp'));
+  modes.append(mk('dmg','Damage','dmg'), mk('heal','Heal','heal'), mk('temp','Temp','temp'));
 
   const ap=document.createElement('div'); ap.className='apply';
   const inp=document.createElement('input'); inp.type='number'; inp.min='0'; inp.placeholder='0';
-  const go=document.createElement('button'); go.textContent='Aplicar';
+  const go=document.createElement('button'); go.textContent='Apply';
   go.onclick=()=>{ const v=Math.abs(parseInt(inp.value)||0); if(!v) return;
     applyTo(m, S.ini.mode||'dmg', v); inp.value=''; };
   inp.onkeydown=ev=>{ ev.stopPropagation(); if(ev.key==='Enter') go.click(); };
@@ -2802,9 +3042,10 @@ $('multi').addEventListener('keydown',e=>{ e.stopPropagation();
 $('btnUndoDmg').onclick=undoIni;
 
 function nextTurn(){
-  if(!S.ini.list.length){ advanceRound(); return; }
+  if(!S.ini.list.length) return;
   const n=turnIdx()+1;
-  if(n>=S.ini.list.length){ S.ini.turnId=S.ini.list[0].id; advanceRound(); }
+  /* Al pasar del último se vuelve al primero. */
+  if(n>=S.ini.list.length) S.ini.turnId=S.ini.list[0].id;
   else S.ini.turnId=S.ini.list[n].id;
   renderIniList(); draw();
 }
@@ -2907,7 +3148,7 @@ async function openTable(){
   const w=window.open('','mesaDeBatalla',rasgos);
   if(!w){ toast('The browser blocked the window. Please allow pop-ups for this site.'); return; }
   w.document.open();
-  w.document.write('<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Tabletop — vista de jugadores</title>'+
+  w.document.write('<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Tabletop — player view</title>'+
     '<style>html,body{margin:0;height:100%;background:#05070B;overflow:hidden;cursor:none}'+
     'canvas{display:block;width:100%;height:100%}'+
     '#tip{position:fixed;left:0;right:0;bottom:26px;text-align:center;color:#6C7C94;'+
@@ -2955,7 +3196,7 @@ function autoDpi(){
 }
 function updateTableInfo(){
   $('tableInfo').textContent = tableOpen()
-    ? (Math.round(T.W/T.dpi*10)/10+'').replace('.',',')+'×'+(Math.round(T.H/T.dpi*10)/10+'').replace('.',',')+' squares'
+    ? (Math.round(T.W/T.dpi*10)/10)+'×'+(Math.round(T.H/T.dpi*10)/10)+' squares'
     : 'not open';
   draw();
 }
@@ -3017,11 +3258,10 @@ addEventListener('beforeunload',()=>{ if(tableOpen()) T.win.close(); });
 /* animación: pings, fundidos y efectos expirados */
 function animate(){
   const fading=performance.now()-T.fadeT<FADE+40;
-  const blinking=shapes().some(s=>s.kind==='effect'&&s.rounds===0&&!s.hidden);
   const hayAnim = CAT.activas && !document.hidden &&
                   (shapes().some(s=>s.anim&&!s.hidden) || (S.draft&&S.draft.anim));
   if(hayAnim) refrescarAnimaciones();
-  if(S.pings.length||fading||blinking||hayAnim){
+  if(S.pings.length||fading||hayAnim){
     const now=performance.now();
     S.pings=S.pings.filter(g=>now-g.t<1100);
     draw();
@@ -3079,10 +3319,34 @@ cv.addEventListener('pointerdown', e=>{
 
   if(S.tool==='oclusion'){
     const tol=10/S.view.k;
-    const v=verticeEn(wp,tol);
-    if(v && !S.wallDraft){ S.wallSel=v.pared; S.drawing={kind:'vertice', ...v}; draw(); return; }
-    const w=paredEn(wp,tol);
-    if(w && !S.wallDraft){ S.wallSel=w; draw(); return; }
+    /* Mayús suma o resta de la selección, como en el resto de la aplicación. Empezar un
+       muro encima de otro es el botón «New wall», no un modificador: era la única
+       manera de dejar Mayús libre para seleccionar. Alt parte un tramo. */
+    if(!S.wallDraft && !S.wallNuevo){
+      const v=verticeEn(wp,tol);
+      if(v){
+        seleccionarPared(v.pared);                       // el muro entero, listo para editarlo
+        S.drawing={kind:'vertice', ...v};
+        syncCtxBar(); draw(); return;
+      }
+      const w=paredEn(wp,tol);
+      if(w){
+        if(e.altKey){
+          push('walls');
+          const i=insertarVertice(w.pared, w.seg, snapPoint(wp));
+          if(i!=null){
+            seleccionarPared(w.pared);
+            S.drawing={kind:'vertice', pared:w.pared, i};  // queda cogido, listo para colocar
+            tocarEscena(); recalcularVision(); syncCtxBar(); draw();
+            toast('Vertex added. Drag to place it.');
+          }
+          return;
+        }
+        seleccionarSegmento(w.pared, w.seg, e.shiftKey);
+        syncCtxBar(); draw(); return;
+      }
+      if(!e.shiftKey) limpiarSeleccionParedes();          // clic en vacío: se suelta todo
+    }
     if(!S.wallDraft) S.wallDraft={pts:[], modo:S.wallModo};
     S.wallDraft.pts.push(snapPoint(wp));
     /* Segmento único: se cierra al segundo clic.
@@ -3126,7 +3390,7 @@ cv.addEventListener('pointerdown', e=>{
 
   if(S.tool==='effect' && S.fxGeo==='poly'){
     S.draft={kind:'effect', geo:'poly', pts:[wp], a:wp, b:wp, color:S.fxPreset.color,
-             pat:S.fxPreset.pat, name:S.fxPreset.name, rounds:S.fxRounds>0?S.fxRounds:null};
+             pat:S.fxPreset.pat, name:S.fxPreset.name};
     S.drawing={kind:'polyfree'}; draw(); return;
   }
   if(S.tool==='effect' && S.animSel){
@@ -3136,7 +3400,7 @@ cv.addEventListener('pointerdown', e=>{
     const nat = (e.g==='wall'||e.g==='cone') ? e.sq*gp : (e.sq/2)*gp;
     const b = (e.g==='wall'||e.g==='cone') ? {x:a.x+nat, y:a.y} : {x:a.x+nat, y:a.y};
     S.draft={kind:'effect', anim:e.p, geo:e.g, a, b, color:'#FFD86B', name:e.s,
-             alpha:S.fxAlpha, blend:S.fxBlend, rounds:S.fxRounds>0?S.fxRounds:null};
+             alpha:S.fxAlpha, blend:S.fxBlend};
     S.drawing={kind:'shape'}; draw(); return;
   }
   if(S.tool==='effect'){
@@ -3144,12 +3408,12 @@ cv.addEventListener('pointerdown', e=>{
     if(S.fxGeo==='poly'){
       S.draft={kind:'effect', preset:S.fxPreset.id, geo:'poly', pts:[wp], a:wp, b:wp,
                color:S.fxPreset.color, pat:S.fxPreset.pat, name:S.fxPreset.name,
-               alpha:S.fxAlpha, rounds:S.fxRounds>0?S.fxRounds:null};
+               alpha:S.fxAlpha};
       S.drawing={kind:'polyfree'}; draw(); return;
     }
     S.draft={kind:'effect', preset:S.fxPreset.id, geo:S.fxGeo, a, b:snapPoint(wp),
              color:S.fxPreset.color, pat:S.fxPreset.pat, name:S.fxPreset.name,
-             w:S.wallW, alpha:S.fxAlpha, rounds:S.fxRounds>0?S.fxRounds:null};
+             w:S.wallW, alpha:S.fxAlpha};
     S.drawing={kind:'shape'}; draw(); return;
   }
   if(S.tool==='measure'){
@@ -3209,7 +3473,9 @@ cv.addEventListener('pointermove', e=>{
       d.w0=wp;
     }
     else if(d.kind==='handle'){
-      const np=S.snap!=='none'?snapPoint(wp):wp;
+      /* Al redimensionar manda el tipo de forma, no la herramienta de selección. */
+      const modo = S.sel && S.sel.kind==='effect' ? S.snap.effect : S.snap.measure;
+      const np = modo!=='none' ? snapPoint(wp, modo) : wp;
       if(d.key==='b'){
         if(S.sel.geo==='poly' && S.sel.pts){
           const a=S.sel.a, d0=dist(a,S.sel.b)||1, d1=dist(a,np)||1, f=Math.max(0.15,d1/d0);
@@ -3269,9 +3535,16 @@ function endPointer(e){
 cv.addEventListener('pointerup',endPointer);
 cv.addEventListener('pointercancel',endPointer);
 cv.addEventListener('contextmenu',e=>e.preventDefault());
-cv.addEventListener('dblclick',()=>{
+cv.addEventListener('dblclick',ev=>{
   if(S.lasso&&S.lasso.length>2) closeLasso();
   else if(S.wallDraft) cerrarPared();
+  else if(S.tool==='oclusion'){
+    /* Doble clic toma el muro entero: es lo que se quiere para poner en un sentido
+       un pasillo largo o todos los lados de una sala. */
+    const w=paredEn(s2w(evPos(ev)), 10/S.view.k);
+    if(w){ seleccionarPared(w.pared); syncCtxBar(); draw();
+           toast(segCount(w.pared)+' segments selected.'); }
+  }
 });
 cv.addEventListener('wheel',e=>{ e.preventDefault(); zoomAt(e.clientX,e.clientY,e.deltaY<0?1.12:1/1.12); },{passive:false});
 
@@ -3293,12 +3566,15 @@ function setTool(t){
   /* Al cambiar de herramienta no debe quedar nada resaltado como seleccionado. */
   if(t!==S.tool){
     S.wallDraft=null;
-    if(t!=='oclusion') S.wallSel=null;
+    if(t!=='oclusion') limpiarSeleccionParedes();
     if(t!=='sel' && t!=='effect'){ S.sel=null; S.selMulti=[]; }
     if(t!=='token' && t!=='sel') S.tokenSel=null;
     hideReadout();
   }
   S.tool=t;
+  /* Fuera del if de arriba a propósito: volver a pulsar la misma herramienta trae la
+     chuleta de vuelta aunque se hubiera cerrado. */
+  mostrarPista(t);
   document.querySelectorAll('#rail button').forEach(b=>b.classList.toggle('on',b.dataset.tool===t));
   $('btnCalibrate').classList.toggle('on',t==='calibrate');
   $('btnFrame').classList.toggle('on',t==='frame');
@@ -3306,6 +3582,36 @@ function setTool(t){
     : t==='frame'?'move' : t==='fog'?'none' : t==='token'?'pointer' : 'crosshair';
   syncCtxBar(); draw();
 }
+/* Cada herramienta puede llevar su chuleta. Se muestra al elegirla y se puede cerrar;
+   volver a elegir la herramienta la trae de vuelta, que es justo lo que se espera de
+   una ayuda que no estorba. */
+const PISTAS = {
+  oclusion: {titulo:'Walls', filas:[
+    ['Click','Select a segment'],
+    ['Shift + click','Add or remove from the selection'],
+    ['Double click','Select the whole wall'],
+    ['Alt + click','Split a segment with a new vertex'],
+    ['Drag a vertex','Move it'],
+    ['New wall','Start one anywhere, even over another'],
+    ['Enter / double click','Finish the wall being drawn'],
+    ['Ctrl + Z','Step back one vertex while drawing']
+  ]}
+};
+function mostrarPista(tool){
+  const p=PISTAS[tool];
+  const caja=$('pista');
+  if(!p){ caja.classList.remove('on'); return; }
+  $('pistaTitulo').textContent=p.titulo;
+  const ul=$('pistaCuerpo'); ul.innerHTML='';
+  for(const [k,d] of p.filas){
+    const li=document.createElement('li');
+    li.innerHTML='<b>'+k+'</b> — '+d;
+    ul.appendChild(li);
+  }
+  caja.classList.add('on');
+}
+$('pistaCerrar').onclick=()=>$('pista').classList.remove('on');
+
 function syncCtxBar(){
   const t=S.tool;
   const show = {
@@ -3321,10 +3627,28 @@ function syncCtxBar(){
   $('ctxbar').classList.toggle('empty', !Object.values(show).some(Boolean));
   $('wallWrap').style.display = (t==='measure' && S.medForma==='wall') ? 'flex' : 'none';
   $('brushWrap').style.display = (S.fogShape==='brush') ? 'flex' : 'none';
+  /* Cada selector muestra el ajuste de su herramienta, que no arranca en «Free». */
+  $('snapSel').value      = S.snap.measure;
+  $('snapSelFx').value    = S.snap.effect;
+  $('snapSelWall').value  = S.snap.oclusion;
+  $('snapSelToken').value = S.snap.token;
+  $('wallNuevo').classList.toggle('on',S.wallNuevo);
   $('fogHide').classList.toggle('on',S.fogMode==='hide');
   $('fogShow').classList.toggle('on',S.fogMode==='show');
   $('btnAnchor').classList.toggle('on',!!S.anchor);
-  if(t==='oclusion') $('wallCuenta').textContent = paredes().length+' walls';
+  if(t==='oclusion'){
+    const lista=paredes();
+    let tramos=0, puertas=0;
+    let unSentido=0;
+    for(const w of lista){
+      tramos+=segCount(w);
+      for(const t of segsDe(w)){ if(t.abierto) puertas++; if(t.dir) unSentido++; }
+    }
+    $('wallCuenta').textContent = lista.length+' walls · '+tramos+' seg'
+      + (puertas ? ' · '+puertas+' open' : '')
+      + (unSentido ? ' · '+unSentido+' one-way' : '')
+      + (S.selParedes.length ? ' · '+S.selParedes.length+' selected' : '');
+  }
   if(t==='token') renderSelectorTokens();
   $('selName').textContent = S.selMulti.length>1
     ? S.selMulti.length+' items selected'
@@ -3341,7 +3665,7 @@ document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{
   /* Cambiar de pestaña cierra lo que estuviera en curso: mover el encuadre,
      trazar una pared o tener algo seleccionado. */
   if(['frame','oclusion','token','calibrate','anchor'].includes(S.tool)) setTool('pan');
-  else { S.sel=null; S.selMulti=[]; S.wallSel=null; S.wallDraft=null; syncCtxBar(); draw(); }
+  else { S.sel=null; S.selMulti=[]; limpiarSeleccionParedes(); S.wallDraft=null; syncCtxBar(); draw(); }
 });
 
 /* paletas */
@@ -3375,7 +3699,10 @@ $('gridOx').oninput=e=>{ cal().ox=parseFloat(e.target.value)||0; tocarEscena(); 
 $('gridOy').oninput=e=>{ cal().oy=parseFloat(e.target.value)||0; tocarEscena(); draw(); };
 $('showGrid').onchange=e=>{ S.showGrid=e.target.checked; draw(); };
 $('btnCalibrate').onclick=()=>setTool('calibrate');
-$('snapSel').onchange=e=>{ S.snap=e.target.value; };
+$('snapSel').onchange     = e=>{ S.snap.measure  = e.target.value; };
+$('snapSelFx').onchange   = e=>{ S.snap.effect   = e.target.value; };
+$('snapSelWall').onchange = e=>{ S.snap.oclusion = e.target.value; };
+$('snapSelToken').onchange= e=>{ S.snap.token    = e.target.value; };
 $('medForma').onchange=e=>{ S.medForma=e.target.value; $('wallWrap').style.display = S.medForma==='wall'?'flex':'none'; };
 $('medDist').oninput=e=>{ S.medDist=Math.max(0,parseFloat(e.target.value)||0); };
 $('persist').onchange=e=>{ S.persist=e.target.checked; };
@@ -3397,24 +3724,26 @@ $('fxAlpha').oninput=e=>{
   S.fxAlpha=parseFloat(e.target.value)/100;
   if(S.sel && S.sel.kind==='effect'){ S.sel.alpha=S.fxAlpha; tocarEscena(); draw(); }
 };
-$('fxRounds').oninput=e=>{ S.fxRounds=Math.max(0,parseInt(e.target.value)||0); };
-$('btnRound').onclick=advanceRound;
-$('btnClearFx').onclick=()=>{
+$('btnClearFx').onclick=async ()=>{
   const s=sc(); if(!s) return;
   const n=s.shapes.filter(x=>x.kind==='effect').length;
   if(!n){ toast('No effects to clear.'); return; }
-  if(!confirm('Remove the '+n+' effects from the map?\n\nFog and measurements are untouched. This can be undone.')) return;
+  if(!await pedirConfirmar('Clear effects',
+      'The '+n+' effects on this map will be removed. Fog and measurements are untouched, and this can be undone.',
+      'Clear')) return;
   push('shapes');
   const keep=s.shapes.filter(x=>x.kind!=='effect'); s.shapes.length=0; keep.forEach(x=>s.shapes.push(x));
-  S.sel=null; tocarEscena(); renderFxList(); draw();
+  S.sel=null; tocarEscena(); renderFxList(); limpiarAnimaciones(); draw();
   toast('Effects cleared. Ctrl+Z to bring them back.');
 };
-$('btnClearAll').onclick=()=>{
+$('btnClearAll').onclick=async ()=>{
   const s=sc(); if(!s) return;
   if(!s.shapes.length){ toast('The map is already clear.'); return; }
-  if(!confirm('Clear the entire map?\n\nEffects and measurements are removed. Fog is kept. This can be undone.')) return;
+  if(!await pedirConfirmar('Clear map',
+      'Effects and measurements will be removed. Fog is kept, and this can be undone.',
+      'Clear')) return;
   push('shapes'); s.shapes.length=0;
-  S.sel=null; tocarEscena(); renderFxList(); draw();
+  S.sel=null; tocarEscena(); renderFxList(); limpiarAnimaciones(); draw();
   toast('Map cleared. Ctrl+Z to bring it back.');
 };
 
@@ -3444,22 +3773,62 @@ $('fogHide').onclick=()=>{ S.fogMode='hide'; setTool('fog'); };
 $('fogShow').onclick=()=>{ S.fogMode='show'; setTool('fog'); };
 $('fogShape').onchange=e=>{ S.fogShape=e.target.value; S.lasso=null; syncCtxBar(); draw(); };
 $('brushSize').oninput=e=>{ S.brush=parseFloat(e.target.value);
-  $('brushLbl').textContent=(Math.round(S.brush*2/cal().gridPx*10)/10+'').replace('.',',')+' squares'; draw(); };
+  $('brushLbl').textContent=(Math.round(S.brush*2/cal().gridPx*10)/10)+' squares'; draw(); };
 $('fogOpacity').oninput=e=>{ S.fogOpacity=parseFloat(e.target.value)/100; $('opLbl').textContent=e.target.value+'%'; draw(); };
 $('wallModo').onchange=e=>{ S.wallModo=e.target.value; S.wallDraft=null; draw(); };
+$('wallNuevo').onclick=()=>{ S.wallNuevo=!S.wallNuevo; S.wallDraft=null;
+  if(S.wallNuevo) limpiarSeleccionParedes();
+  syncCtxBar(); draw(); };
 $('soloParedes').onchange=e=>{ S.soloParedes=e.target.checked; draw(); };
 $('wallPuerta').onclick=()=>{
-  if(!S.wallSel){ toast('Tap a wall to turn it into a door.'); return; }
-  S.wallSel.abierta = !S.wallSel.abierta;
-  tocarEscena(); recalcularVision(); draw();
-  toast(S.wallSel.abierta ? 'Door open: vision passes through.' : 'Door closed: blocking again.');
+  if(!S.selParedes.length){ toast('Tap a wall segment to turn it into a door.'); return; }
+  push('walls');
+  /* Se igualan todos los elegidos: si queda alguno cerrado se abren todos, y si ya
+     estaban abiertos se cierran. Así una selección mezclada acaba uniforme. */
+  const abrir = S.selParedes.some(t=>!segsDe(t.pared)[t.seg].abierto);
+  for(const t of S.selParedes) segsDe(t.pared)[t.seg].abierto = abrir;
+  tocarEscena(); recalcularVision(); draw(); syncCtxBar();
+  const n=S.selParedes.length;
+  toast(abrir ? (n>1 ? n+' segments opened: vision passes through them.'
+                     : 'Door open: vision passes through this segment.')
+              : (n>1 ? n+' segments closed: blocking again.'
+                     : 'Door closed: this segment blocks again.'));
 };
-$('wallBorrar').onclick=()=>{ if(S.wallSel) borrarPared(S.wallSel); else toast('Tap a wall to select it.'); };
-$('wallVaciar').onclick=()=>{
+/* Un muro puede bloquear por los dos lados, solo por uno, o solo por el otro. */
+$('wallDir').onclick=()=>{
+  if(!S.selParedes.length){ toast('Tap a wall segment to make it one-way.'); return; }
+  push('walls');
+  /* El primero marca el paso del ciclo y los demás le siguen, de modo que un pasillo
+     entero quede orientado igual. El signo es relativo al sentido en que se trazó cada
+     tramo, así que esto sale derecho en muros dibujados de una vez. */
+  const t0=segsDe(S.selParedes[0].pared)[S.selParedes[0].seg];
+  const dir = t0.dir===0 ? 1 : (t0.dir===1 ? -1 : 0);
+  for(const t of S.selParedes) segsDe(t.pared)[t.seg].dir = dir;
+  tocarEscena(); recalcularVision(); draw(); syncCtxBar();
+  const n=S.selParedes.length;
+  toast(dir===0 ? (n>1 ? n+' segments block from both sides.' : 'Segment blocks from both sides.')
+                : (n>1 ? n+' segments are one-way: they block only from the marked side.'
+                       : 'One-way: blocks only from the marked side.'));
+};
+function borrarSeleccionParedes(){
+  const lista=paredesSeleccionadas();
+  if(!lista.length){ toast('Tap a wall to select it.'); return; }
+  push('walls');
+  const arr=paredes();
+  for(const w of lista){ const i=arr.indexOf(w); if(i>=0) arr.splice(i,1); }
+  limpiarSeleccionParedes();
+  tocarEscena(); recalcularVision(); draw(); syncCtxBar();
+  toast(lista.length>1 ? lista.length+' walls deleted.' : 'Wall deleted.');
+}
+$('wallBorrar').onclick=borrarSeleccionParedes;
+$('wallVaciar').onclick=async ()=>{
   const n=paredes().length;
   if(!n){ toast('No walls in this scene.'); return; }
-  if(!confirm('Delete the '+n+' walls in this scene?')) return;
-  const s=sc(); s.walls=[]; S.wallSel=null; tocarEscena(); recalcularVision(); draw(); syncCtxBar();
+  if(!await pedirConfirmar('Delete all walls',
+      'All '+n+' walls in this scene will be deleted, doors included. This cannot be undone.',
+      'Delete', true)) return;
+  const s=sc(); push('walls'); s.walls=[]; limpiarSeleccionParedes();
+  tocarEscena(); recalcularVision(); draw(); syncCtxBar();
 };
 $('tokenJug').onchange=e=>{
   S.tokenSel = jugadores().find(j=>j.id===e.target.value) || null;
@@ -3494,17 +3863,19 @@ $('fogModo').onchange=e=>{
   toast(n ? 'Exploration on: '+n+' tokens revealed their surroundings.'
           : 'Exploration on: place tokens to reveal the map.');
 };
-$('fogReset').onclick=()=>{
+$('fogReset').onclick=async ()=>{
   const s=sc(); if(!s||s.type!=='map') return;
-  if(!confirm('Cover the entire map again?\n\nAll exploration will be lost.')) return;
+  if(!await pedirConfirmar('Reset exploration',
+      'The whole map goes back under fog and everything explored so far is lost.',
+      'Reset', true)) return;
   push('fog'); tocarNiebla();
   s.fogCtx.globalCompositeOperation='source-over';
   s.fogCtx.fillStyle='#05070B'; s.fogCtx.fillRect(0,0,s.w,s.h);
   draw(); toast('Exploration reset.');
 };
-$('fogAll').onclick=()=>{ const s=sc(); if(!s||s.type!=='map') return; push('fog'); tocarNiebla();
+$('fogAll').onclick=()=>{ const s=sc(); if(!s||s.type!=='map'||!fogPintable()) return; push('fog'); tocarNiebla();
   s.fogCtx.globalCompositeOperation='source-over'; s.fogCtx.fillStyle='#05070B'; s.fogCtx.fillRect(0,0,s.w,s.h); draw(); };
-$('fogNone').onclick=()=>{ const s=sc(); if(!s||s.type!=='map') return; push('fog'); tocarNiebla();
+$('fogNone').onclick=()=>{ const s=sc(); if(!s||s.type!=='map'||!fogPintable()) return; push('fog'); tocarNiebla();
   s.fogCtx.clearRect(0,0,s.w,s.h); draw(); };
 
 $('btnAddIni').onclick=()=>openCombatant(null);
@@ -3608,7 +3979,9 @@ $('btnDupEscena').onclick=async ()=>{
 $('bandejaMostrar').onclick=()=>{ if(LIB.imgSel) mostrarImagen(LIB.imgSel); };
 $('overlayVolver').onclick=ocultarImagen;
 $('btnWipe').onclick=async ()=>{
-  if(!confirm('Clear the entire library?\nAll scenes, their fog and effects will be deleted. This cannot be undone.')) return;
+  if(!await pedirConfirmar('Clear library',
+      'Every scene in this campaign will be deleted, along with its fog and effects. This cannot be undone.',
+      'Clear library', true)) return;
   LIB.scenes.forEach(s=>{ if(s.thumbUrl) URL.revokeObjectURL(s.thumbUrl); liberarEscena(s); });
   LIB.scenes=[]; LIB.idx=-1;
   if(DB.ok){ await dbClear('scenes'); await dbClear('blobs'); }
@@ -3644,13 +4017,13 @@ $('btnSave').onclick=async ()=>{
   }
   const c=campActiva();
   const data={ v:6, campana:{name:c?c.name:'Campaign', players:jugadores()},
-    round:S.round, ini:S.ini, idx:LIB.idx,
+    ini:S.ini, idx:LIB.idx,
     table:{dpi:T.dpi, diag:parseFloat($('diagIn').value)||27, cover:T.cover,
            bright:T.bright, contrast:T.contrast} , scenes:escenas };
   const blob=new Blob([JSON.stringify(data)],{type:'application/json'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
-  const slug=(c?c.name:'campana').toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,28);
+  const slug=(c?c.name:'campaign').toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,28);
   a.download='tabletop-'+slug+'-'+new Date().toISOString().slice(0,10)+'.json';
   a.click(); URL.revokeObjectURL(a.href);
   toast('Campaign exported: '+escenas.length+' scenes and '+jugadores().length+' players.');
@@ -3699,7 +4072,6 @@ $('fileSes').onchange=e=>{
       $('brLbl').textContent=Math.round(T.bright*100)+'%'; $('coLbl').textContent=Math.round(T.contrast*100)+'%';
       applyFilter();
     }
-    S.round=d.round||1;
     if(d.ini){
       S.ini={...S.ini, ...d.ini, selId:null, entry:null, undo:[]};
       S.ini.list=(S.ini.list||[]).map(m=>({temp:0, cond:[], saves:[0,0,0,0,0,0], ...m}));
@@ -3735,6 +4107,13 @@ addEventListener('keydown',e=>{
   if(/input|select|textarea/i.test(e.target.tagName)) return;
   if(e.code==='Space'){ S.spaceDown=true; cv.style.cursor='grab'; e.preventDefault(); return; }
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){
+    /* Con un muro a medias se retira el último vértice puesto: deshacer el muro
+       entero cuando solo sobra un punto sería tirar todo el trazado. */
+    if(!e.shiftKey && S.wallDraft && S.wallDraft.pts.length){
+      S.wallDraft.pts.pop();
+      if(!S.wallDraft.pts.length) S.wallDraft=null;
+      draw(); e.preventDefault(); return;
+    }
     if(e.shiftKey) rehacer(); else undo();
     e.preventDefault(); return;
   }
@@ -3779,12 +4158,11 @@ addEventListener('keydown',e=>{
   if(k==='enter'&&S.lasso){ closeLasso(); return; }
   if(k==='enter'&&S.wallDraft){ cerrarPared(); return; }
   if(k==='delete'||k==='backspace'){
-    if(S.tool==='oclusion' && S.wallSel){ borrarPared(S.wallSel); e.preventDefault(); return; }
+    if(S.tool==='oclusion' && S.selParedes.length){ borrarSeleccionParedes(); e.preventDefault(); return; }
     $('btnDel').click(); e.preventDefault(); return;
   }
   if(k==='h'){ $('panel').classList.toggle('hidden'); return; }
   if(k==='b'){ setBlack(!T.black); return; }
-  if(k==='g'){ advanceRound(); return; }
   if(k==='t'){ nextTurn(); return; }
   if(k==='tab'&&LIB.scenes.length){ selectScene((LIB.idx+1)%LIB.scenes.length); e.preventDefault(); return; }
   if(FORMAS_TECLA[k]){
@@ -3857,10 +4235,15 @@ const ATAJOS = [
     ['E','Move table framing'], ['K','Calibrate square'], ['O','Anchor measure origin'],
     ['Y','Occlusion walls'], ['J','Player tokens']
   ]],
-  ['Vision', [
+  ['Walls and vision', [
     ['Drag token','Recalculates visibility'],
-    ['Del','Delete selected wall'],
-    ['Double click / Enter','Finish segment or close polygon']
+    ['Click a segment','Select it — then Open / close or One-way'],
+    ['Shift + click','Add or remove from the selection'],
+    ['Double click','Select the whole wall'],
+    ['Alt + click','Split a segment with a new vertex'],
+    ['Ctrl + Z','Step back one vertex while drawing a wall'],
+    ['Del','Delete the selected walls'],
+    ['Enter','Finish the wall being drawn']
   ]],
   ['Measurement shapes', [
     ['R','Line'], ['C','Circle'], ['N','Cone'], ['Q','Square'], ['W','Wall'], ['D','Freehand']
@@ -3878,7 +4261,7 @@ const ATAJOS = [
     ['Enter','Close the fog lasso'], ['Del','Delete selection']
   ]],
   ['Combat', [
-    ['T','Next turn'], ['G','Next round'],
+    ['T','Next turn'],
     ['number + Enter','Damage to open combatant'], ['+ number','Healing'], ['t number','Temp HP']
   ]],
   ['Help', [ ['?','This screen'] ]]
@@ -3991,7 +4374,6 @@ async function arrancar(){
                                cal:r.cal||{gridPx:50,unitVal:5,unitName:'ft',rule:'cheb'}}));
     const st = (await dbGet('state','camp:'+CAMP.id)) || (await dbGet('state','app'));
     if(st){
-      S.round = st.round||1;
       if(st.ini){
         S.ini={...S.ini, ...st.ini, selId:null, entry:null, undo:[]};
         S.ini.list=(S.ini.list||[]).map(m=>({temp:0, cond:[], saves:[0,0,0,0,0,0], ...m}));
