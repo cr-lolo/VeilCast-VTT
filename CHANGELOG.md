@@ -1,5 +1,60 @@
 # Changelog
 
+## v1.1.0 — Working from the map
+
+Almost all of this release comes from one piece of feedback: doing anything to something
+already on the map meant leaving the map. Place an effect, move a token, measure a
+distance — three trips to the toolbar. Each is one gesture now, and the things on the map
+finally behave as one set instead of three separate systems.
+
+### Selecting and moving
+- Hold Ctrl (or Cmd) from any tool and the next click selects instead of placing. Release
+  it and you are back where you were, mid-placement, with nothing lost
+- Player tokens are part of the selection: pick them, drag them alongside effects, delete
+  them, undo it. Deleting a token takes it off that map only — the character, their hit
+  points and their tokens on other scenes are untouched
+- One selection rule everywhere: a click replaces, Shift adds or removes, and whatever is
+  on top answers first, tokens included
+- What is selected is finally visible. Every selected item is outlined and a group is
+  boxed, so a drag no longer moves something you did not know you had
+- Right-click anything on the map for a menu of what applies to it: layer order,
+  duplicate, pin and delete on an effect; remove from map on a token; paste where you
+  clicked on open ground
+
+### Effects that follow a character
+- An effect can be pinned to a player and travels with them — useful for anything centred
+  on its caster rather than on a square
+- Two ways in: the new *Pin to token* placement mode drops it straight onto them, or
+  right-click an effect already on the map and pick the player
+- Moving the character moves the spell, and one undo takes both back
+- A token leaving the scene releases whatever was pinned to it instead of deleting it
+
+### Placement
+- The four separate snapping menus became one control, in the same place for every tool,
+  always showing the setting for the tool in hand. Walls still default to square corners
+  and tokens to square centres — those are different needs, not preferences — and
+  *All tools* copies one setting across when you would rather they matched
+- The setting is remembered between sessions
+
+### Tools
+- The toolbar holds every tool. Calibration, table framing and the anchored origin used to
+  live in three unrelated panels, so their keyboard shortcuts could arm a mode with nothing
+  on screen to show for it
+- Every tool carries its own instructions, not just the wall editor. Dismiss one and it
+  stays dismissed for that tool, between sessions
+- The armed tool reads at a glance instead of through a one-pixel border
+
+### Safety
+- Clearing the initiative order asks first, and can be undone
+- Removing a combatant, or taking a token off a map, goes through undo
+- Two confirmations claimed the action could not be undone when it could
+
+### Fixes, interface work and quality of life
+- Anchoring a measurement origin left the map unresponsive until another tool was picked
+- The table screen was showing the DM's selection
+- Messages no longer overwrite each other when several arrive at once
+- Assorted bug fixes, interface tidying and small quality-of-life changes throughout
+
 ## v1.0.0 — First complete release
 
 The first version considered finished and free of major issues. The occlusion engine was

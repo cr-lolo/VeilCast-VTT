@@ -132,7 +132,13 @@
   .ini .dot{width:9px;height:9px;border-radius:2px;flex:none}
   .ini .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12.5px}
   .ini .hp{font-family:var(--mono);font-size:11px;color:var(--muted);white-space:nowrap}
-  .ini .x{padding:2px 6px;font-size:12px;background:transparent;border-color:transparent;color:var(--muted)}
+  /* Editar y quitar eran gemelos de 20×18 px pegados uno al otro, y quitar no pedía
+     confirmación: en plena pelea se borraba un combatiente al apuntar al lápiz. Ambos
+     suben al mínimo de puntero y el destructivo se aparta del resto de la fila. */
+  .ini .ed,.ini .x{min-width:26px;height:26px;padding:0;flex:none;display:flex;
+    align-items:center;justify-content:center;
+    background:transparent;border-color:transparent;color:var(--muted)}
+  .ini .x{font-size:14px;margin-left:5px}
   .ini .x:hover{color:var(--danger);border-color:var(--line)}
   .ini.turn{background:rgba(90,210,232,.13);box-shadow:inset 2px 0 0 var(--measure)}
   .ini.turn .nm{font-weight:600}
@@ -144,7 +150,7 @@
   .ini .bar .tp{background:#CFF3FA;opacity:.85}
   .ini .cd{display:inline-flex;gap:3px;margin-left:5px;vertical-align:-2px}
   .ini .cd svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-  .ini .ed{padding:2px 6px;font-size:11px;background:transparent;border-color:transparent;color:var(--muted)}
+  .ini .ed{font-size:12px}
   .ini .ed:hover{color:var(--text);border-color:var(--line)}
 
   .strip{padding:9px 8px 11px;margin:0 0 6px;border-radius:0 0 6px 6px;
@@ -185,14 +191,26 @@
     text-shadow:0 0 4px rgba(0,0,0,.9)}
   #catgrid .tp{position:absolute;top:3px;left:3px;background:rgba(5,7,11,.8);border-radius:3px;
     font-size:8px;font-family:var(--mono);padding:1px 4px;color:var(--muted)}
-  #campMenuPanel{position:absolute;z-index:40;top:96px;left:16px;width:220px;padding:5px;
+  /* El menú del mapa comparte aspecto con el de la campaña: es el mismo gesto. */
+  #campMenuPanel,#mapMenu{position:absolute;z-index:40;top:96px;left:16px;width:220px;padding:5px;
     background:var(--panel);border:1px solid var(--line);border-radius:8px;
     box-shadow:0 12px 32px rgba(0,0,0,.5);display:flex;flex-direction:column;gap:2px}
-  #campMenuPanel.hide{display:none}
-  #campMenuPanel button{text-align:left;background:transparent;border-color:transparent;padding:8px 10px}
-  #campMenuPanel button:hover{background:var(--panel-2);border-color:var(--line)}
-  #campMenuPanel button.peligro{color:var(--danger)}
-  #campMenuPanel .sepm{height:1px;background:var(--line);margin:3px 0}
+  #campMenuPanel.hide,#mapMenu.hide{display:none}
+  #campMenuPanel button,#mapMenu button{text-align:left;background:transparent;border-color:transparent;padding:8px 10px}
+  #campMenuPanel button:hover,#mapMenu button:hover{background:var(--panel-2);border-color:var(--line)}
+  #campMenuPanel button.peligro,#mapMenu button.peligro{color:var(--danger)}
+  #campMenuPanel .sepm,#mapMenu .sepm{height:1px;background:var(--line);margin:3px 0}
+  #mapMenu{width:224px}
+  #mapMenu .cab{padding:5px 10px 6px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--muted);font-family:var(--mono);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  /* Cartel del modo «elige jugador»: la aplicación se queda esperando un clic concreto y
+     tiene que decirlo, con su salida a la vista. */
+  #anclaAviso{position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:14;
+    display:none;align-items:center;gap:10px;background:rgba(17,23,34,.96);
+    border:1px solid var(--point);border-radius:8px;padding:7px 12px;font-size:12px;
+    color:var(--text);box-shadow:0 10px 28px rgba(0,0,0,.45)}
+  #anclaAviso.on{display:flex}
+  #anclaAviso b{color:var(--point);font-weight:600}
   #tip{position:absolute;z-index:40;display:none;pointer-events:none;white-space:nowrap;
     background:rgba(8,10,15,.96);border:1px solid var(--line);border-radius:4px;
     padding:4px 8px;font-size:11px;color:var(--text)}
@@ -231,8 +249,13 @@
   #rail button svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
   #rail button .k{position:absolute;bottom:2px;right:4px;font-family:var(--mono);font-size:8px;color:var(--muted)}
   #rail button.on .k{color:inherit}
+  /* Qué herramienta está armada decide lo que hace el siguiente clic sobre el mapa: es
+     el estado más consecuente de la pantalla y lo llevaba un borde de 1 px sobre un
+     relleno al 14%. La marca de canto es la misma que ya usa el turno en la iniciativa. */
+  #rail button.on{background:rgba(90,210,232,.22);box-shadow:inset 3px 0 0 var(--measure)}
   #rail .sep{height:1px;background:var(--line);margin:2px 0}
-  #rail button.fx.on{background:rgba(224,163,60,.16);border-color:var(--fog);color:#FBE3B4}
+  #rail button.fx.on{background:rgba(224,163,60,.22);border-color:var(--fog);color:#FBE3B4;
+    box-shadow:inset 3px 0 0 var(--fog)}
 
   /* ---------- barra contextual ---------- */
   /* La barra vive en el hueco que queda entre el panel y la columna de la derecha, no
@@ -258,6 +281,10 @@
     line-height:1.2;background:transparent;border:none;color:var(--muted)}
   #pistaCerrar:hover{color:var(--text)}
   #ctxbar .grp{display:none;align-items:center;gap:8px}
+  /* Los controles van en racimos con nombre y una raya entre cada dos. Nueve controles
+     seguidos son una fila; tres racimos de tres se leen. No se esconde ninguno: en una
+     herramienta que se usa en directo, buscar en un desplegable cuesta más que mirar. */
+  #ctxbar .cl{display:flex;align-items:center;gap:8px}
   #ctxbar .sepv{width:1px;align-self:stretch;background:var(--line);margin:0 2px}
   #ctxbar .danger{color:#D9A08E}
   #ctxbar .danger:hover{background:rgba(224,96,60,.14);border-color:var(--danger)}
@@ -293,7 +320,9 @@
 <canvas id="stage"></canvas>
 <div id="readout"></div>
 <div id="empty"><div>Add a map or image to the library to get started.<br>
-  <span style="font-size:11px">You can also drag files onto this window.</span></div></div>
+  <span style="font-size:11px">You can also drag files onto this window.</span><br>
+  <span id="emptyPasos" style="font-size:11px;display:none">Getting started, top right, walks
+    through the rest.</span></div></div>
 <div id="aviso" role="alert" style="display:none;position:absolute;top:0;left:var(--panel-w);right:0;z-index:14;
   background:rgba(224,96,60,.16);border-bottom:1px solid var(--danger);color:#F6C9BC;
   padding:8px 14px;font-size:12px"></div>
@@ -545,46 +574,78 @@
   <button data-tool="oclusion" aria-label="Occlusion walls (Y)" title="Occlusion walls (Y)"><svg viewBox="0 0 24 24"><path d="M3 20h18"/><path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/></svg><span class="k">Y</span></button>
   <button data-tool="token" aria-label="Player tokens (J)" title="Player tokens (J)"><svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg><span class="k">J</span></button>
   <button data-tool="pointer" aria-label="Table pointer (P)" title="Table pointer (P)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg><span class="k">P</span></button>
+  <!-- Calibrar, encuadre y ancla son modos como los de arriba: se apoderan del puntero
+       igual y hasta ahora vivían escondidos en pestañas distintas del panel. Los botones
+       del panel siguen ahí; esto es el sitio donde se buscan. -->
+  <div class="sep"></div>
+  <button data-tool="calibrate" aria-label="Calibrate square (K)" title="Calibrate square (K)"><svg viewBox="0 0 24 24"><path d="M3 17h18"/><path d="M5 17v-4M9 17v-6M13 17v-4M17 17v-6"/><path d="M3 6l4-2 4 2 4-2 4 2"/></svg><span class="k">K</span></button>
+  <button data-tool="frame" aria-label="Move table framing (E)" title="Move table framing (E)"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="13" rx="1.5"/><path d="M9 11h6M12 8v6"/></svg><span class="k">E</span></button>
+  <button data-tool="anchor" aria-label="Anchor measure origin (O)" title="Anchor measure origin (O)"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.5"/><path d="M12 7.5V21"/><path d="M5 14a7 7 0 0 0 14 0"/><path d="M8 11h8"/></svg><span class="k">O</span></button>
 </div>
 
 <!-- barra contextual -->
 <div id="ctxbar" class="empty">
-  <div class="grp" id="grp-measure">
-    <select id="medForma" title="Measurement shape">
-      <option value="line">Line</option>
-      <option value="circle">Circle</option>
-      <option value="cone">Cone</option>
-      <option value="square">Square</option>
-      <option value="wall">Wall</option>
-      <option value="free">Freehand</option>
+  <!-- Un solo control de colocación, siempre en el mismo sitio, para las cuatro
+       herramientas que ponen cosas en el mapa. Antes había cuatro desplegables iguales
+       repartidos por sus grupos y ninguno se veía desde los demás. -->
+  <div class="grp" id="grp-pos" role="group" aria-label="Positioning">
+    <select id="posSel" title="Where what you place lands">
+      <option value="none">Free</option>
+      <option value="center">Square center</option>
+      <option value="corner">Square corner</option>
+      <option value="token">Pin to token</option>
     </select>
-    <span style="display:flex;align-items:center;gap:5px">Fix
-      <input id="medDist" type="number" min="0" step="5" placeholder="—" style="width:62px"></span>
+    <button id="posTodas" class="ghost" title="Give every tool this setting">All tools</button>
     <span class="sepv"></span>
-    <span id="swatches" style="display:flex;gap:6px"></span>
+  </div>
+  <div class="grp" id="grp-measure">
+    <span class="cl" role="group" aria-label="Shape">
+      <select id="medForma" title="Measurement shape">
+        <option value="line">Line</option>
+        <option value="circle">Circle</option>
+        <option value="cone">Cone</option>
+        <option value="square">Square</option>
+        <option value="wall">Wall</option>
+        <option value="free">Freehand</option>
+      </select>
+      <span style="display:flex;align-items:center;gap:5px">Fix
+        <input id="medDist" type="number" min="0" step="5" placeholder="—" style="width:62px"></span>
+      <span id="wallWrap" style="display:none;align-items:center;gap:5px">Width<input id="wallW" type="number" min="0.5" step="0.5" value="1" style="width:58px"></span>
+    </span>
     <span class="sepv"></span>
-    <select id="snapSel" title="Snap while measuring"><option value="none">Free</option><option value="center">Square center</option><option value="corner">Square corner</option></select>
-    <button id="btnAnchor" class="ghost">Anchor origin <kbd>O</kbd></button>
-    <label style="display:flex;align-items:center;gap:5px">Keep<input id="persist" type="checkbox"></label>
-    <span id="wallWrap" style="display:none;align-items:center;gap:5px">Width<input id="wallW" type="number" min="0.5" step="0.5" value="1" style="width:58px"></span>
+    <span class="cl" role="group" aria-label="Appearance">
+      <span id="swatches" style="display:flex;gap:6px"></span>
+      <label style="display:flex;align-items:center;gap:5px">Keep<input id="persist" type="checkbox"></label>
+    </span>
+    <span class="sepv"></span>
+    <span class="cl" role="group" aria-label="Origin">
+      <button id="btnAnchor" class="ghost">Anchor origin <kbd>O</kbd></button>
+    </span>
   </div>
   <div class="grp" id="grp-effect">
-    <span id="fxchips" style="display:flex;gap:5px;flex-wrap:wrap"></span>
+    <span class="cl" role="group" aria-label="Effect">
+      <span id="fxchips" style="display:flex;gap:5px;flex-wrap:wrap"></span>
+    </span>
+    <span class="sepv"></span>
+    <span class="cl" role="group" aria-label="Appearance">
     <select id="fxBlend" title="Blend with map">
       <option value="normal" selected>Normal blend</option>
       <option value="screen">Screen</option>
       <option value="lighter">Additive</option>
       <option value="multiply">Multiply</option>
     </select>
-    <select id="snapSelFx" title="Snap when placing effects"><option value="none">Free</option><option value="center">Square center</option><option value="corner">Square corner</option></select>
     <span style="display:flex;align-items:center;gap:5px">Opacity<input id="fxAlpha" type="range" min="20" max="100" value="100" style="width:76px"></span>
-    <select id="fxGeo">
-      <option value="circle">Circle</option>
-      <option value="cone">Cone</option>
-      <option value="area">Area</option>
-      <option value="wall">Wall</option>
-      <option value="poly">Free outline</option>
-    </select>
+    </span>
+    <span class="sepv"></span>
+    <span class="cl" role="group" aria-label="Shape">
+      <select id="fxGeo">
+        <option value="circle">Circle</option>
+        <option value="cone">Cone</option>
+        <option value="area">Area</option>
+        <option value="wall">Wall</option>
+        <option value="poly">Free outline</option>
+      </select>
+    </span>
   </div>
   <div class="grp" id="grp-fog">
     <button id="fogHide" class="ghost">Hide</button>
@@ -593,43 +654,61 @@
     <span id="brushWrap" style="display:flex;align-items:center;gap:6px">Size<input id="brushSize" type="range" min="10" max="400" value="75"><span id="brushLbl" style="font-family:var(--mono);font-size:11px;min-width:64px">1.5 squares</span></span>
   </div>
   <div class="grp" id="grp-oclusion">
-    <select id="wallModo">
-      <option value="segmento">Single segment</option>
-      <option value="polisegmento">Multi-segment wall</option>
-      <option value="poligono">Closed polygon</option>
-    </select>
-    <select id="snapSelWall" title="Snap when drawing walls"><option value="none">Free</option><option value="center">Square center</option><option value="corner">Square corner</option></select>
+    <span class="cl" role="group" aria-label="Draw">
+      <select id="wallModo">
+        <option value="segmento">Single segment</option>
+        <option value="polisegmento">Multi-segment wall</option>
+        <option value="poligono">Closed polygon</option>
+      </select>
+      <button id="wallNuevo" class="ghost" title="Start walls anywhere, even on top of an existing one">New wall</button>
+    </span>
     <span class="sepv"></span>
-    <label style="display:flex;align-items:center;gap:5px">Walls only<input id="soloParedes" type="checkbox"></label>
-    <span id="wallCuenta" style="font-family:var(--mono);font-size:11px">0 walls</span>
+    <span class="cl" role="group" aria-label="Selected segments">
+      <button id="wallPuerta" class="ghost">Open / close</button>
+      <button id="wallDir" class="ghost" title="Cycle which side this segment blocks from">One-way</button>
+      <button id="wallBorrar" class="ghost danger">Delete wall <kbd>Del</kbd></button>
+    </span>
     <span class="sepv"></span>
-    <button id="wallNuevo" class="ghost" title="Start walls anywhere, even on top of an existing one">New wall</button>
-    <button id="wallPuerta" class="ghost">Open / close</button>
-    <button id="wallDir" class="ghost" title="Cycle which side this segment blocks from">One-way</button>
-    <span class="sepv"></span>
-    <button id="wallBorrar" class="ghost danger">Delete wall <kbd>Del</kbd></button>
-    <button id="wallVaciar" class="ghost danger">Clear all</button>
+    <span class="cl" role="group" aria-label="This scene">
+      <label style="display:flex;align-items:center;gap:5px">Walls only<input id="soloParedes" type="checkbox"></label>
+      <span id="wallCuenta" style="font-family:var(--mono);font-size:11px">0 walls</span>
+      <button id="wallVaciar" class="ghost danger">Clear all</button>
+    </span>
   </div>
   <div class="grp" id="grp-token">
-    <select id="tokenJug" title="Player placed on click"></select>
-    <span style="display:flex;align-items:center;gap:5px">Vision
-      <input id="tokenVision" type="number" min="0" step="5" value="30" style="width:58px"></span>
-    <select id="snapSelToken" title="Snap when placing tokens"><option value="none">Free</option><option value="center">Square center</option><option value="corner">Square corner</option></select>
-    <select id="tokensMesa" title="Table visibility">
-      <option value="ocultos">Hidden on table</option>
-      <option value="punto">Small dot</option>
-      <option value="nombre">With name</option>
-    </select>
-    <label style="display:flex;align-items:center;gap:5px">Show vision<input id="verVision" type="checkbox" checked></label>
-    <label style="display:flex;align-items:center;gap:5px">Show lights<input id="verLuces" type="checkbox" checked></label>
-    <button id="tokenQuitar" class="ghost">Remove from map</button>
+    <span class="cl" role="group" aria-label="Player">
+      <select id="tokenJug" title="Player placed on click"></select>
+      <span style="display:flex;align-items:center;gap:5px">Vision
+        <input id="tokenVision" type="number" min="0" step="5" value="30" style="width:58px"></span>
+      <button id="tokenQuitar" class="ghost">Remove from map</button>
+    </span>
+    <span class="sepv"></span>
+    <span class="cl" role="group" aria-label="On the table">
+      <select id="tokensMesa" title="Table visibility">
+        <option value="ocultos">Hidden on table</option>
+        <option value="punto">Small dot</option>
+        <option value="nombre">With name</option>
+      </select>
+    </span>
+    <span class="sepv"></span>
+    <span class="cl" role="group" aria-label="Show on your screen">
+      <label style="display:flex;align-items:center;gap:5px">Vision<input id="verVision" type="checkbox" checked></label>
+      <label style="display:flex;align-items:center;gap:5px">Lights<input id="verLuces" type="checkbox" checked></label>
+    </span>
   </div>
   <div class="grp" id="grp-sel">
     <span id="selName" style="color:var(--text)">Nothing selected</span>
-    <button id="btnSubir" class="ghost" title="Bring to front">↑</button>
-    <button id="btnBajar" class="ghost" title="Send to back">↓</button>
-    <button id="btnDup" class="ghost">Duplicate</button>
-    <button id="btnDel" class="ghost">Delete <kbd>Del</kbd></button>
+    <span class="sepv"></span>
+    <span class="cl" role="group" aria-label="Layer">
+      <button id="btnSubir" class="ghost" title="Bring to front">↑</button>
+      <button id="btnBajar" class="ghost" title="Send to back">↓</button>
+    </span>
+    <span class="sepv"></span>
+    <span class="cl" role="group" aria-label="Edit">
+      <button id="btnDup" class="ghost">Duplicate</button>
+      <button id="btnPin" class="ghost" style="display:none">Pin to token</button>
+      <button id="btnDel" class="ghost danger">Delete <kbd>Del</kbd></button>
+    </span>
   </div>
   <div class="grp" id="grp-clear">
     <button id="btnClearMeasures" class="ghost">Clear measurements</button>
@@ -644,6 +723,10 @@
   <b id="overlayNom" style="color:var(--text);font-weight:600"></b>
   <button id="overlayVolver" style="padding:4px 9px;font-size:11px">Back to map</button>
 </div>
+<div id="anclaAviso">
+  <span id="anclaTxt"></span>
+  <button id="anclaCancelar" style="padding:4px 9px;font-size:11px">Cancel</button>
+</div>
 <div id="tip"></div>
 
 <div id="onboard">
@@ -656,7 +739,7 @@
 </div>
 
 <div id="pista">
-  <button id="pistaCerrar" title="Hide (comes back when you pick the tool again)">×</button>
+  <button id="pistaCerrar" title="Hide this one for good (press the tool again to bring it back)">×</button>
   <h4 id="pistaTitulo"></h4>
   <ul id="pistaCuerpo"></ul>
 </div>
@@ -707,6 +790,8 @@
     </div>
   </div>
 </div>
+
+<div id="mapMenu" class="hide" role="menu" aria-label="Map actions"></div>
 
 <div id="campMenuPanel" class="hide">
   <button data-op="renombrar">Rename campaign</button>
@@ -813,10 +898,10 @@ const S = {
      parecía no estar cargando nada. En la mesa se sigue viendo entera. */
   fogOpacity:0.5,
   fxPreset:EFFECTS[0], animSel:null, fxGeo:'circle', fxAlpha:1, fxBlend:'normal', wallW:1,
-  sel:null, selMulti:[], portapapeles:[], redo:[], anchor:null,
+  sel:null, selMulti:[], selTokens:[], anclando:null, portapapeles:[], redo:[], anchor:null,
   ini:{list:[], turnId:null, selId:null, mode:'dmg', entry:null, undo:[],
        show:true, corner:'tr', scale:1, hpMode:'pj'},
-  pointers:new Map(), pinch:null, spaceDown:false, panning:null, drawing:null,
+  pointers:new Map(), pinch:null, spaceDown:false, selDown:false, panning:null, drawing:null,
   cursor:null, cursorWorld:null, pings:[], showFrame:true, lasso:null,
   draft:null, history:[]
 };
@@ -849,6 +934,13 @@ function snapDe(tool){
 function snapPoint(p, modo){
   const m = modo || snapDe(S.tool);
   const c=cal(), g=c.gridPx, ox=c.ox||0, oy=c.oy||0;
+  /* «Anclar a token» es un modo de colocación más: en vez de encajar en la retícula,
+     encaja en el jugador que tenga cerca. Si no hay ninguno se queda donde se soltó. */
+  if(m==='token'){
+    const j=tokenCerca(p);
+    const t=j?tokenDe(j):null;
+    return t ? {x:t.x, y:t.y} : p;
+  }
   if(m==='none' || !g) return p;
   const rx=p.x-ox, ry=p.y-oy;
   if(m==='corner') return {x:Math.round(rx/g)*g+ox, y:Math.round(ry/g)*g+oy};
@@ -1259,6 +1351,16 @@ const segSeleccionado   = (w,i) => S.selParedes.some(t=>t.pared===w && t.seg===i
 const paredSeleccionada = w => S.selParedes.some(t=>t.pared===w);
 const paredesSeleccionadas = () => [...new Set(S.selParedes.map(t=>t.pared))];
 function limpiarSeleccionParedes(){ S.selParedes=[]; }
+/* Formas y tokens se sueltan juntos: son una sola selección aunque vivan en dos listas,
+   igual que los tramos de pared viven en la suya. */
+function limpiarSeleccion(){ S.sel=null; S.selMulti=[]; S.selTokens=[]; }
+/* Las posiciones se copian una a una: la instantánea no puede compartir objetos con la
+   escena o al mover un token se reescribiría también el historial. */
+function clonarTokens(t){
+  const o={};
+  for(const k in (t||{})) o[k]={x:t[k].x, y:t[k].y};
+  return o;
+}
 /* Huella barata del estado de las paredes: cambia si se mueve un vértice, se abre una
    puerta o se invierte un sentido. Recorrerla cuesta muchísimo menos que relanzar los
    rayos, y al calcularse sola evita tener que acordarse de invalidar la caché en cada
@@ -1400,9 +1502,14 @@ function revelarEn(pos, radio){
   c.restore();
   tocarNiebla();
 }
-function moverToken(j, pos, revelar=true){
+function moverToken(j, pos, revelar=true, salvo){
   const t=tokens();
+  const antes=t[j.id];
   t[j.id]={x:pos.x, y:pos.y};
+  if(antes){
+    const dx=pos.x-antes.x, dy=pos.y-antes.y;
+    if(dx||dy) arrastrarAnclados(j, dx, dy, salvo);
+  }
   if(revelar) visionEnMovimiento(j, pos);
   tocarEscena();
 }
@@ -1416,8 +1523,37 @@ function tokenEn(wp){
   }
   return null;
 }
+/* El más cercano dentro de un radio generoso: al anclar un efecto no hay que acertar en
+   el token, basta con soltarlo encima del jugador. */
+function tokenCerca(wp, radio){
+  const r = radio!=null ? radio : (cal().gridPx||50);
+  let mejor=null, mejorD=Infinity;
+  for(const j of jugadores()){
+    const t=tokenDe(j); if(!t) continue;
+    const d=dist(wp,t);
+    if(d<=r && d<mejorD){ mejor=j; mejorD=d; }
+  }
+  return mejor;
+}
+/* Los efectos anclados van escritos en píxeles de mapa como todo lo demás: al mover el
+   token se reescriben sus coordenadas. Resolverlo al pintar obligaría a enseñar el
+   desplazamiento al hit test, a los tiradores, a la copia de seguridad y a la niebla. */
+function arrastrarAnclados(j, dx, dy, salvo){
+  const s=sc(); if(!s || !s.shapes) return;
+  for(const sh of s.shapes){
+    if(sh.pin!==j.id) continue;
+    if(salvo && salvo.has(sh)) continue;
+    translateShape(sh, dx, dy);
+  }
+}
+const anclados = j => (sc()?.shapes || []).filter(sh=>sh.pin===j.id);
+/* Un token que se va de la escena suelta lo suyo donde esté: borrar arte que el director
+   colocó sería peor que dejarlo huérfano. */
+function soltarAnclajes(pid){
+  for(const sh of (sc()?.shapes || [])) if(sh.pin===pid) delete sh.pin;
+}
 
-function drawTokens(c, view, dpr, modo){
+function drawTokens(c, view, dpr, modo, helpers){
   const lista=jugadores();
   if(!lista.length || modo==='ocultos') return;
   const gp=cal().gridPx||50;
@@ -1427,8 +1563,11 @@ function drawTokens(c, view, dpr, modo){
     const t=tokenDe(j); if(!t) continue;
     const col=colorJugador(j);
     const r = modo==='punto' ? gp*0.14 : gp*0.36;
+    const activo = helpers && j===S.tokenSel;
+    const marcado = helpers && S.selTokens.includes(j);
 
-    if(modo!=='punto' && (S.tool==='token' || j===S.tokenSel)){
+    /* El círculo de visión es una ayuda del director; en la mesa no pinta nada. */
+    if(helpers && modo!=='punto' && (S.tool==='token' || activo)){
       c.beginPath(); c.arc(t.x,t.y,radioVision(j),0,Math.PI*2);
       c.strokeStyle=col+'55'; c.lineWidth=1.5/view.k;
       c.setLineDash([8/view.k,6/view.k]); c.stroke(); c.setLineDash([]);
@@ -1436,9 +1575,16 @@ function drawTokens(c, view, dpr, modo){
     c.beginPath(); c.arc(t.x,t.y,r,0,Math.PI*2);
     c.fillStyle = modo==='punto' ? col : col+'D0';
     c.fill();
-    c.lineWidth=(j===S.tokenSel?3:2)/view.k;
-    c.strokeStyle = j===S.tokenSel ? '#FFFFFF' : '#05070B';
+    c.lineWidth=(activo?3:2)/view.k;
+    c.strokeStyle = activo ? '#FFFFFF' : '#05070B';
     c.stroke();
+    /* Un token cogido lleva la misma marca que una forma cogida: aro discontinuo en el
+       color de la selección, para que un grupo mixto se lea de una sola manera. */
+    if(marcado){
+      c.beginPath(); c.arc(t.x,t.y,r+3/view.k,0,Math.PI*2);
+      c.strokeStyle='#5AD2E8'; c.lineWidth=1.8/view.k;
+      c.setLineDash([5/view.k,4/view.k]); c.stroke(); c.setLineDash([]);
+    }
     if(modo!=='punto'){
       c.fillStyle='#05070B';
       c.font='700 '+(gp*0.34)+'px "Inter", system-ui, sans-serif';
@@ -1763,13 +1909,15 @@ function renderScene(c, view, W, H, dpr, o){
     if(S.lasso) drawLasso(c,view,dpr);
     if(o.testGrid) drawGrid(c,view,dpr,W,H,true);
     if(o.labels) drawLabels(c,view,dpr,o);
-    if(o.handles && S.sel && S.selMulti.length<2) drawHandles(c,view,dpr);
+    if(o.handles && S.sel && S.selMulti.length<2 && !S.selTokens.length) drawHandles(c,view,dpr);
+    if(o.handles && S.selMulti.length+S.selTokens.length>1) drawSelBox(c,view,dpr);
+    if(o.handles) drawAnclajes(c,view,dpr);
     if(o.anchor && S.anchor) drawAnchor(c,view,dpr);
     if(o.tableFrame) drawTableFrame(c,view,dpr);
     if(o.luces) drawLuces(c,view,dpr);
     if(o.vision && S.tool==='token') drawVision(c,view,dpr);
     if(o.walls) drawParedes(c,view,dpr,o);
-    if(o.tokens) drawTokens(c,view,dpr,o.tokens);
+    if(o.tokens) drawTokens(c,view,dpr,o.tokens,!o.hideHelpers);
     if(o.brushCursor) drawBrushCursor(c,view,dpr);
   }
   if(o.pointer) drawPointer(c,view,dpr);
@@ -1801,16 +1949,22 @@ function drawGrid(c,view,dpr,W,H,bright){
 function drawShape(c,view,dpr,s,isDraft,o){
   const g=s.geo||s.type;
   let alpha=1;
+  /* Lo seleccionado es asunto del director. Antes esto se calculaba dentro y sin mirar
+     la ventana, así que la mesa engordaba el trazo de lo que él tuviera cogido. */
+  const marcado = !o.hideHelpers && (s===S.sel || S.selMulti.includes(s));
 
   /* Los efectos animados se pintan con el fotograma actual de su vídeo. */
   if(s.anim){
     const cn = fotograma(s.anim);
     if(cn){
       drawAnim(c, view, dpr, s, cn, alpha);
-      if(!isDraft && s!==S.sel) return;   // el contorno solo al trazar o al seleccionar
+      /* El contorno solo al trazar o al seleccionar. Antes la condición era «s!==S.sel»
+         y de las dos mitades de marcado la de selección múltiple no llegaba a evaluarse:
+         un efecto animado dentro de una selección de varios no se marcaba de ninguna
+         manera. */
+      if(!isDraft && !marcado) return;
       c.save();
       c.setTransform(dpr*view.k,0,0,dpr*view.k, dpr*view.x, dpr*view.y);
-      const marcado = s===S.sel || S.selMulti.includes(s);
       c.strokeStyle = marcado ? '#5AD2E8' : (s.color||'#E0A33C');
       c.lineWidth = (marcado?2.4:1.4)/view.k;
       c.setLineDash([6/view.k,5/view.k]);
@@ -1837,13 +1991,21 @@ function drawShape(c,view,dpr,s,isDraft,o){
     }
   }
   c.strokeStyle=col;
-  const marcado = s===S.sel || S.selMulti.includes(s);
   c.lineWidth=(marcado?3.2:2.2)/view.k;
   c.lineJoin='round'; c.lineCap='round';
   if(isDraft) c.setLineDash([7/view.k,5/view.k]);
   c.shadowColor=col; c.shadowBlur=s.kind==='effect'?6:10;
   c.stroke(p);
   c.shadowBlur=0; c.setLineDash([]);
+  /* Medio píxel más de grosor no distingue nada: encima del trazo propio va una línea
+     discontinua en el color de la selección, la misma que ya llevaban los animados.
+     La forma conserva su color y aun así se ve cogida de un vistazo. */
+  if(marcado){
+    c.strokeStyle='#5AD2E8'; c.lineWidth=1.6/view.k;
+    c.setLineDash([6/view.k,5/view.k]);
+    c.stroke(p);
+    c.setLineDash([]);
+  }
   if(g!=='free' && s.kind!=='effect'){
     c.fillStyle=col; c.beginPath(); c.arc(s.a.x,s.a.y,3.2/view.k,0,Math.PI*2); c.fill();
   }
@@ -1884,6 +2046,82 @@ function drawHandles(c,view,dpr){
     c.beginPath(); c.arc(p.x,p.y,6,0,Math.PI*2);
     c.fillStyle=fill; c.fill(); c.strokeStyle=s.color; c.lineWidth=2; c.stroke();
   }
+}
+/* Esquinas reales de una forma, no solo sus dos puntos: un círculo de radio 300 tiene
+   a y b muy juntos y ocupa media pantalla. Sirve para encuadrar la selección. */
+function puntosBorde(s){
+  const a=s.a, b=s.b, g=s.geo||s.type;
+  if((g==='poly'||g==='free') && s.pts && s.pts.length) return s.pts;
+  if(!a || !b) return s.pts || [];
+  if(g==='circle'){
+    const r=dist(a,b);
+    return [{x:a.x-r,y:a.y-r},{x:a.x+r,y:a.y+r}];
+  }
+  if(g==='cone'){
+    const L=dist(a,b)||0.001, ux=(b.x-a.x)/L, uy=(b.y-a.y)/L, hw=L/2;
+    return [a, {x:a.x+ux*L-uy*hw, y:a.y+uy*L+ux*hw},
+               {x:a.x+ux*L+uy*hw, y:a.y+uy*L-ux*hw}];
+  }
+  if(g==='wall'){
+    const L=dist(a,b)||0.001, ux=(b.x-a.x)/L, uy=(b.y-a.y)/L;
+    const hw=((s.w||1)*cal().gridPx)/2, px=-uy*hw, py=ux*hw;
+    return [{x:a.x+px,y:a.y+py},{x:b.x+px,y:b.y+py},
+            {x:b.x-px,y:b.y-py},{x:a.x-px,y:a.y-py}];
+  }
+  if(g==='area'){
+    const h=Math.max(Math.abs(b.x-a.x),Math.abs(b.y-a.y));
+    return [{x:a.x-h,y:a.y-h},{x:a.x+h,y:a.y+h}];
+  }
+  if(g==='square' && !s.rectFree){
+    const lado=Math.max(Math.abs(b.x-a.x),Math.abs(b.y-a.y));
+    return [a, {x:a.x+lado*(b.x<a.x?-1:1), y:a.y+lado*(b.y<a.y?-1:1)}];
+  }
+  return [a,b];
+}
+/* Con dos o más cosas cogidas no se dibujan tiradores —serían un enjambre—, así que el
+   grupo se encuadra entero: además de decir qué está seleccionado, dice que arrastrar
+   va a mover todo eso a la vez. */
+function drawSelBox(c,view,dpr){
+  let pts=[];
+  for(const s of S.selMulti) pts=pts.concat(puntosBorde(s));
+  const rt=(cal().gridPx||50)*0.36;
+  for(const j of S.selTokens){
+    const t=tokenDe(j);
+    if(t) pts.push({x:t.x-rt,y:t.y-rt},{x:t.x+rt,y:t.y+rt});
+  }
+  if(pts.length<2) return;
+  const bb=bbox(pts), m=7/view.k;
+  c.save();
+  c.setTransform(dpr*view.k,0,0,dpr*view.k, dpr*view.x, dpr*view.y);
+  c.strokeStyle='#5AD2E8'; c.lineWidth=1.5/view.k;
+  c.setLineDash([7/view.k,5/view.k]);
+  c.strokeRect(bb.x0-m, bb.y0-m, (bb.x1-bb.x0)+m*2, (bb.y1-bb.y0)+m*2);
+  c.setLineDash([]);
+  c.restore();
+  c.setTransform(dpr,0,0,dpr,0,0);
+}
+/* El vínculo solo se enseña cuando una de las dos puntas está cogida: dibujarlo siempre
+   llenaría el mapa de hilos en cuanto haya media docena de efectos anclados. */
+function drawAnclajes(c,view,dpr){
+  const s=sc(); if(!s || !s.shapes) return;
+  const pares=[];
+  for(const sh of s.shapes){
+    if(!sh.pin) continue;
+    const j=jugadores().find(x=>x.id===sh.pin); if(!j) continue;
+    const t=tokenDe(j); if(!t) continue;
+    if(S.selTokens.includes(j) || sh===S.sel || S.selMulti.includes(sh)) pares.push([t,sh]);
+  }
+  if(!pares.length) return;
+  c.save();
+  c.setTransform(dpr*view.k,0,0,dpr*view.k, dpr*view.x, dpr*view.y);
+  c.strokeStyle='#FFD86B'; c.lineWidth=1.4/view.k;
+  c.setLineDash([3/view.k,4/view.k]);
+  for(const [t,sh] of pares){
+    c.beginPath(); c.moveTo(t.x,t.y); c.lineTo(sh.a.x,sh.a.y); c.stroke();
+  }
+  c.setLineDash([]);
+  c.restore();
+  c.setTransform(dpr,0,0,dpr,0,0);
 }
 function drawAnchor(c,view,dpr){
   c.setTransform(dpr,0,0,dpr,0,0);
@@ -2201,6 +2439,7 @@ async function guardarEstado(){
   await dbPut('state', {id:'app', camp:CAMP.id, ini:S.ini, activa:sc()?sc().id:null,
     fx:{favoritos:CAT.favoritos, recientes:CAT.recientes, activas:CAT.activas},
     tokensMesa:S.tokensMesa, plegadas:S.plegadas||[], pasosNunca:!!S.pasosNunca,
+    pistasCerradas:S.pistasCerradas||[], snap:S.snap,
     mesa:{dpi:T.dpi, diag:parseFloat($('diagIn').value)||27, cover:T.cover,
           bright:T.bright, contrast:T.contrast, hpMode:S.ini.hpMode,
           diagHecha:!!T.diagHecha, mesaAbierta:!!T.mesaAbierta}});
@@ -2333,7 +2572,7 @@ async function selectScene(i){
   if(i<0 || i>=LIB.scenes.length) return;
   if(LIB.scenes[i].type==='image'){ elegirImagen(LIB.scenes[i]); return; }
   await volcar();   // no dejar cambios de la escena anterior sin guardar
-  LIB.idx=i; S.sel=null; S.draft=null; S.lasso=null; S.history=[];
+  LIB.idx=i; limpiarSeleccion(); S.draft=null; S.lasso=null; S.history=[];
   S.wallDraft=null; limpiarSeleccionParedes(); S.tokenSel=null;
   T.fadeT=performance.now();
   const s=sc();
@@ -2504,7 +2743,11 @@ function push(kind){
   } else if(kind==='walls'){
     S.history.push({kind:'walls', scene:s.id, arr:clonarParedes(s.walls)});
   } else {
-    S.history.push({kind:'shapes', scene:s.id, arr:s.shapes.map(x=>({...x}))});
+    /* Los tokens viajan en la misma entrada que las formas, no en una suya: arrastrar un
+       efecto y un token a la vez tiene que deshacerse de una sola vez. De paso, todo
+       push('shapes') que ya existía pasa a cubrirlos. */
+    S.history.push({kind:'shapes', scene:s.id, arr:s.shapes.map(x=>({...x})),
+                    tokens:clonarTokens(s.tokens)});
   }
   if(S.history.length>24) S.history.shift();
 }
@@ -2513,7 +2756,7 @@ function instantanea(){
   if(!s || s.type!=='map') return null;
   /* La escena va marcada: una instantánea solo puede volver al mapa del que salió. */
   return {scene:s.id, shapes:s.shapes.map(x=>({...x})), walls:clonarParedes(s.walls),
-          ini:S.ini.list.map(m=>({...m}))};
+          tokens:clonarTokens(s.tokens), ini:S.ini.list.map(m=>({...m}))};
 }
 function rehacer(){
   const s=sc();
@@ -2528,8 +2771,9 @@ function rehacer(){
   rehaciendo=false;
   s.shapes.length=0; e.shapes.forEach(x=>s.shapes.push(x));
   if(e.walls) s.walls = clonarParedes(e.walls);
-  S.sel=null; S.selMulti=[]; limpiarSeleccionParedes();
-  tocarEscena(); renderFxList(); recalcularVision(); syncCtxBar(); draw();
+  if(e.tokens) s.tokens = clonarTokens(e.tokens);
+  limpiarSeleccion(); limpiarSeleccionParedes();
+  tocarEscena(); renderFxList(); recalcularVision(); renderJugadores(); syncCtxBar(); draw();
   toast('Redone.');
 }
 function undo(){
@@ -2561,7 +2805,9 @@ function undo(){
     if(antes) S.redo.push(antes);
     if(S.redo.length>12) S.redo.shift();
     s.shapes.length=0; e.arr.forEach(x=>s.shapes.push(x));
-    S.sel=null; S.selMulti=[]; tocarEscena(); renderFxList();
+    /* Entradas viejas no traen tokens: se dejan como están en vez de vaciarlos. */
+    if(e.tokens){ s.tokens = e.tokens; recalcularVision(); renderJugadores(); }
+    limpiarSeleccion(); tocarEscena(); renderFxList();
   }
   draw();
 }
@@ -2645,7 +2891,12 @@ function renderPasos(){
     {ok: !!T.mesaAbierta,
      t:'Open the table view', d:'Drag it to that screen and click it for full screen.'}
   ];
-  if(S.pasosNunca || pasosOcultos || pasos.every(p=>p.ok)){ caja.classList.remove('on'); return; }
+  const visible = !(S.pasosNunca || pasosOcultos || pasos.every(p=>p.ok));
+  /* El cartel de bienvenida nombraba un solo camino de los que hacen falta. Ahora manda
+     a la lista, pero solo mientras la lista esté puesta: si se cerró, no se apunta a
+     algo que no está en pantalla. */
+  const eco=$('emptyPasos'); if(eco) eco.style.display = visible ? 'block' : 'none';
+  if(!visible){ caja.classList.remove('on'); return; }
   caja.classList.add('on');
   const ol=$('pasos'); ol.innerHTML='';
   let primeroPendiente=true;
@@ -3089,10 +3340,15 @@ function renderIniList(){
     const del=document.createElement('button'); del.className='x'; del.textContent='×'; del.title='Remove';
     del.onclick=ev=>{
       ev.stopPropagation();
+      /* Quitar un combatiente se lleva sus puntos de vida, sus estados y sus
+         salvaciones. No pide confirmación —se hace a menudo— pero entra en el historial
+         para que Ctrl+Z lo devuelva entero. */
+      pushIniUndo();
       S.ini.list.splice(i,1);
       if(m.id===S.ini.turnId) S.ini.turnId = S.ini.list.length ? S.ini.list[Math.min(i,S.ini.list.length-1)].id : null;
       if(m.id===S.ini.selId) S.ini.selId=null;
       renderIniList(); draw();
+      toast(m.name+' removed. Ctrl+Z to bring them back.');
     };
     row.onclick=()=>{ S.ini.selId = (S.ini.selId===m.id) ? null : m.id; clearEntry(); renderIniList(); };
     row.append(pos,iv,dot,nm,bar,hp,ed,del);
@@ -3477,7 +3733,149 @@ function animate(){
 }
 requestAnimationFrame(animate);
 
+/* Sin punto, la copia cae desplazada una casilla, que es lo que hace Ctrl+V de siempre.
+   Con punto —el menú del mapa— cae donde está el puntero, tomando el primer elemento
+   como referencia para que un grupo conserve su forma. */
+function pegar(pos){
+  if(!S.portapapeles.length || !sc()){ toast('Nothing copied yet.'); return; }
+  push('shapes');
+  const g=cal().gridPx, nuevos=[];
+  const ref=S.portapapeles[0];
+  const dx = pos ? pos.x-ref.a.x : g;
+  const dy = pos ? pos.y-ref.a.y : g;
+  S.portapapeles.forEach(x=>{
+    const c=JSON.parse(JSON.stringify(x));
+    /* El ancla es de la colocación original, no del arte: la copia nace suelta. */
+    delete c.pin;
+    c.a={x:c.a.x+dx,y:c.a.y+dy}; c.b={x:c.b.x+dx,y:c.b.y+dy};
+    if(c.pts) c.pts=c.pts.map(p=>({x:p.x+dx,y:p.y+dy}));
+    sc().shapes.push(c); nuevos.push(c);
+  });
+  S.selMulti=nuevos; S.sel=nuevos[nuevos.length-1]; S.selTokens=[];
+  tocarEscena(); renderFxList(); syncCtxBar(); draw();
+  toast(nuevos.length===1 ? '1 pasted.' : nuevos.length+' pasted.');
+}
+
+/* ============ anclar eligiendo jugador ============ */
+/* Anclar exigía tener ya cogido el token, así que un efecto puesto sin pensar en ello
+   había que borrarlo y volver a colocarlo con el modo puesto. Aquí la aplicación se
+   queda esperando: se elige el efecto y luego el jugador. */
+function empezarAnclaje(formas){
+  const fx=(formas||[]).filter(x=>x.kind==='effect');
+  if(!fx.length){ toast('Pick an effect first.'); return; }
+  if(!jugadores().some(j=>tokenDe(j))){
+    toast('No player tokens on this map yet — place one with J first.'); return;
+  }
+  S.anclando=fx;
+  const nom = fx.length===1 ? (fx[0].name || shapeLabel(fx[0]) || 'this effect')
+                            : fx.length+' effects';
+  $('anclaTxt').innerHTML='Select a player to anchor <b></b> to.';
+  $('anclaTxt').querySelector('b').textContent=nom;
+  $('anclaAviso').classList.add('on');
+  cursorDeHerramienta(); draw();
+}
+function cancelarAnclaje(callado){
+  if(!S.anclando) return;
+  S.anclando=null;
+  $('anclaAviso').classList.remove('on');
+  cursorDeHerramienta(); draw();
+  if(!callado) toast('Pinning cancelled.');
+}
+function terminarAnclaje(j){
+  const fx=S.anclando; if(!fx) return;
+  push('shapes');
+  fx.forEach(x=>{ x.pin=j.id; });
+  S.anclando=null;
+  $('anclaAviso').classList.remove('on');
+  cursorDeHerramienta();
+  tocarEscena(); syncCtxBar(); draw();
+  toast(fx.length===1 ? 'Pinned to '+j.character+'. It follows them now.'
+                      : fx.length+' effects pinned to '+j.character+'.');
+}
+$('anclaCancelar').onclick=()=>cancelarAnclaje();
+
+/* ============ menú del mapa ============ */
+/* El clic derecho estaba capturado y tirado a la basura: preventDefault y nada más, en
+   una aplicación que ya lo usa para borrar una escena y para marcar un favorito. */
+function cerrarMapMenu(){
+  const m=$('mapMenu');
+  if(!m.classList.contains('hide')){ m.classList.add('hide'); cv.focus?.(); }
+}
+function abrirMapMenu(sp, titulo, items){
+  const m=$('mapMenu');
+  m.innerHTML='';
+  if(titulo){ const c=document.createElement('div'); c.className='cab'; c.textContent=titulo; m.appendChild(c); }
+  for(const it of items){
+    if(it==='-'){ const s=document.createElement('div'); s.className='sepm'; m.appendChild(s); continue; }
+    const b=document.createElement('button');
+    b.type='button'; b.setAttribute('role','menuitem'); b.textContent=it.label;
+    if(it.peligro) b.className='peligro';
+    b.onclick=()=>{ cerrarMapMenu(); it.hacer(); };
+    m.appendChild(b);
+  }
+  m.classList.remove('hide');
+  /* Se coloca en el puntero, pero sin salirse de la ventana. */
+  const r=m.getBoundingClientRect();
+  m.style.left = Math.max(6, Math.min(sp.x, innerWidth  - r.width  - 8)) + 'px';
+  m.style.top  = Math.max(6, Math.min(sp.y, innerHeight - r.height - 8)) + 'px';
+  const primero=m.querySelector('button');
+  if(primero) primero.focus();
+}
+/* Flechas y Esc dentro del menú, y sin dejar que lleguen al mapa: las flechas mueven el
+   encuadre de la mesa desde cualquier sitio. */
+$('mapMenu').addEventListener('keydown', e=>{
+  e.stopPropagation();
+  const bs=[...$('mapMenu').querySelectorAll('button')];
+  const i=bs.indexOf(document.activeElement);
+  if(e.key==='Escape'){ cerrarMapMenu(); e.preventDefault(); }
+  else if(e.key==='ArrowDown'){ bs[(i+1)%bs.length]?.focus(); e.preventDefault(); }
+  else if(e.key==='ArrowUp'){ bs[(i-1+bs.length)%bs.length]?.focus(); e.preventDefault(); }
+});
+addEventListener('pointerdown', e=>{ if(!$('mapMenu').contains(e.target)) cerrarMapMenu(); }, true);
+addEventListener('wheel', cerrarMapMenu, {passive:true});
+
 /* ============ interacción ============ */
+/* Coger algo del mapa en un solo sitio. Lo usa la herramienta de selección y lo usa
+   cualquier otra mientras se mantenga Ctrl —Cmd en Mac—, que es la misma idea que ya
+   tenía el espacio para desplazarse: la herramienta no cambia, se toma prestada.
+   El orden es el de la pintura: primero el token, que se dibuja encima de todo. */
+function seleccionEnPunto(e, sp, wp){
+  const j=tokenEn(wp);
+  if(j){
+    if(e.shiftKey){
+      const i=S.selTokens.indexOf(j);
+      if(i<0) S.selTokens.push(j); else S.selTokens.splice(i,1);
+      S.tokenSel = S.selTokens[S.selTokens.length-1] || null;
+      syncCtxBar(); renderJugadores(); draw(); return;
+    }
+    /* Coger uno que ya estaba dentro de la selección no la deshace: así se arrastra el
+       grupo entero desde cualquiera de sus piezas. */
+    if(!S.selTokens.includes(j)){ S.selTokens=[j]; S.sel=null; S.selMulti=[]; }
+    S.tokenSel=j;
+    push('shapes');
+    S.drawing={kind:'move', w0:wp};
+    syncCtxBar(); renderJugadores(); draw(); return;
+  }
+  const h=handleAt(sp);
+  if(h){ push('shapes'); S.drawing={kind:'handle',key:h}; return; }
+  const found=hitTest(wp);
+  /* Una sola regla en toda la aplicación: Mayús suma o resta, el clic pelado sustituye
+     y el vacío suelta salvo que se tenga Mayús. */
+  if(found && e.shiftKey){
+    const i=S.selMulti.indexOf(found);
+    if(i<0) S.selMulti.push(found); else S.selMulti.splice(i,1);
+    S.sel = S.selMulti[S.selMulti.length-1] || null;
+    syncCtxBar(); draw(); return;
+  }
+  if(!found){
+    if(!e.shiftKey) limpiarSeleccion();
+    syncCtxBar(); draw(); return;
+  }
+  if(!S.selMulti.includes(found)){ S.selMulti=[found]; S.selTokens=[]; }
+  S.sel=found;
+  push('shapes'); S.drawing={kind:'move',w0:wp};
+  syncCtxBar(); draw();
+}
 const evPos=e=>({x:e.clientX,y:e.clientY});
 const MEASURE_TOOLS=['measure'];
 const FORMAS_MEDIDA=['line','circle','cone','square','wall','free'];
@@ -3502,26 +3900,46 @@ cv.addEventListener('pointerdown', e=>{
     return;
   }
 
+  /* Mientras se espera un jugador, el clic es para eso y nada más. Fallar no cancela:
+     se avisa y se sigue esperando, que cancelar por un clic torpe sería peor. */
+  if(S.anclando){
+    const j=tokenEn(wp);
+    if(j) terminarAnclaje(j);
+    else toast('Click a player token, or Cancel.');
+    return;
+  }
+
+  /* Ctrl presta la herramienta de selección sin soltar la que se esté usando: colocar
+     un efecto, coger el token de al lado, moverlo y seguir colocando sin pisar el carril.
+     Va por delante de todo lo demás para que signifique siempre lo mismo. Botón izquierdo
+     solo: en Mac, Ctrl con el resto es el clic derecho del sistema. */
+  if(e.button===0 && S.tool!=='sel' && (e.ctrlKey || e.metaKey)){
+    seleccionEnPunto(e, sp, wp); return;
+  }
+
   if(S.tool==='pointer'){ S.pings.push({x:wp.x,y:wp.y,t:performance.now()}); S.drawing={kind:'pointer'}; draw(); return; }
   if(S.tool==='frame'){ S.drawing={kind:'frame',w0:wp,c0:{...s.center}}; return; }
-  if(S.tool==='anchor'){ S.anchor=snapPoint(wp); setTool('line'); toast('Origin anchored. Press again to release.'); draw(); return; }
+  /* Anclar devuelve a la herramienta de medir. Antes ponía 'line', que fue nombre de
+     herramienta y hoy solo es una forma: dejaba S.tool en un valor que no reconoce ni
+     el pointerdown ni syncCtxBar, con la barra vacía y el mapa sin responder. */
+  if(S.tool==='anchor'){ S.anchor=snapPoint(wp); setTool('measure'); toast('Origin anchored. Press again to release.'); draw(); return; }
 
-  /* Los tokens se arrastran tanto con la herramienta de tokens como con la de selección. */
-  if(S.tool==='token' || S.tool==='sel'){
+  /* La herramienta de selección entera está en seleccionEnPunto(); aquí solo queda la de
+     tokens, que arrastra el que haya debajo y si no lo hay coloca uno. */
+  if(S.tool==='sel'){ seleccionEnPunto(e, sp, wp); return; }
+  if(S.tool==='token'){
     const j=tokenEn(wp);
     if(j){
       S.tokenSel=j;
       S.drawing={kind:'token', j};
       renderJugadores(); draw(); return;
     }
-    if(S.tool==='token'){
-      const objetivo = S.tokenSel || jugadores().find(x=>!tokenDe(x)) || jugadores()[0];
-      if(!objetivo){ toast('Add players to the campaign to place their tokens.'); return; }
-      moverToken(objetivo, snapPoint(wp));
-      S.tokenSel=objetivo;
-      if(modoNiebla()==='dinamica') recalcularVision();
-      renderJugadores(); draw(); return;
-    }
+    const objetivo = S.tokenSel || jugadores().find(x=>!tokenDe(x)) || jugadores()[0];
+    if(!objetivo){ toast('Add players to the campaign to place their tokens.'); return; }
+    moverToken(objetivo, snapPoint(wp));
+    S.tokenSel=objetivo;
+    if(modoNiebla()==='dinamica') recalcularVision();
+    renderJugadores(); draw(); return;
   }
 
   if(S.tool==='oclusion'){
@@ -3562,24 +3980,6 @@ cv.addEventListener('pointerdown', e=>{
     draw(); return;
   }
 
-  if(S.tool==='sel'){
-    const h=handleAt(sp);
-    if(h){ push('shapes'); S.drawing={kind:'handle',key:h}; return; }
-    const found=hitTest(wp);
-    if(found && (e.shiftKey || e.metaKey || e.ctrlKey)){
-      /* Mayús suma o resta de la selección múltiple. */
-      const i=S.selMulti.indexOf(found);
-      if(i<0) S.selMulti.push(found); else S.selMulti.splice(i,1);
-      S.sel = S.selMulti[S.selMulti.length-1] || null;
-      syncCtxBar(); draw(); return;
-    }
-    if(!found){ S.sel=null; S.selMulti=[]; syncCtxBar(); draw(); return; }
-    if(!S.selMulti.includes(found)) S.selMulti=[found];
-    S.sel=found;
-    push('shapes'); S.drawing={kind:'move',w0:wp};
-    syncCtxBar(); draw(); return;
-  }
-
   if(S.tool==='fog'){
     if(S.fogShape==='lasso'){
       if(!S.lasso) S.lasso=[];
@@ -3600,6 +4000,10 @@ cv.addEventListener('pointerdown', e=>{
              pat:S.fxPreset.pat, name:S.fxPreset.name};
     S.drawing={kind:'polyfree'}; draw(); return;
   }
+  /* Con el modo «Pin to token» puesto, colocar un efecto encima de un jugador lo deja
+     enganchado a él: es la misma pulsación que colocarlo sobre una casilla. */
+  const anclaA = (S.tool==='effect' && S.snap.effect==='token' && !S.anchor)
+                   ? tokenCerca(wp) : null;
   if(S.tool==='effect' && S.animSel){
     const e=S.animSel, gp=cal().gridPx;
     const a=S.anchor||snapPoint(wp);
@@ -3608,6 +4012,7 @@ cv.addEventListener('pointerdown', e=>{
     const b = (e.g==='wall'||e.g==='cone') ? {x:a.x+nat, y:a.y} : {x:a.x+nat, y:a.y};
     S.draft={kind:'effect', anim:e.p, geo:e.g, a, b, color:'#FFD86B', name:e.s,
              alpha:S.fxAlpha, blend:S.fxBlend};
+    if(anclaA) S.draft.pin=anclaA.id;
     S.drawing={kind:'shape'}; draw(); return;
   }
   if(S.tool==='effect'){
@@ -3616,11 +4021,13 @@ cv.addEventListener('pointerdown', e=>{
       S.draft={kind:'effect', preset:S.fxPreset.id, geo:'poly', pts:[wp], a:wp, b:wp,
                color:S.fxPreset.color, pat:S.fxPreset.pat, name:S.fxPreset.name,
                alpha:S.fxAlpha};
+      if(anclaA) S.draft.pin=anclaA.id;
       S.drawing={kind:'polyfree'}; draw(); return;
     }
     S.draft={kind:'effect', preset:S.fxPreset.id, geo:S.fxGeo, a, b:snapPoint(wp),
              color:S.fxPreset.color, pat:S.fxPreset.pat, name:S.fxPreset.name,
              w:S.wallW, alpha:S.fxAlpha};
+    if(anclaA) S.draft.pin=anclaA.id;
     S.drawing={kind:'shape'}; draw(); return;
   }
   if(S.tool==='measure'){
@@ -3676,7 +4083,17 @@ cv.addEventListener('pointermove', e=>{
     else if(d.kind==='move'){
       const dx=wp.x-d.w0.x, dy=wp.y-d.w0.y;
       const grupo = S.selMulti.length ? S.selMulti : (S.sel?[S.sel]:[]);
-      grupo.forEach(x=>translateShape(x,dx,dy));
+      /* Un efecto anclado cogido junto a su token se movería dos veces: una con el grupo
+         y otra arrastrado por el token. Se mueve una sola, la del token. */
+      const conToken = new Set(S.selTokens.map(j=>j.id));
+      const yaVan = new Set(grupo.filter(x=>x.pin && conToken.has(x.pin)));
+      grupo.forEach(x=>{ if(!yaVan.has(x)) translateShape(x,dx,dy); });
+      /* Los tokens del grupo se mueven por desplazamiento, sin encajar: arrastrando un
+         conjunto lo que importa es que no se descoloquen entre sí. */
+      for(const j of S.selTokens){
+        const t=tokenDe(j);
+        if(t) moverToken(j, {x:t.x+dx, y:t.y+dy});
+      }
       d.w0=wp;
     }
     else if(d.kind==='handle'){
@@ -3721,7 +4138,12 @@ function endPointer(e){
   if(kind==='fogrect'&&S.draft){ fogRect(S.draft.a,S.draft.b); S.draft=null; draw(); return; }
   if(kind==='token'){ tocarEscena(); recalcularVision(); renderJugadores(); draw(); return; }
   if(kind==='vertice'){ tocarEscena(); recalcularVision(); draw(); return; }
-  if(['fog','cells','frame','pointer','move','handle'].includes(kind)){ tocarEscena(); renderFxList(); draw(); return; }
+  if(['fog','cells','frame','pointer','move','handle'].includes(kind)){
+    /* Si el grupo llevaba tokens, la visibilidad se rehace al soltar, no en cada
+       fotograma del arrastre. */
+    if(kind==='move' && S.selTokens.length){ recalcularVision(); renderJugadores(); }
+    tocarEscena(); renderFxList(); draw(); return;
+  }
   if(!S.draft) return;
 
   if(S.draft.geo==='calibrate'){
@@ -3742,7 +4164,65 @@ function endPointer(e){
 }
 cv.addEventListener('pointerup',endPointer);
 cv.addEventListener('pointercancel',endPointer);
-cv.addEventListener('contextmenu',e=>e.preventDefault());
+cv.addEventListener('contextmenu', e=>{
+  /* El menú del navegador se traga siempre, con modificador o sin él. */
+  e.preventDefault();
+  /* En Mac, Ctrl+clic es el clic derecho del sistema: el puntero baja con botón 0 y
+     ctrlKey, arranca el préstamo de la herramienta de selección, y acto seguido llega
+     este evento y abre el menú encima de un arrastre ya empezado. Con un modificador de
+     préstamo pulsado el menú no es lo que se ha pedido. Queda en el botón derecho, que
+     en un trackpad es pulsar con dos dedos. */
+  if(e.ctrlKey || e.metaKey) return;
+  const s=sc(); if(!s || s.type!=='map') return;
+  const sp=evPos(e), wp=s2w(sp);
+  const j=tokenEn(wp);
+  const forma = j ? null : hitTest(wp);
+  /* Pulsar sobre algo que ya estaba cogido no deshace la selección: así el menú actúa
+     sobre el grupo entero, que es lo que se espera al pulsar dentro de él. */
+  if(j){
+    if(!S.selTokens.includes(j)){ S.selTokens=[j]; S.sel=null; S.selMulti=[]; }
+    S.tokenSel=j;
+  } else if(forma){
+    if(!S.selMulti.includes(forma)){ S.selMulti=[forma]; S.selTokens=[]; }
+    S.sel=forma;
+  }
+  syncCtxBar(); draw();
+
+  const items=[];
+  let titulo=null;
+  if(j){
+    titulo=j.character;
+    const atados=anclados(j);
+    if(atados.length) items.push({label:'Release '+(atados.length===1?'the pinned effect'
+                                   :atados.length+' pinned effects'),
+                                  hacer:()=>{ push('shapes'); soltarAnclajes(j.id);
+                                              tocarEscena(); syncCtxBar(); draw();
+                                              toast('Released.'); }});
+    items.push({label:'Remove from map', peligro:true, hacer:()=>{ S.tokenSel=j; $('tokenQuitar').click(); }});
+  } else if(forma){
+    const n=S.selMulti.length;
+    titulo = n>1 ? n+' selected' : (forma.name || shapeLabel(forma) || 'Stroke');
+    items.push({label:'Bring forward', hacer:()=>$('btnSubir').click()},
+               {label:'Send back',     hacer:()=>$('btnBajar').click()});
+    if(n<2) items.push({label:'Duplicate', hacer:()=>$('btnDup').click()});
+    const fxSel=S.selMulti.filter(x=>x.kind==='effect');
+    if(fxSel.length && fxSel.some(x=>x.pin))
+      items.push({label:'Unpin from token', hacer:()=>{ push('shapes');
+        fxSel.forEach(x=>delete x.pin); tocarEscena(); syncCtxBar(); draw(); toast('Released.'); }});
+    else if(fxSel.length && S.selTokens.length===1)
+      items.push({label:'Pin to '+S.selTokens[0].character, hacer:()=>$('btnPin').click()});
+    /* Sin tokens en el mapa no hay a qué anclar: no se ofrece algo que iba a negarse. */
+    else if(fxSel.length && jugadores().some(x=>tokenDe(x)))
+      items.push({label:'Pin to player…', hacer:()=>empezarAnclaje(fxSel)});
+    items.push('-', {label:'Delete', peligro:true, hacer:()=>$('btnDel').click()});
+  } else {
+    if(S.portapapeles.length) items.push({label:'Paste here', hacer:()=>pegar(wp)});
+    if(s.shapes.some(x=>x.kind!=='effect'))
+      items.push({label:'Clear measurements', hacer:()=>$('btnClearMeasures').click()});
+  }
+  if(!items.length) return;
+  abrirMapMenu(sp, titulo, items);
+});
 cv.addEventListener('dblclick',ev=>{
   if(S.lasso&&S.lasso.length>2) closeLasso();
   else if(S.wallDraft) cerrarPared();
@@ -3776,25 +4256,40 @@ function setTool(t){
     S.wallDraft=null;
     if(t!=='oclusion') limpiarSeleccionParedes();
     if(t!=='sel' && t!=='effect'){ S.sel=null; S.selMulti=[]; }
+    if(t!=='sel') S.selTokens=[];
     if(t!=='token' && t!=='sel') S.tokenSel=null;
     hideReadout();
   }
+  cerrarMapMenu(); cancelarAnclaje(true);
+  const repetida = t===S.tool;
   S.tool=t;
-  /* Fuera del if de arriba a propósito: volver a pulsar la misma herramienta trae la
-     chuleta de vuelta aunque se hubiera cerrado. */
-  mostrarPista(t);
+  /* Fuera del if de arriba a propósito: volver a pulsar la herramienta que ya está
+     puesta trae la chuleta de vuelta aunque se hubiera cerrado. Cambiar de herramienta
+     no la fuerza: cerrada una vez, cerrada queda. */
+  mostrarPista(t, repetida);
   document.querySelectorAll('#rail button').forEach(b=>b.classList.toggle('on',b.dataset.tool===t));
   $('btnCalibrate').classList.toggle('on',t==='calibrate');
   $('btnFrame').classList.toggle('on',t==='frame');
-  cv.style.cursor = t==='pan'?'grab' : t==='pointer'?'none' : t==='sel'?'default'
-    : t==='frame'?'move' : t==='fog'?'none' : t==='token'?'pointer' : 'crosshair';
+  cursorDeHerramienta();
   syncCtxBar(); draw();
 }
-/* Cada herramienta puede llevar su chuleta. Se muestra al elegirla y se puede cerrar;
-   volver a elegir la herramienta la trae de vuelta, que es justo lo que se espera de
-   una ayuda que no estorba. */
+function cursorDeHerramienta(){
+  const t=S.tool;
+  /* Un modo invisible no es un modo: mientras se tenga pulsado el espacio o Ctrl el
+     puntero dice a qué herramienta se ha cambiado prestada. */
+  if(S.spaceDown){ cv.style.cursor='grab'; return; }
+  if(S.anclando){ cv.style.cursor='crosshair'; return; }
+  if(S.selDown && t!=='sel'){ cv.style.cursor='default'; return; }
+  cv.style.cursor = t==='pan'?'grab' : t==='pointer'?'none' : t==='sel'?'default'
+    : t==='frame'?'move' : t==='fog'?'none' : t==='token'?'pointer' : 'crosshair';
+}
+/* Cada herramienta lleva su chuleta. Se muestra al elegirla y se puede cerrar; volver a
+   pulsar la herramienta que ya está puesta la trae de vuelta. El cierre se recuerda por
+   herramienta y entre sesiones: con once chuletas, reaparecer en cada cambio de
+   herramienta sería justo la ayuda que estorba. */
 const PISTAS = {
   oclusion: {titulo:'Walls', filas:[
+    ['Ctrl + click','Grab an effect or a token without leaving the wall editor'],
     ['Click','Select a segment'],
     ['Shift + click','Add or remove from the selection'],
     ['Double click','Select the whole wall'],
@@ -3803,12 +4298,94 @@ const PISTAS = {
     ['New wall','Start one anywhere, even over another'],
     ['Enter / double click','Finish the wall being drawn'],
     ['Ctrl + Z','Step back one vertex while drawing']
+  ]},
+  pan: {titulo:'Pan and zoom', filas:[
+    ['Drag','Move the view'],
+    ['Wheel','Zoom in and out'],
+    ['Space','Hold it to pan without leaving the tool you are on'],
+    ['Middle mouse','The same, if you would rather not hold a key'],
+    ['Tab','Jump to the next scene in the library'],
+    ['H','Hide the side panel and get the whole screen']
+  ]},
+  sel: {titulo:'Select and move', filas:[
+    ['Click','Pick a measurement, an effect or a player token'],
+    ['Shift + click','Add or remove from the selection'],
+    ['Drag','Move everything selected at once, tokens included'],
+    ['Drag a handle','Resize or reshape a single shape'],
+    ['Overlapping','Whatever is on top answers first, and tokens are on top'],
+    ['Ctrl + C, Ctrl + V','Copy effects one square across; tokens are left alone'],
+    ['Right-click','Opens a menu on whatever is under the pointer, or two-finger tap'],
+    ['Del','Delete the selection; a token only leaves this map'],
+    ['Esc','Let it all go']
+  ]},
+  measure: {titulo:'Measure', filas:[
+    ['Ctrl + click','Grab something already on the map without leaving this tool'],
+    ['Drag','Draw the shape chosen on the bar'],
+    ['Keep','Leave it off and the measurement goes when you let go'],
+    ['Fix','Set a distance and a single click draws it at that size'],
+    ['O','Anchor the origin, so every shape starts from the same point'],
+    ['R C N Q W D','Line, circle, cone, square, wall, freehand'],
+    ['Esc','Cancel the one you are drawing']
+  ]},
+  effect: {titulo:'Effects', filas:[
+    ['Ctrl + click','Grab an effect or a token without leaving this tool'],
+    ['Pin to token','A positioning mode: drop an effect on a player and it follows them'],
+    ['Or after the fact','Right-click a placed effect, Pin to player, then click the player'],
+    ['Catalog','Pick an animation in the Effects tab, then drag on the map'],
+    ['Drag','Place it and size it as you go'],
+    ['Free outline','Trace an irregular area by hand'],
+    ['Right-click a tile','Mark it as a favorite'],
+    ['O','Anchor the origin, so effects start from the same point'],
+    ['They stay','Unlike measurements, effects last until you delete them']
+  ]},
+  fog: {titulo:'Fog of war', filas:[
+    ['Ctrl + click','Grab something on the map without putting the brush down'],
+    ['Hide / Reveal','Which way the stroke works'],
+    ['Brush','Drag to paint; Size sets how wide'],
+    ['Squares','Click or drag over whole grid squares'],
+    ['Rectangle','Drag a box'],
+    ['Lasso','Click the corners, then Enter or double click to close'],
+    ['Dynamic mode','Fog is rebuilt from the tokens, so painting does nothing']
+  ]},
+  token: {titulo:'Player tokens', filas:[
+    ['Ctrl + click','Works from any tool: grab a token wherever you are'],
+    ['Click','Place the player chosen on the bar'],
+    ['Drag','Move a token already on the map'],
+    ['Select tool','Takes tokens too, and moves them with the effects on them'],
+    ['Vision','Its radius is what exploration and dynamic fog reveal'],
+    ['Hidden on table','Tokens are yours by default; the bar can show them'],
+    ['Remove from map','Takes it off this scene only, never off the campaign']
+  ]},
+  pointer: {titulo:'Table pointer', filas:[
+    ['Click','Ping that spot; the mark shows on the table screen too'],
+    ['It fades','About a second later, so it never has to be cleared'],
+    ['Images too','The only tool that works on a full-screen image']
+  ]},
+  calibrate: {titulo:'Calibrate the square', filas:[
+    ['Drag','Across a row of squares on the map, corner to corner'],
+    ['Squares measured','Set that count on the Scene tab before dragging'],
+    ['Why','Everything the table shows is scaled from this one number'],
+    ['After','The tool hands you back to panning on its own']
+  ]},
+  frame: {titulo:'Table framing', filas:[
+    ['Drag','Move what the table screen is showing'],
+    ['Arrows','Nudge it one pixel'],
+    ['Shift + arrow','Nudge it a whole square'],
+    ['Center here','Snap the framing to the middle of your view'],
+    ['Independent','Your own zoom never moves the table']
+  ]},
+  anchor: {titulo:'Anchored origin', filas:[
+    ['Click','Fix the origin somewhere on the map'],
+    ['Then','Measurements and effects all start from that point'],
+    ['O again','Release it and go back to drawing from the cursor']
   ]}
 };
-function mostrarPista(tool){
+function mostrarPista(tool, forzar){
   const p=PISTAS[tool];
   const caja=$('pista');
-  if(!p){ caja.classList.remove('on'); return; }
+  if(!p || (!forzar && (S.pistasCerradas||[]).includes(tool))){
+    caja.classList.remove('on'); return;
+  }
   $('pistaTitulo').textContent=p.titulo;
   const ul=$('pistaCuerpo'); ul.innerHTML='';
   for(const [k,d] of p.filas){
@@ -3818,7 +4395,11 @@ function mostrarPista(tool){
   }
   caja.classList.add('on');
 }
-$('pistaCerrar').onclick=()=>$('pista').classList.remove('on');
+$('pistaCerrar').onclick=()=>{
+  if(!S.pistasCerradas) S.pistasCerradas=[];
+  if(!S.pistasCerradas.includes(S.tool)){ S.pistasCerradas.push(S.tool); tocarEstado(); }
+  $('pista').classList.remove('on');
+};
 
 function syncCtxBar(){
   const t=S.tool;
@@ -3836,14 +4417,21 @@ function syncCtxBar(){
   $('wallWrap').style.display = (t==='measure' && S.medForma==='wall') ? 'flex' : 'none';
   $('brushWrap').style.display = (S.fogShape==='brush') ? 'flex' : 'none';
   /* Cada selector muestra el ajuste de su herramienta, que no arranca en «Free». */
-  $('snapSel').value      = S.snap.measure;
-  $('snapSelFx').value    = S.snap.effect;
-  $('snapSelWall').value  = S.snap.oclusion;
-  $('snapSelToken').value = S.snap.token;
+  /* Un solo control para las cuatro herramientas que colocan algo. Muestra el ajuste de
+     la que esté puesta y lo cambia solo a ella: un vértice de muro quiere esquinas y un
+     token quiere centros, y eso no es una preferencia sino la geometría del tablero. */
+  const conPos = ['measure','effect','oclusion','token'].includes(t);
+  $('grp-pos').classList.toggle('on', conPos);
+  $('posSel').querySelector('option[value="token"]').hidden = t!=='effect';
+  if(conPos) $('posSel').value = snapDe(t);
   $('wallNuevo').classList.toggle('on',S.wallNuevo);
   $('fogHide').classList.toggle('on',S.fogMode==='hide');
   $('fogShow').classList.toggle('on',S.fogMode==='show');
   $('btnAnchor').classList.toggle('on',!!S.anchor);
+  /* El del carril se enciende igual con un origen puesto, no solo mientras se arma:
+     syncCtxBar() corre después del recorrido de setTool(), así que gana este. */
+  const railO=document.querySelector('#rail button[data-tool="anchor"]');
+  if(railO) railO.classList.toggle('on', !!S.anchor || t==='anchor');
   if(t==='oclusion'){
     const lista=paredes();
     let tramos=0, puertas=0;
@@ -3858,22 +4446,34 @@ function syncCtxBar(){
       + (S.selParedes.length ? ' · '+S.selParedes.length+' selected' : '');
   }
   if(t==='token') renderSelectorTokens();
-  $('selName').textContent = S.selMulti.length>1
-    ? S.selMulti.length+' items selected'
-    : (S.sel ? (S.sel.name || shapeLabel(S.sel) || 'Stroke') : 'Nothing selected');
+  /* El botón aparece en cuanto hay un efecto cogido. Con un token cogido ancla directo;
+     sin él abre el modo de elegir jugador, que es la vía larga pero siempre disponible.
+     Y si ya está anclado, suelta. */
+  const fxSel = S.selMulti.filter(x=>x.kind==='effect');
+  const yaAnclados = fxSel.length>0 && fxSel.every(x=>x.pin);
+  $('btnPin').style.display = fxSel.length ? '' : 'none';
+  $('btnPin').textContent = yaAnclados ? 'Unpin'
+    : (S.selTokens.length===1 ? 'Pin to '+S.selTokens[0].character : 'Pin to player…');
+  const nSel = S.selMulti.length + S.selTokens.length;
+  $('selName').textContent = nSel>1
+    ? nSel+' items selected'
+    : (S.selTokens.length===1 ? S.selTokens[0].character
+      : (S.sel ? (S.sel.name || shapeLabel(S.sel) || 'Stroke') : 'Nothing selected'));
   if(S.sel && S.sel.kind==='effect'){
     $('fxBlend').value = S.sel.blend || 'normal';
     $('fxAlpha').value = Math.round((S.sel.alpha!=null?S.sel.alpha:1)*100);
   }
 }
 document.querySelectorAll('#rail button').forEach(b=>b.onclick=()=>setTool(b.dataset.tool));
+/* El ancla se pone y se quita con el mismo botón, y esa lógica ya vivía en la barra. */
+document.querySelector('#rail button[data-tool="anchor"]').onclick=()=>$('btnAnchor').click();
 document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on',x===b));
   document.querySelectorAll('.tabpane').forEach(p=>p.classList.toggle('on',p.id==='tab-'+b.dataset.tab));
   /* Cambiar de pestaña cierra lo que estuviera en curso: mover el encuadre,
      trazar una pared o tener algo seleccionado. */
   if(['frame','oclusion','token','calibrate','anchor'].includes(S.tool)) setTool('pan');
-  else { S.sel=null; S.selMulti=[]; limpiarSeleccionParedes(); S.wallDraft=null; syncCtxBar(); draw(); }
+  else { limpiarSeleccion(); limpiarSeleccionParedes(); S.wallDraft=null; syncCtxBar(); draw(); }
 });
 
 /* paletas */
@@ -3909,10 +4509,39 @@ $('gridOx').oninput=e=>{ cal().ox=parseFloat(e.target.value)||0; tocarEscena(); 
 $('gridOy').oninput=e=>{ cal().oy=parseFloat(e.target.value)||0; tocarEscena(); draw(); };
 $('showGrid').onchange=e=>{ S.showGrid=e.target.checked; draw(); };
 $('btnCalibrate').onclick=()=>setTool('calibrate');
-$('snapSel').onchange     = e=>{ S.snap.measure  = e.target.value; };
-$('snapSelFx').onchange   = e=>{ S.snap.effect   = e.target.value; };
-$('snapSelWall').onchange = e=>{ S.snap.oclusion = e.target.value; };
-$('snapSelToken').onchange= e=>{ S.snap.token    = e.target.value; };
+$('btnPin').onclick=()=>{
+  const fx=S.selMulti.filter(x=>x.kind==='effect');
+  if(!fx.length) return;
+  if(fx.every(x=>x.pin)){
+    push('shapes');
+    fx.forEach(x=>delete x.pin);
+    tocarEscena(); syncCtxBar(); draw();
+    toast(fx.length===1 ? 'Effect released.' : fx.length+' effects released.');
+    return;
+  }
+  const j=S.selTokens[0];
+  if(!j){ empezarAnclaje(fx); return; }   // sin token cogido, se elige uno
+  push('shapes');
+  fx.forEach(x=>{ x.pin=j.id; });
+  tocarEscena(); syncCtxBar(); draw();
+  toast(fx.length===1 ? 'Effect pinned to '+j.character+'.'
+                      : fx.length+' effects pinned to '+j.character+'.');
+};
+const RANURA_POS = {effect:'effect', oclusion:'oclusion', token:'token'};
+const ranuraPos = t => RANURA_POS[t] || 'measure';
+$('posSel').onchange = e=>{
+  S.snap[ranuraPos(S.tool)] = e.target.value;
+  tocarEstado(); draw();
+};
+$('posTodas').onclick = ()=>{
+  const v=$('posSel').value;
+  /* «Anclar a token» solo tiene sentido colocando efectos: al resto se les da el centro
+     de casilla, que es lo más parecido. */
+  const g = v==='token' ? 'center' : v;
+  S.snap.measure=g; S.snap.oclusion=g; S.snap.token=g; S.snap.effect=v;
+  tocarEstado(); syncCtxBar(); draw();
+  toast('Every tool now places on '+$('posSel').selectedOptions[0].textContent.toLowerCase()+'.');
+};
 $('medForma').onchange=e=>{ S.medForma=e.target.value; $('wallWrap').style.display = S.medForma==='wall'?'flex':'none'; };
 $('medDist').oninput=e=>{ S.medDist=Math.max(0,parseFloat(e.target.value)||0); };
 $('persist').onchange=e=>{ S.persist=e.target.checked; };
@@ -3940,7 +4569,7 @@ $('btnClearFx').onclick=async ()=>{
   if(!n){ toast('No effects to clear.'); return; }
   if(!await pedirConfirmar('Clear effects',
       'The '+n+' effects on this map will be removed. Fog and measurements are untouched, and this can be undone.',
-      'Clear')) return;
+      'Clear', true)) return;
   push('shapes');
   const keep=s.shapes.filter(x=>x.kind!=='effect'); s.shapes.length=0; keep.forEach(x=>s.shapes.push(x));
   S.sel=null; tocarEscena(); renderFxList(); limpiarAnimaciones(); draw();
@@ -3951,7 +4580,7 @@ $('btnClearAll').onclick=async ()=>{
   if(!s.shapes.length){ toast('The map is already clear.'); return; }
   if(!await pedirConfirmar('Clear map',
       'Effects and measurements will be removed. Fog is kept, and this can be undone.',
-      'Clear')) return;
+      'Clear', true)) return;
   push('shapes'); s.shapes.length=0;
   S.sel=null; tocarEscena(); renderFxList(); limpiarAnimaciones(); draw();
   toast('Map cleared. Ctrl+Z to bring it back.');
@@ -3959,11 +4588,21 @@ $('btnClearAll').onclick=async ()=>{
 
 $('btnDel').onclick=()=>{
   const grupo = S.selMulti.length ? [...S.selMulti] : (S.sel?[S.sel]:[]);
-  if(!grupo.length) return;
+  const toks = [...S.selTokens];
+  if(!grupo.length && !toks.length) return;
   push('shapes');
   const a=sc().shapes;
   grupo.forEach(x=>{ const i=a.indexOf(x); if(i>=0) a.splice(i,1); });
-  S.sel=null; S.selMulti=[]; tocarEscena(); renderFxList(); syncCtxBar(); draw();
+  /* Borrar un token lo quita de ESTA escena, nunca de la campaña: su ficha y sus puntos
+     de vida siguen donde estaban y volver a colocarlo lo recupera entero. */
+  const t=tokens();
+  toks.forEach(j=>{ delete t[j.id]; soltarAnclajes(j.id); });
+  limpiarSeleccion();
+  tocarEscena(); renderFxList(); syncCtxBar();
+  if(toks.length){ recalcularVision(); renderJugadores(); }
+  draw();
+  if(toks.length) toast(toks.length===1 ? toks[0].character+' taken off the map. Ctrl+Z to undo.'
+                                        : toks.length+' tokens taken off the map. Ctrl+Z to undo.');
 };
 $('btnSubir').onclick=()=>{
   if(!S.sel) return; push('shapes');
@@ -4035,7 +4674,7 @@ $('wallVaciar').onclick=async ()=>{
   const n=paredes().length;
   if(!n){ toast('No walls in this scene.'); return; }
   if(!await pedirConfirmar('Delete all walls',
-      'All '+n+' walls in this scene will be deleted, doors included. This cannot be undone.',
+      'All '+n+' walls in this scene will be deleted, doors included. This can be undone.',
       'Delete', true)) return;
   const s=sc(); push('walls'); s.walls=[]; limpiarSeleccionParedes();
   tocarEscena(); recalcularVision(); draw(); syncCtxBar();
@@ -4053,10 +4692,18 @@ $('tokenVision').oninput=e=>{
 $('verVision').onchange=e=>{ S.verVision=e.target.checked; draw(); };
 $('verLuces').onchange=e=>{ S.verLuces=e.target.checked; draw(); };
 $('tokensMesa').onchange=e=>{ S.tokensMesa=e.target.value; tocarEstado(); draw(); };
+/* Era la última acción destructiva sin red: quitaba el token de la escena sin pasar por
+   el historial, así que no había forma de recuperarlo salvo volver a colocarlo a ojo. */
 $('tokenQuitar').onclick=()=>{
   if(!S.tokenSel){ toast('Pick a player first.'); return; }
+  if(!tokenDe(S.tokenSel)){ toast(S.tokenSel.character+' has no token on this map.'); return; }
+  push('shapes');
+  const quien=S.tokenSel.character;
   delete tokens()[S.tokenSel.id];
-  tocarEscena(); recalcularVision(); renderJugadores(); draw();
+  soltarAnclajes(S.tokenSel.id);
+  S.selTokens=S.selTokens.filter(j=>j!==S.tokenSel);
+  tocarEscena(); recalcularVision(); renderJugadores(); syncCtxBar(); draw();
+  toast(quien+' taken off the map. Ctrl+Z to undo.');
 };
 $('fogModo').onchange=e=>{
   const s=sc(); if(!s) return;
@@ -4076,7 +4723,7 @@ $('fogModo').onchange=e=>{
 $('fogReset').onclick=async ()=>{
   const s=sc(); if(!s||s.type!=='map') return;
   if(!await pedirConfirmar('Reset exploration',
-      'The whole map goes back under fog and everything explored so far is lost.',
+      'The whole map goes back under fog and everything explored so far is cleared. This can be undone.',
       'Reset', true)) return;
   push('fog'); tocarNiebla();
   s.fogCtx.globalCompositeOperation='source-over';
@@ -4134,7 +4781,21 @@ document.querySelectorAll('#campMenuPanel button').forEach(b=>{
   };
 });
 $('btnNextTurn').onclick=nextTurn;
-$('btnClearIni').onclick=()=>{ S.ini.list=[]; S.ini.turnId=null; renderIniList(); draw(); };
+/* Era la única acción destructiva de la aplicación sin confirmación ni historial, y
+   está pegada a «Undo application» con el mismo aspecto: un clic de más en mitad del
+   combate se llevaba el orden entero. */
+$('btnClearIni').onclick=async ()=>{
+  const n=S.ini.list.length;
+  if(!n){ toast('No combatants to clear.'); return; }
+  if(!await pedirConfirmar('Clear initiative',
+      'All '+n+' combatants leave the order, with their hit points, conditions and death saves. '
+      +'Campaign players keep the hit points they have now. This can be undone.',
+      'Clear', true)) return;
+  pushIniUndo();
+  S.ini.list=[]; S.ini.turnId=null; S.ini.selId=null;
+  renderIniList(); draw();
+  toast('Initiative cleared. Ctrl+Z to bring it back.');
+};
 $('iniShow').onchange=e=>{ S.ini.show=e.target.checked; draw(); };
 $('iniCorner').onchange=e=>{ S.ini.corner=e.target.value; draw(); };
 $('iniSize').oninput=e=>{ S.ini.scale=e.target.value/100; $('iniSizeLbl').textContent=e.target.value+'%'; draw(); };
@@ -4315,7 +4976,9 @@ addEventListener('keydown',e=>{
   if(!$('conc').classList.contains('hide')) return;
   if(!$('multi').classList.contains('hide')) return;
   if(/input|select|textarea/i.test(e.target.tagName)) return;
-  if(e.code==='Space'){ S.spaceDown=true; cv.style.cursor='grab'; e.preventDefault(); return; }
+  if(e.code==='Space'){ S.spaceDown=true; cursorDeHerramienta(); e.preventDefault(); return; }
+  /* No lleva return: Ctrl es también el principio de Ctrl+Z, Ctrl+C y Ctrl+V. */
+  if(e.key==='Control' || e.key==='Meta'){ S.selDown=true; cursorDeHerramienta(); }
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){
     /* Con un muro a medias se retira el último vértice puesto: deshacer el muro
        entero cuando solo sobra un punto sería tirar todo el trazado. */
@@ -4336,19 +4999,7 @@ addEventListener('keydown',e=>{
     e.preventDefault(); return;
   }
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='v'){
-    if(S.portapapeles.length && sc()){
-      push('shapes');
-      const g=cal().gridPx, nuevos=[];
-      S.portapapeles.forEach(x=>{
-        const c=JSON.parse(JSON.stringify(x));
-        c.a={x:c.a.x+g,y:c.a.y+g}; c.b={x:c.b.x+g,y:c.b.y+g};
-        if(c.pts) c.pts=c.pts.map(p=>({x:p.x+g,y:p.y+g}));
-        sc().shapes.push(c); nuevos.push(c);
-      });
-      S.selMulti=nuevos; S.sel=nuevos[nuevos.length-1];
-      tocarEscena(); renderFxList(); draw();
-      toast(nuevos.length+' pasted.');
-    }
+    pegar();
     e.preventDefault(); return;
   }
   if(e.key.startsWith('Arrow')){
@@ -4363,7 +5014,8 @@ addEventListener('keydown',e=>{
   if(S.ini.selId && entryKey(k)){ e.preventDefault(); return; }
   if(e.key==='?'){ abrirAtajos(); e.preventDefault(); return; }
   if(k==='escape' && S.ini.entry){ clearEntry(); return; }
-  if(k==='escape'){ S.draft=null; S.drawing=null; S.lasso=null; S.sel=null; S.selMulti=[]; S.wallDraft=null;
+  if(k==='escape'){ cerrarMapMenu(); cancelarAnclaje();
+    S.draft=null; S.drawing=null; S.lasso=null; limpiarSeleccion(); S.wallDraft=null;
     hideReadout(); syncCtxBar(); draw(); return; }
   if(k==='enter'&&S.lasso){ closeLasso(); return; }
   if(k==='enter'&&S.wallDraft){ cerrarPared(); return; }
@@ -4381,13 +5033,44 @@ addEventListener('keydown',e=>{
   }
   if(KEYS[k]) setTool(KEYS[k]);
 });
-addEventListener('keyup',e=>{ if(e.code==='Space'){ S.spaceDown=false; setTool(S.tool); } });
+/* Soltar el espacio solo tiene que devolver el cursor de la herramienta. Pasar por
+   setTool() la contaba como «vuelta a pulsar» y resucitaba la chuleta ya cerrada. */
+addEventListener('keyup',e=>{
+  if(e.code==='Space'){ S.spaceDown=false; cursorDeHerramienta(); }
+  if(e.key==='Control' || e.key==='Meta'){ S.selDown=false; cursorDeHerramienta(); }
+});
+/* Cambiar de ventana con una tecla pulsada no manda el keyup: sin esto la aplicación se
+   quedaba convencida de que el espacio o Ctrl seguían abajo. */
+addEventListener('blur',()=>{ S.spaceDown=false; S.selDown=false; cursorDeHerramienta(); });
 $('toggle').onclick=()=>$('panel').classList.remove('hidden');
 
 let tTimer;
+/* Sesenta y ocho sitios llaman a esto y solo hay un cartel: el segundo aviso dentro de
+   2,6 s borraba el primero sin dejar rastro, y en una ráfaga —elegir varios tramos y
+   borrarlos— solo se llegaba a leer el último. Ahora hacen cola. */
+const COLA_TOAST_MAX = 2;
+let colaToast = [];
 function toast(msg){
-  const t=$('toast'); t.textContent=msg; t.classList.add('show');
-  clearTimeout(tTimer); tTimer=setTimeout(()=>t.classList.remove('show'),2600);
+  const t=$('toast');
+  if(t.classList.contains('show')){
+    /* Repetir el que ya está puesto o llenar la cola de mensajes viejos no ayuda a
+       nadie: la cola es corta a propósito, lo último que pasó es lo que importa. */
+    if(t.textContent===msg || colaToast.includes(msg)) return;
+    colaToast.push(msg);
+    while(colaToast.length>COLA_TOAST_MAX) colaToast.shift();
+    return;
+  }
+  mostrarToast(msg);
+}
+function mostrarToast(msg){
+  const t=$('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(tTimer);
+  tTimer=setTimeout(()=>{
+    t.classList.remove('show');
+    /* 260 ms es lo que tarda en desvanecerse: encadenar antes sería un parpadeo. */
+    if(colaToast.length) setTimeout(()=>{ const s=colaToast.shift(); if(s) mostrarToast(s); }, 260);
+  }, 2600);
 }
 
 /* ============ diálogos propios ============ */
@@ -4472,6 +5155,15 @@ const ATAJOS = [
   ]],
   ['Measurement shapes', [
     ['R','Line'], ['C','Circle'], ['N','Cone'], ['Q','Square'], ['W','Wall'], ['D','Freehand']
+  ]],
+  ['Selecting', [
+    ['Ctrl + click','Borrow the select tool from wherever you are'],
+    ['Right-click','Menu for what is under the pointer: shape, token or empty map'],
+    ['On a trackpad','Two-finger tap. Ctrl + click is the grab, not the menu'],
+    ['Click','Replaces the selection — topmost wins, tokens are topmost'],
+    ['Shift + click','Add or remove; on empty space it keeps what you had'],
+    ['Drag','Moves everything selected, effects and tokens together'],
+    ['Del','Delete; a token only leaves this map, never the campaign']
   ]],
   ['View', [
     ['Wheel','Zoom'], ['Space + drag','Pan the map'], ['H','Hide the panel'],
@@ -4624,6 +5316,10 @@ async function arrancar(){
       }
       if(st.tokensMesa){ S.tokensMesa=st.tokensMesa; $('tokensMesa').value=S.tokensMesa; }
       S.pasosNunca=!!st.pasosNunca;
+      if(Array.isArray(st.pistasCerradas)) S.pistasCerradas=st.pistasCerradas;
+      /* La colocación no se guardaba: cada recarga volvía a los valores de fábrica y
+         no había forma de dejarla como uno la quiere. */
+      if(st.snap) S.snap={...S.snap, ...st.snap};
       if(st.fx){
         CAT.favoritos=st.fx.favoritos||[]; CAT.recientes=st.fx.recientes||[];
         CAT.activas=st.fx.activas!==false; $('animOn').checked=CAT.activas;
