@@ -1,5 +1,51 @@
 # Changelog
 
+## v1.2.0 — A look of its own
+
+The interface stopped looking like a developer tool. Everything the app draws — panels and
+map alike — now comes from one palette, so it can be themed, and three themes ship with it.
+Along the way the toolbars stopped moving under the cursor, and a settings menu turned up a
+handful of things that were never being remembered.
+
+### Themes
+- Three of them: **Ember**, warm amber over neutral greys, and the new default; **Slate**,
+  the original cold blue, kept exactly as it was; and **Parchment**, ink on cream for a lit
+  room. The table screen stays dark under all three, so a bright theme never washes out the
+  map or glares across a dark table
+- Chosen from a new settings menu, behind the gear beside the campaign selector, and applied
+  as you pick so you can compare them against the map behind
+
+### Interface
+- Panels are separated by tone rather than outlined, and section headings are no longer set
+  in shouted capitals
+- Tool hints moved to a single quiet line at the bottom of the screen, one per tool. They no
+  longer need dismissing, so the setting that remembered dismissals is gone
+- Undo and redo have buttons, so they are not something you have to already know about
+- Toolbars keep their width while you work. Controls that only apply sometimes now hold
+  their place instead of appearing and shifting everything sideways mid-click
+- A status bar along the bottom: scale, zoom, and whether the table view is open
+- Shape, effect and fog options are now segmented buttons rather than dropdowns
+- Interface size can be set to 85%, 100% or 115% for smaller screens. The map is never
+  scaled, so the table stays true to size
+- The Scene tab is gone. Map scale joined the monitor settings — they are two halves of the
+  same calculation and were in different tabs — and the fog settings joined the fog tool
+
+### Fixes
+- **Most of the settings were never being restored.** Catalog favourites, monitor diagonal,
+  screen calibration, placement mode, image brightness and more were saved correctly and
+  then read from the wrong record on startup
+- **Clearing the library deleted every campaign's scenes**, not just the current one, and
+  threw away every downloaded effect along with them
+- Holding Ctrl to grab something off the map did nothing while the pan tool was selected
+- The cursor vanished entirely when painting fog with the rectangle or lasso
+- Measured squares grow from the centre, matching how effect areas have always worked
+- Placing an animated effect releases it, so the next click moves it instead of placing
+  another. Escape clears a picked effect
+- Escape now clears a selected wall
+- A token already on the map can only be moved by dragging it
+- Player vision and light markers start hidden
+- The animation catalog can be collapsed like every other section
+
 ## v1.1.0 — Working from the map
 
 Almost all of this release comes from one piece of feedback: doing anything to something

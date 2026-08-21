@@ -5,7 +5,7 @@
    are actually running. Set it in the commit that ships a release, not on every edit;
    it is only ever compared for equality, never ordered, so any distinct string works —
    but a version must never be reused, or returning visitors keep the old assets. */
-const VERSION = 'veilcast-v1.1.0';
+const VERSION = 'veilcast-v1.2.0';
 const ASSETS = [
   './',
   './index.html',

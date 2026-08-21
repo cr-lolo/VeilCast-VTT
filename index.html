@@ -10,15 +10,125 @@
 <meta name="theme-color" content="#0B1018">
 <meta name="mobile-web-app-capable" content="yes">
 <style>
+  /* ---------- paleta ----------
+     Un tema es este bloque y nada más: solo redefine fichas, nunca reglas de componente.
+     Así una ficha no puede existir en un tema y faltar en otro.
+     Las variantes «-rgb» son el mismo color en canales sueltos, para las docenas de
+     rgba() que hay repartidas. Sin ellas media hoja de estilo se quedaría fuera del tema.
+     El lienzo no sabe leer variables CSS: se resuelven una vez en PAL (ver leerPaleta). */
   :root{
-    --ink:#080A0F; --panel:#111722; --panel-2:#182131; --line:#27344A;
-    --text:#E4DFD1; --muted:#8494AC;
-    --measure:#5AD2E8; --fog:#E0A33C; --danger:#E0603C; --frame:#8BE07A; --point:#FFD86B;
+    --ink:#0B0B0C;        --ink-rgb:11,11,12;
+    --ink-deep:#050505;   --ink-deep-rgb:5,5,5;
+    --panel:#1A1A1B;      --panel-rgb:26,26,27;
+    --panel-2:#232324;
+    --panel-3:#131314;
+    --panel-hover:#2B2B2C; --line-hover:#4A4A4C;
+    --field:#0F0F10;
+    --line:#333334;       --line-rgb:51,51,52;
+    --text:#EDE7DC;       --text-rgb:237,231,220;
+    --text-soft:#BDB6AA;
+    --muted:#8E8880;
+    --muted-2:#6A655E;
+    --measure:#E0A33C;      --measure-rgb:224,163,60;
+    --measure-soft:#F6DFB4; --measure-soft-rgb:246,223,180;
+    --fog:#6E93B8;          --fog-rgb:110,147,184;
+    --fog-soft:#CBDCEB;
+    --danger:#C4543A;       --danger-rgb:196,84,58;
+    --danger-soft:#F0C4B6;
+    --danger-2:#C49080;
+    --frame:#7FA860;        --frame-rgb:127,168,96;
+    --frame-soft:#D6E8C6;
+    --point:#F0C860;        --point-rgb:240,200,96;
+    --ring:#FFFFFF;         --ring-rgb:255,255,255;
+    --shadow-rgb:0,0,0;
     --panel-w:344px;
+    --ui:1;            /* escala del cromo; el mapa nunca se toca */
     --radius:6px;
     --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
     --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   }
+
+  /* ---------- temas ----------
+     Solo fichas, nunca reglas de componente: así ninguna ficha puede existir en un tema
+     y faltar en otro. Slate no lleva bloque porque es :root: el tema de fábrica no debe
+     depender de que cargue nada más.
+
+     Dos cosas que valen para todos:
+     · --ink-deep se queda OSCURO también en los temas claros. Es la niebla del mapa y el
+       fondo de la ventana de la mesa: una niebla clara taparía menos, y una mesa clara
+       deslumbra en una sala a oscuras. El tema viste el portátil del director, no la mesa.
+     · Las fichas «-soft» son el texto que va ENCIMA del tinte de su acento. En oscuro son
+       claras; en claro tienen que ser oscuras o desaparecen. Es lo único que de verdad se
+       rompe al pasar a fondo claro. */
+
+  /* El azul frío original. Fue el aspecto de fábrica hasta la v1.2.0 y sigue aquí
+     entero: quien lo tuviera puesto lo conserva al actualizar. */
+  :root[data-tema="slate"]{
+    --ink:#080A0F;        --ink-rgb:8,10,15;
+    --ink-deep:#05070B;   --ink-deep-rgb:5,7,11;      /* niebla, contornos, etiquetas */
+    --panel:#111722;      --panel-rgb:17,23,34;
+    --panel-2:#182131;
+    --field:#0B111A;                                   /* fondo de los campos */
+    --line:#27344A;       --line-rgb:39,52,74;
+    --text:#E4DFD1;      --text-rgb:228,223,209;
+    --text-soft:#B9C2D0;                               /* texto secundario en el lienzo */
+    --muted:#8494AC;
+    --muted-2:#6C7C94;                                 /* el más apagado de todos */
+    --measure:#5AD2E8;      --measure-rgb:90,210,232;
+    --measure-soft:#CFF3FA; --measure-soft-rgb:207,243,250;
+    --fog:#E0A33C;          --fog-rgb:224,163,60;
+    --fog-soft:#FBE3B4;
+    --danger:#E0603C;       --danger-rgb:224,96,60;
+    --danger-soft:#F6C9BC;
+    --frame:#8BE07A;        --frame-rgb:139,224,122;
+    --frame-soft:#DBF5D3;
+    --point:#FFD86B;        --point-rgb:255,216,107;
+    --ring:#FFFFFF;       --ring-rgb:255,255,255;       /* aro del token activo */
+    --panel-3:#0D131C;                                 /* pie del degradado del panel */
+    --panel-hover:#20293B; --line-hover:#3A4A66;       /* botón bajo el puntero */
+    --danger-2:#D9A08E;                                /* rojo apagado de la barra */
+    --shadow-rgb:0,0,0;
+  }
+
+  /* Papel: la mesa de día, o una sala con luz. Tinta sobre crema y un acento de óxido.
+     Es el tema que de verdad pone a prueba la capa de fichas. */
+  :root[data-tema="parchment"]{
+    --ink:#DED6C4;        --ink-rgb:222,214,196;
+    --ink-deep:#3E362B;   --ink-deep-rgb:62,54,43;
+    --panel:#FBF7EC;      --panel-rgb:251,247,236;
+    --panel-2:#F2ECDC;
+    --panel-3:#E8E0CC;
+    --panel-hover:#EDE5D2; --line-hover:#A89C82;
+    --field:#FFFDF6;
+    --line:#C9BFA8;       --line-rgb:201,191,168;
+    --text:#241E16;       --text-rgb:36,30,22;
+    --text-soft:#4A4034;
+    --muted:#6B5F4E;
+    --muted-2:#8A7D69;
+    --measure:#8C3A24;      --measure-rgb:140,58,36;
+    --measure-soft:#5A2214; --measure-soft-rgb:90,34,20;
+    --fog:#7A6320;          --fog-rgb:122,99,32;
+    --fog-soft:#42350E;
+    --danger:#A32E1E;       --danger-rgb:163,46,30;
+    --danger-soft:#6B1C10;
+    --danger-2:#8A4030;
+    --frame:#3F6B2A;        --frame-rgb:63,107,42;
+    --frame-soft:#27431A;
+    --point:#8A6410;        --point-rgb:138,100,16;
+    --ring:#241E16;         --ring-rgb:36,30,22;
+    /* Sombra parda en vez de negra: el mismo alfa pesa mucho menos sobre crema. */
+    --shadow-rgb:120,105,80;
+  }
+
+  /* Escala del cromo. `zoom` reajusta la maquetación de verdad —no es un transform que
+     deje el hueco original—, y solo se aplica a las superficies de la interfaz: el lienzo
+     y los menús flotantes que se colocan con coordenadas de puntero se quedan fuera, o
+     las cuentas dejarían de cuadrar. */
+  #panel,#rail,#ctxbar,#pista,#estado,#onboard,#toast,#entry,
+  #modal .card,#jugador .card,#atajos .card,#conc .card,#multi .card,
+  #dlgTexto .card,#dlgConfirmar .card,#dlgAjustes .card{zoom:var(--ui)}
+  /* No hace falta compensar el anclaje al panel: zoom escala tanto el ancho del panel
+     como el `left` de quien se apoya en él, así que siguen cuadrando solos. */
   *{box-sizing:border-box}
   html,body{height:100%;margin:0;overflow:hidden;background:var(--ink);color:var(--text);
     font-family:var(--sans);-webkit-tap-highlight-color:transparent}
@@ -30,18 +140,18 @@
 
   /* ---------- panel lateral ---------- */
   #panel{position:absolute;top:0;left:0;bottom:0;width:var(--panel-w);z-index:10;
-    background:linear-gradient(180deg,var(--panel) 0%, #0D131C 100%);
-    border-right:1px solid var(--line);display:flex;flex-direction:column;
+    background:linear-gradient(180deg,var(--panel) 0%, var(--panel-3) 100%);
+    display:flex;flex-direction:column;
     transition:transform .18s ease}
   #panel.hidden{transform:translateX(-100%)}
   .brand{padding:13px 16px 9px;border-bottom:1px solid var(--line);flex:none}
-  .brand h1{margin:0;font-size:12px;letter-spacing:.18em;text-transform:uppercase;font-weight:600}
+  .brand h1{margin:0;font-size:14px;letter-spacing:-.01em;font-weight:600}
   .brand p{margin:3px 0 0;font-size:11px;color:var(--muted);font-family:var(--mono)}
   #tabs{display:flex;flex:none;border-bottom:1px solid var(--line)}
   #tabs button{flex:1 1 0;min-width:0;border:none;border-radius:0;background:transparent;padding:10px 2px;
-    font-size:10px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);
+    font-size:12px;letter-spacing:0;color:var(--muted);
     border-bottom:2px solid transparent;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  #tabs button.on{color:var(--text);border-bottom-color:var(--measure);background:rgba(90,210,232,.06)}
+  #tabs button.on{color:var(--text);border-bottom-color:var(--measure);background:rgba(var(--measure-rgb),.06)}
   .tabpane{display:none;overflow-y:auto;overscroll-behavior:contain;flex:1}
   .tabpane.on{display:block}
   section{border-bottom:1px solid var(--line);padding:12px 14px 14px}
@@ -55,11 +165,11 @@
      aviso: en la columna de 344 px salía estrechísimo y tapaba los botones de la
      biblioteca, que es justo lo que hay que usar en el paso uno. */
   #onboard{position:absolute;top:52px;right:74px;z-index:12;width:320px;display:none;
-    background:rgba(17,23,34,.96);border:1px solid var(--line);border-radius:10px;
+    background:rgba(var(--panel-rgb),.96);border-radius:10px;
     backdrop-filter:blur(6px);padding:14px 16px 12px;
-    box-shadow:0 12px 32px rgba(0,0,0,.45)}
+    box-shadow:0 12px 32px rgba(var(--shadow-rgb),.45)}
   #onboard.on{display:block}
-  #onboard h4{margin:0 0 10px;font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  #onboard h4{margin:0 0 10px;font-size:13px;letter-spacing:-.01em;
     color:var(--measure);font-weight:600}
   #onboard p{margin:11px 0 0;font-size:11px;line-height:1.45;color:var(--muted)}
   #onboardCerrar{position:absolute;top:7px;right:8px;padding:1px 6px;font-size:13px;
@@ -76,7 +186,7 @@
     color:var(--muted);text-align:center;border:1px solid var(--line);border-radius:50%;
     width:18px;height:18px;line-height:16px}
   #pasos li.ok{color:var(--muted)}
-  #pasos li.ok::before{content:'✓';color:#0B111A;background:var(--frame);border-color:var(--frame)}
+  #pasos li.ok::before{content:'✓';color:var(--field);background:var(--frame);border-color:var(--frame)}
   #pasos li.ok b{text-decoration:line-through;color:var(--muted);font-weight:500}
   #pasos li.now::before{border-color:var(--measure);color:var(--measure)}
   #pasos b{grid-column:2;color:var(--text);font-weight:600}
@@ -84,25 +194,28 @@
   #sinCalibrar{color:var(--fog)}
   #inilist{max-height:330px;overflow-y:auto}
   #fxlist{max-height:200px;overflow-y:auto}
-  .eyebrow{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0 0 9px;font-weight:600}
+  /* Antes: 10px en versales con .16em de tracking. Catorce secciones gritando a la vez
+     es de las cosas que más delatan una interfaz hecha a ojo. En redonda y con su
+     tamaño se leen igual y no compiten con el contenido. */
+  .eyebrow{font-size:12px;letter-spacing:0;text-transform:none;color:var(--muted);margin:0 0 9px;font-weight:600}
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
   .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 
   button,.filebtn{font:inherit;font-size:12px;color:var(--text);background:var(--panel-2);
     border:1px solid var(--line);border-radius:var(--radius);padding:8px 6px;cursor:pointer;
     text-align:center;line-height:1.2;transition:background .12s,border-color .12s}
-  button:hover,.filebtn:hover{background:#20293B;border-color:#3A4A66}
+  button:hover,.filebtn:hover{background:var(--panel-hover);border-color:var(--line-hover)}
   button:focus-visible,.filebtn:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--measure);outline-offset:1px}
-  button.on{background:rgba(90,210,232,.14);border-color:var(--measure);color:#CFF3FA}
+  button.on{background:rgba(var(--measure-rgb),.14);border-color:var(--measure);color:var(--measure-soft)}
   button.wide{width:100%}
   button.ghost{background:transparent}
   label.field{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;color:var(--muted);margin:7px 0}
   input[type=number],input[type=text],select{font:inherit;font-family:var(--mono);font-size:12px;width:92px;
-    padding:5px 6px;color:var(--text);background:#0B111A;border:1px solid var(--line);border-radius:4px}
+    padding:5px 6px;color:var(--text);background:var(--field);border:1px solid var(--line);border-radius:4px}
   select.wide{width:100%;margin-top:3px}
   input[type=range]{width:100%;accent-color:var(--measure)}
   .hint{font-size:11px;color:var(--muted);line-height:1.45;margin:8px 0 0}
-  kbd{font-family:var(--mono);font-size:10px;background:#0B111A;border:1px solid var(--line);
+  kbd{font-family:var(--mono);font-size:10px;background:var(--field);border:1px solid var(--line);
     border-radius:3px;padding:1px 4px;color:var(--text)}
 
   /* ---------- biblioteca ---------- */
@@ -110,24 +223,24 @@
   .lib button{padding:0;height:62px;background-size:cover;background-position:center;
     position:relative;overflow:hidden;border-radius:5px}
   .lib button.on{border-color:var(--frame);box-shadow:0 0 0 1px var(--frame)}
-  .lib button .nm{position:absolute;left:0;right:0;bottom:0;background:rgba(5,7,11,.8);font-size:9px;
+  .lib button .nm{position:absolute;left:0;right:0;bottom:0;background:rgba(var(--ink-deep-rgb),.8);font-size:9px;
     font-family:var(--mono);padding:2px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left}
-  .lib button .tp{position:absolute;top:3px;left:3px;background:rgba(5,7,11,.8);border-radius:3px;
+  .lib button .tp{position:absolute;top:3px;left:3px;background:rgba(var(--ink-deep-rgb),.8);border-radius:3px;
     font-size:8px;font-family:var(--mono);padding:1px 4px;letter-spacing:.06em}
   .lib button.on .tp{color:var(--frame)}
   .lib button.arrastrando{opacity:.35}
   .lib button.destino{box-shadow:0 0 0 2px var(--measure)}
 
   /* ---------- lista de efectos ---------- */
-  .fxrow{display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid rgba(39,52,74,.6);font-size:12px}
+  .fxrow{display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid rgba(var(--line-rgb),.6);font-size:12px}
   .fxrow .dot{width:10px;height:10px;border-radius:2px;flex:none}
   .fxrow .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .fxrow button{padding:3px 6px;font-size:11px}
 
   /* ---------- iniciativa ---------- */
   .ini{display:flex;align-items:center;gap:7px;padding:6px 6px;border-radius:5px;cursor:pointer;
-    border-bottom:1px solid rgba(39,52,74,.5)}
-  .ini:hover{background:rgba(90,210,232,.07)}
+    border-bottom:1px solid rgba(var(--line-rgb),.5)}
+  .ini:hover{background:rgba(var(--measure-rgb),.07)}
   .ini .iv{font-family:var(--mono);font-size:12px;color:var(--muted);min-width:20px;text-align:right}
   .ini .dot{width:9px;height:9px;border-radius:2px;flex:none}
   .ini .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12.5px}
@@ -140,38 +253,38 @@
     background:transparent;border-color:transparent;color:var(--muted)}
   .ini .x{font-size:14px;margin-left:5px}
   .ini .x:hover{color:var(--danger);border-color:var(--line)}
-  .ini.turn{background:rgba(90,210,232,.13);box-shadow:inset 2px 0 0 var(--measure)}
+  .ini.turn{background:rgba(var(--measure-rgb),.13);box-shadow:inset 2px 0 0 var(--measure)}
   .ini.turn .nm{font-weight:600}
   .ini.down .nm{opacity:.5;text-decoration:line-through}
-  .ini.sel{background:rgba(90,210,232,.09);border-bottom-color:transparent}
+  .ini.sel{background:rgba(var(--measure-rgb),.09);border-bottom-color:transparent}
   .ini .pos{font-family:var(--mono);font-size:11px;color:var(--muted);min-width:14px;text-align:right}
-  .ini .bar{width:54px;height:7px;border-radius:4px;background:rgba(255,255,255,.10);position:relative;overflow:hidden;flex:none}
+  .ini .bar{width:54px;height:7px;border-radius:4px;background:rgba(var(--ring-rgb),.10);position:relative;overflow:hidden;flex:none}
   .ini .bar i{position:absolute;top:0;bottom:0;left:0;display:block;border-radius:4px}
-  .ini .bar .tp{background:#CFF3FA;opacity:.85}
+  .ini .bar .tp{background:var(--measure-soft);opacity:.85}
   .ini .cd{display:inline-flex;gap:3px;margin-left:5px;vertical-align:-2px}
   .ini .cd svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
   .ini .ed{font-size:12px}
   .ini .ed:hover{color:var(--text);border-color:var(--line)}
 
   .strip{padding:9px 8px 11px;margin:0 0 6px;border-radius:0 0 6px 6px;
-    background:rgba(90,210,232,.06);border:1px solid rgba(90,210,232,.18);border-top:none}
+    background:rgba(var(--measure-rgb),.06);border:1px solid rgba(var(--measure-rgb),.18);border-top:none}
   .strip .modes{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:7px}
   .strip .modes button{font-size:11px;padding:6px 2px}
-  .strip .modes button.on{background:rgba(224,96,60,.16);border-color:var(--danger);color:#F6C9BC}
-  .strip .modes button.heal.on{background:rgba(139,224,122,.16);border-color:var(--frame);color:#DBF5D3}
-  .strip .modes button.temp.on{background:rgba(90,210,232,.16);border-color:var(--measure);color:#CFF3FA}
+  .strip .modes button.on{background:rgba(var(--danger-rgb),.16);border-color:var(--danger);color:var(--danger-soft)}
+  .strip .modes button.heal.on{background:rgba(var(--frame-rgb),.16);border-color:var(--frame);color:var(--frame-soft)}
+  .strip .modes button.temp.on{background:rgba(var(--measure-rgb),.16);border-color:var(--measure);color:var(--measure-soft)}
   .strip .apply{display:flex;gap:5px}
   .strip .apply input{flex:1;width:auto;text-align:center;font-size:14px;padding:7px}
   .strip .apply button{min-width:66px}
   .strip .conds{display:flex;flex-wrap:wrap;gap:4px;margin-top:9px}
   .strip .conds button{padding:4px;width:28px;height:28px;display:flex;align-items:center;justify-content:center}
   .strip .conds button svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-  .strip .conds button.on{background:rgba(224,163,60,.18);border-color:var(--fog);color:#FBE3B4}
+  .strip .conds button.on{background:rgba(var(--fog-rgb),.18);border-color:var(--fog);color:var(--fog-soft)}
   .strip .saves{display:flex;align-items:center;gap:6px;margin-top:10px;font-size:11px;color:var(--muted)}
   .strip .saves .pips{display:flex;gap:5px}
   .strip .saves .pip{width:17px;height:17px;border-radius:50%;border:1.5px solid var(--line);background:transparent;padding:0}
-  .strip .saves .pip.ok{background:#8BE07A;border-color:#8BE07A}
-  .strip .saves .pip.ko{background:#E0603C;border-color:#E0603C}
+  .strip .saves .pip.ok{background:var(--frame);border-color:var(--frame)}
+  .strip .saves .pip.ko{background:var(--danger);border-color:var(--danger)}
 
   .spr{width:34px;height:34px;padding:0;background-size:cover;background-position:center;border-radius:5px}
   .spr.on{border-color:var(--measure);box-shadow:0 0 0 1px var(--measure)}
@@ -179,72 +292,73 @@
   #fxlibrary{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:9px}
   #fxlibrary button{padding:0;height:54px;background-size:cover;background-position:center;
     position:relative;overflow:hidden;border-radius:5px}
-  #fxlibrary .nm{position:absolute;left:0;right:0;bottom:0;background:rgba(5,7,11,.8);
+  #fxlibrary .nm{position:absolute;left:0;right:0;bottom:0;background:rgba(var(--ink-deep-rgb),.8);
     font-size:9px;font-family:var(--mono);padding:1px 3px}
   #catgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:9px;max-height:420px;overflow-y:auto}
   #catgrid button.cat{padding:0;height:66px;background-size:cover;background-position:center;
-    background-color:#0B111A;position:relative;overflow:hidden;border-radius:5px}
+    background-color:var(--field);position:relative;overflow:hidden;border-radius:5px}
   #catgrid button.cat.on{border-color:var(--measure);box-shadow:0 0 0 1px var(--measure)}
-  #catgrid .nm{position:absolute;left:0;right:0;bottom:0;background:rgba(5,7,11,.82);font-size:9.5px;
+  #catgrid .nm{position:absolute;left:0;right:0;bottom:0;background:rgba(var(--ink-deep-rgb),.82);font-size:9.5px;
     padding:2px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left}
-  #catgrid .fav{position:absolute;top:3px;right:4px;color:#FFD86B;font-size:11px;
-    text-shadow:0 0 4px rgba(0,0,0,.9)}
-  #catgrid .tp{position:absolute;top:3px;left:3px;background:rgba(5,7,11,.8);border-radius:3px;
+  #catgrid .fav{position:absolute;top:3px;right:4px;color:var(--point);font-size:11px;
+    text-shadow:0 0 4px rgba(var(--shadow-rgb),.9)}
+  #catgrid .tp{position:absolute;top:3px;left:3px;background:rgba(var(--ink-deep-rgb),.8);border-radius:3px;
     font-size:8px;font-family:var(--mono);padding:1px 4px;color:var(--muted)}
   /* El menú del mapa comparte aspecto con el de la campaña: es el mismo gesto. */
   #campMenuPanel,#mapMenu{position:absolute;z-index:40;top:96px;left:16px;width:220px;padding:5px;
-    background:var(--panel);border:1px solid var(--line);border-radius:8px;
-    box-shadow:0 12px 32px rgba(0,0,0,.5);display:flex;flex-direction:column;gap:2px}
+    background:var(--panel);border-radius:8px;
+    box-shadow:0 12px 32px rgba(var(--shadow-rgb),.5);display:flex;flex-direction:column;gap:2px}
   #campMenuPanel.hide,#mapMenu.hide{display:none}
   #campMenuPanel button,#mapMenu button{text-align:left;background:transparent;border-color:transparent;padding:8px 10px}
   #campMenuPanel button:hover,#mapMenu button:hover{background:var(--panel-2);border-color:var(--line)}
   #campMenuPanel button.peligro,#mapMenu button.peligro{color:var(--danger)}
   #campMenuPanel .sepm,#mapMenu .sepm{height:1px;background:var(--line);margin:3px 0}
   #mapMenu{width:224px}
-  #mapMenu .cab{padding:5px 10px 6px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  #mapMenu .cab{padding:5px 10px 6px;font-size:11px;letter-spacing:0;
     color:var(--muted);font-family:var(--mono);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   /* Cartel del modo «elige jugador»: la aplicación se queda esperando un clic concreto y
      tiene que decirlo, con su salida a la vista. */
   #anclaAviso{position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:14;
-    display:none;align-items:center;gap:10px;background:rgba(17,23,34,.96);
+    display:none;align-items:center;gap:10px;background:rgba(var(--panel-rgb),.96);
     border:1px solid var(--point);border-radius:8px;padding:7px 12px;font-size:12px;
-    color:var(--text);box-shadow:0 10px 28px rgba(0,0,0,.45)}
+    color:var(--text);box-shadow:0 10px 28px rgba(var(--shadow-rgb),.45)}
   #anclaAviso.on{display:flex}
   #anclaAviso b{color:var(--point);font-weight:600}
   #tip{position:absolute;z-index:40;display:none;pointer-events:none;white-space:nowrap;
-    background:rgba(8,10,15,.96);border:1px solid var(--line);border-radius:4px;
+    background:rgba(var(--ink-rgb),.96);border-radius:4px;
     padding:4px 8px;font-size:11px;color:var(--text)}
-  #entry{position:absolute;left:50%;bottom:78px;transform:translateX(-50%);z-index:13;display:none;
-    background:rgba(8,10,15,.95);border:1px solid var(--measure);border-radius:8px;padding:9px 14px;
+  #entry{position:absolute;left:50%;bottom:160px;transform:translateX(-50%);z-index:13;display:none;
+    background:rgba(var(--ink-rgb),.95);border:1px solid var(--measure);border-radius:8px;padding:9px 14px;
     font-family:var(--mono);font-size:14px;color:var(--text);pointer-events:none}
   #entry b{color:var(--measure);font-weight:600}
 
-  .multi{display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid rgba(39,52,74,.5);font-size:12px}
+  .multi{display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid rgba(var(--line-rgb),.5);font-size:12px}
   .multi .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .multi button{padding:4px 8px;font-size:11px;min-width:66px}
-  .multi button.full{background:rgba(224,96,60,.18);border-color:var(--danger);color:#F6C9BC}
-  .multi button.half{background:rgba(224,163,60,.18);border-color:var(--fog);color:#FBE3B4}
+  .multi button.full{background:rgba(var(--danger-rgb),.18);border-color:var(--danger);color:var(--danger-soft)}
+  .multi button.half{background:rgba(var(--fog-rgb),.18);border-color:var(--fog);color:var(--fog-soft)}
 
   /* ---------- diálogo ---------- */
-  #modal,#jugador,#atajos,#conc,#multi,#dlgTexto,#dlgConfirmar{position:absolute;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;
-    background:rgba(5,7,11,.62);backdrop-filter:blur(3px)}
-  #modal.hide,#jugador.hide,#atajos.hide,#conc.hide,#multi.hide,#dlgTexto.hide,#dlgConfirmar.hide{display:none}
-  #modal .card,#jugador .card,#atajos .card,#conc .card,#multi .card,#dlgTexto .card,#dlgConfirmar .card{width:330px;background:var(--panel);border:1px solid var(--line);border-radius:10px;
-    padding:18px 18px 16px;box-shadow:0 18px 48px rgba(0,0,0,.55)}
-  #modal h2,#jugador h2,#atajos h2,#conc h2,#multi h2,#dlgTexto h2,#dlgConfirmar h2{margin:0 0 14px;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  #modal,#jugador,#atajos,#conc,#multi,#dlgTexto,#dlgConfirmar,#dlgAjustes{position:absolute;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;
+    background:rgba(var(--ink-deep-rgb),.62);backdrop-filter:blur(3px)}
+  #modal.hide,#jugador.hide,#atajos.hide,#conc.hide,#multi.hide,#dlgTexto.hide,#dlgConfirmar.hide,#dlgAjustes.hide{display:none}
+  #modal .card,#jugador .card,#atajos .card,#conc .card,#multi .card,#dlgTexto .card,#dlgConfirmar .card,#dlgAjustes .card{width:330px;background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:18px 18px 16px;box-shadow:0 18px 48px rgba(var(--shadow-rgb),.55)}
+  #modal h2,#jugador h2,#atajos h2,#conc h2,#multi h2,#dlgTexto h2,#dlgConfirmar h2,#dlgAjustes h2{margin:0 0 14px;font-size:15px;letter-spacing:-.01em;color:var(--text);font-weight:600}
   #modal label,#jugador label,#multi label,#dlgTexto label{display:block;font-size:11px;color:var(--muted);margin-bottom:10px}
   #modal label input,#modal label select,#jugador label input,#multi label input,#dlgTexto label input{width:100%;margin-top:4px;padding:8px;font-size:13px}
   #modal .two,#jugador .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   #modal .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin:2px 0 14px}
   #modal .seg button{font-size:11px;padding:7px 4px}
-  #modal .seg button.on{background:rgba(90,210,232,.14);border-color:var(--measure);color:#CFF3FA}
-  #modal .acts,#jugador .acts,#atajos .acts,#conc .acts,#multi .acts,#dlgTexto .acts,#dlgConfirmar .acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
-  #modal .acts .primary,#jugador .acts .primary,#atajos .acts .primary,#conc .acts .primary,#multi .acts .primary,#dlgTexto .acts .primary,#dlgConfirmar .acts .primary{background:rgba(90,210,232,.16);border-color:var(--measure);color:#CFF3FA}
+  #modal .seg button.on{background:rgba(var(--measure-rgb),.14);border-color:var(--measure);color:var(--measure-soft)}
+  #modal .acts,#jugador .acts,#atajos .acts,#conc .acts,#multi .acts,#dlgTexto .acts,#dlgConfirmar .acts,#dlgAjustes .acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+  #modal .acts .primary,#jugador .acts .primary,#atajos .acts .primary,#conc .acts .primary,#multi .acts .primary,#dlgTexto .acts .primary,#dlgConfirmar .acts .primary,#dlgAjustes .acts .primary{background:rgba(var(--measure-rgb),.16);border-color:var(--measure);color:var(--measure-soft)}
 
   /* ---------- carril de herramientas ---------- */
   #rail{position:absolute;top:50%;right:12px;transform:translateY(-50%);z-index:11;
     display:flex;flex-direction:column;gap:5px;padding:6px;border-radius:10px;
-    background:rgba(17,23,34,.92);border:1px solid var(--line);backdrop-filter:blur(6px)}
+    background:rgba(var(--panel-rgb),.94);backdrop-filter:blur(10px);
+    box-shadow:0 6px 20px rgba(var(--shadow-rgb),.35)}
   #rail button{width:42px;height:42px;padding:0;display:flex;align-items:center;justify-content:center;position:relative}
   #rail button svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
   #rail button .k{position:absolute;bottom:2px;right:4px;font-family:var(--mono);font-size:8px;color:var(--muted)}
@@ -252,42 +366,74 @@
   /* Qué herramienta está armada decide lo que hace el siguiente clic sobre el mapa: es
      el estado más consecuente de la pantalla y lo llevaba un borde de 1 px sobre un
      relleno al 14%. La marca de canto es la misma que ya usa el turno en la iniciativa. */
-  #rail button.on{background:rgba(90,210,232,.22);box-shadow:inset 3px 0 0 var(--measure)}
+  /* Todas las herramientas se marcan igual. Efectos y niebla llevaban su propio ámbar
+     y parecían de otra familia, y al cambiar de tema la diferencia cantaba más. */
+  #rail button.on{background:rgba(var(--measure-rgb),.22);box-shadow:inset 3px 0 0 var(--measure);
+    color:var(--measure-soft)}
   #rail .sep{height:1px;background:var(--line);margin:2px 0}
-  #rail button.fx.on{background:rgba(224,163,60,.22);border-color:var(--fog);color:#FBE3B4;
-    box-shadow:inset 3px 0 0 var(--fog)}
+
+  /* Deshacer estaba solo en Ctrl+Z, que hay que saberse. Dos botones arriba en el centro
+     lo cuentan sin que nadie tenga que buscarlo, y se apagan cuando no hay nada que
+     deshacer para no prometer lo que no pueden. */
+  #hist{position:absolute;top:12px;left:var(--panel-w);right:74px;margin:0 auto;
+    width:fit-content;z-index:11;display:flex;gap:4px;padding:4px;border-radius:10px;
+    background:rgba(var(--panel-rgb),.94);backdrop-filter:blur(10px);
+    box-shadow:0 6px 20px rgba(var(--shadow-rgb),.35)}
+  #panel.hidden ~ #hist{left:8px}
+  #hist button{width:34px;height:30px;padding:0;display:flex;align-items:center;
+    justify-content:center;background:transparent;border-color:transparent}
+  #hist button svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.7;
+    stroke-linecap:round;stroke-linejoin:round}
+  #hist button:disabled{opacity:.3;cursor:default;background:transparent}
+  #hist button:not(:disabled):hover{background:var(--panel-hover);border-color:var(--line)}
 
   /* ---------- barra contextual ---------- */
   /* La barra vive en el hueco que queda entre el panel y la columna de la derecha, no
      centrada en la ventana: así no se mete debajo de la chuleta ni de la escala. */
-  #ctxbar{position:absolute;left:var(--panel-w);right:322px;bottom:16px;
+  #ctxbar{position:absolute;left:var(--panel-w);right:74px;bottom:34px;
     margin:0 auto;width:fit-content;max-width:100%;z-index:11;
     display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;
-    background:rgba(17,23,34,.94);border:1px solid var(--line);backdrop-filter:blur(6px);
-    font-size:12px;color:var(--muted);flex-wrap:wrap;justify-content:center}
+    background:rgba(var(--panel-rgb),.94);backdrop-filter:blur(10px);
+    box-shadow:0 6px 20px rgba(var(--shadow-rgb),.35);
+    font-size:12px;color:var(--muted);flex-wrap:nowrap;justify-content:flex-start;
+    overflow-x:auto;overflow-y:hidden;scrollbar-width:thin}
   #panel.hidden ~ #ctxbar{left:8px}
   #ctxbar.empty{display:none}
-  /* Columna de la derecha: la chuleta encima y la escala debajo, sin pisarse. */
-  #pista{position:absolute;right:16px;bottom:52px;z-index:11;max-width:290px;
-    background:rgba(17,23,34,.94);border:1px solid var(--line);border-radius:8px;
-    backdrop-filter:blur(6px);padding:10px 12px;font-size:11.5px;line-height:1.5;
-    color:var(--muted);display:none}
-  #pista.on{display:block}
-  #pista h4{margin:0 0 6px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;
-    color:var(--measure);font-weight:600}
-  #pista ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:3px}
+  /* La chuleta era una caja con título, ocho filas y una × para cerrarla, y aun así
+     estorbaba: por eso hubo que inventarle un sistema de cierre por herramienta. Las dos
+     referencias del género la resuelven como una tira baja de una línea, sin título y sin
+     cerrar, porque nunca se pone en medio. Nada que apartar si no molesta. */
+  #pista{position:absolute;bottom:82px;left:var(--panel-w);right:74px;
+    margin:0 auto;width:fit-content;max-width:100%;z-index:11;
+    display:none;align-items:center;gap:14px;flex-wrap:wrap;justify-content:center;
+    padding:5px 12px;border-radius:14px;
+    background:rgba(var(--ink-rgb),.72);backdrop-filter:blur(8px);
+    font-size:11.5px;color:var(--muted);pointer-events:none}
+  #panel.hidden ~ #pista{left:8px}
+  #pista.on{display:flex}
+  #pista .fi{display:flex;align-items:center;gap:5px;white-space:nowrap}
+  #pista b{color:var(--text);font-weight:600;font-family:var(--mono);font-size:10px;
+    background:rgba(var(--panel-rgb),.9);border-radius:4px;padding:2px 5px}
   #pista b{color:var(--text);font-weight:600;font-family:var(--mono);font-size:10.5px}
-  #pistaCerrar{position:absolute;top:6px;right:7px;padding:1px 6px;font-size:12px;
-    line-height:1.2;background:transparent;border:none;color:var(--muted)}
-  #pistaCerrar:hover{color:var(--text)}
-  #ctxbar .grp{display:none;align-items:center;gap:8px}
+  #ctxbar .grp{display:none;align-items:center;gap:8px;flex:none}
   /* Los controles van en racimos con nombre y una raya entre cada dos. Nueve controles
      seguidos son una fila; tres racimos de tres se leen. No se esconde ninguno: en una
      herramienta que se usa en directo, buscar en un desplegable cuesta más que mirar. */
-  #ctxbar .cl{display:flex;align-items:center;gap:8px}
+  #ctxbar .cl{display:flex;align-items:center;gap:8px;flex:none}
+  /* Un desplegable de cuatro opciones son dos clics para ver y uno para elegir. En una
+     herramienta que se maneja en directo, los segmentos son uno solo y además enseñan de
+     un vistazo qué más hay. El <select> sigue detrás, oculto y mandando. */
+  .segs{display:inline-flex;border-radius:var(--radius);overflow:hidden;
+    background:var(--panel-3)}
+  .segs button{border:none;border-radius:0;background:transparent;padding:6px 9px;
+    font-size:11px;color:var(--muted);white-space:nowrap}
+  .segs button:hover{background:var(--panel-hover);color:var(--text)}
+  .segs button.on{background:rgba(var(--measure-rgb),.16);color:var(--measure-soft)}
+  .segs button:focus-visible{outline:2px solid var(--measure);outline-offset:-2px}
   #ctxbar .sepv{width:1px;align-self:stretch;background:var(--line);margin:0 2px}
-  #ctxbar .danger{color:#D9A08E}
-  #ctxbar .danger:hover{background:rgba(224,96,60,.14);border-color:var(--danger)}
+  #ctxbar .danger{color:var(--danger-2)}
+  #ctxbar #calAyuda{color:var(--muted)}
+  #ctxbar .danger:hover{background:rgba(var(--danger-rgb),.14);border-color:var(--danger)}
   #ctxbar .grp.on{display:flex}
   #ctxbar select,#ctxbar input[type=number]{width:auto;min-width:74px}
   #ctxbar input[type=range]{width:110px}
@@ -299,16 +445,26 @@
 
   /* ---------- hud ---------- */
   #readout{position:absolute;z-index:9;pointer-events:none;font-family:var(--mono);font-size:14px;font-weight:600;
-    background:rgba(8,10,15,.82);border:1px solid var(--line);border-radius:4px;padding:4px 8px;white-space:nowrap;display:none}
-  #toast{position:absolute;bottom:132px;left:50%;transform:translateX(-50%);z-index:12;
-    background:rgba(8,10,15,.94);border:1px solid var(--line);border-radius:var(--radius);
+    background:rgba(var(--ink-rgb),.82);border-radius:4px;padding:4px 8px;white-space:nowrap;display:none}
+  #toast{position:absolute;bottom:122px;left:50%;transform:translateX(-50%);z-index:12;
+    background:rgba(var(--ink-rgb),.94);border-radius:var(--radius);
     padding:9px 14px;font-size:12px;font-family:var(--mono);opacity:0;transition:opacity .25s;pointer-events:none}
   #toast.show{opacity:1}
-  #scalebar{position:absolute;right:16px;bottom:18px;z-index:9;pointer-events:none;
-    font-family:var(--mono);font-size:10px;color:var(--muted);text-align:right}
-  #scalebar .bar{height:6px;border:1px solid var(--muted);border-top:none;margin-top:3px}
+  /* La escala andaba suelta en una esquina y no había sitio para el zoom ni para saber
+     si la mesa está abierta. Una barra de estado a lo ancho, del borde del panel al del
+     carril, que es donde la ponen las herramientas del gremio. */
+  #estado{position:absolute;left:var(--panel-w);right:0;bottom:0;height:26px;z-index:9;
+    display:flex;align-items:center;gap:16px;padding:0 14px 0 16px;
+    font-family:var(--mono);font-size:10.5px;color:var(--muted);
+    background:rgba(var(--ink-rgb),.72);backdrop-filter:blur(8px);pointer-events:none}
+  #panel.hidden ~ #estado{left:0}
+  #estado .sep{flex:1}
+  #estado b{color:var(--text);font-weight:500}
+  #estado .viva{color:var(--frame)}
+  #scalebar{display:flex;align-items:center;gap:7px}
+  #scalebar .bar{height:5px;border:1px solid var(--muted);border-top:none;min-width:20px}
   #toggle{position:absolute;top:10px;left:10px;z-index:12;width:34px;height:34px;padding:0;
-    background:rgba(17,23,34,.9);display:none;align-items:center;justify-content:center}
+    background:rgba(var(--panel-rgb),.9);display:none;align-items:center;justify-content:center}
   #panel.hidden ~ #toggle{display:flex}
   #empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:5;pointer-events:none}
   #empty div{text-align:center;color:var(--muted);font-size:13px;line-height:1.7}
@@ -326,7 +482,13 @@
 <div id="aviso" role="alert" style="display:none;position:absolute;top:0;left:var(--panel-w);right:0;z-index:14;
   background:rgba(224,96,60,.16);border-bottom:1px solid var(--danger);color:#F6C9BC;
   padding:8px 14px;font-size:12px"></div>
-<div id="scalebar"><span id="sbLabel"></span><div class="bar" id="sbBar"></div></div>
+<div id="estado">
+  <span id="scalebar"><span id="sbLabel"></span><span class="bar" id="sbBar"></span></span>
+  <span class="sep"></span>
+  <span id="wallCuenta"></span>
+  <span id="stZoom">100%</span>
+  <span id="stMesa">table closed</span>
+</div>
 <div id="toast" role="status" aria-live="polite"></div>
 
 <aside id="panel">
@@ -336,13 +498,13 @@
       <select id="campSel" style="flex:1;width:auto"></select>
       <button id="campNueva" class="ed" title="New campaign" style="padding:4px 8px">＋</button>
       <button id="campMenu" class="ed" title="Campaign options" style="padding:4px 8px">⋯</button>
+      <button id="btnAjustes" class="ed" title="Settings" aria-label="Settings" style="padding:4px 8px">⚙</button>
     </div>
     <p id="brandInfo">no scene</p>
   </div>
   <div id="tabs">
     <button data-tab="table">Table</button>
     <button data-tab="lib" class="on">Library</button>
-    <button data-tab="scene">Scene</button>
     <button data-tab="fx">Effects</button>
     <button data-tab="combat">Combat</button>
   </div>
@@ -374,6 +536,16 @@
       <p class="hint" id="libHint">Maps keep their calibration, fog and effects. Images display full screen. Click to send to the table, right-click to remove.</p>
     </section>
     <section>
+      <p class="eyebrow">Session</p>
+      <div class="grid2">
+        <button id="btnSave">Export backup</button>
+        <label class="filebtn" for="fileSes">Import backup</label>
+        <input id="fileSes" type="file" accept="application/json" hidden>
+      </div>
+      <p class="hint">The library saves itself on this device: close and reopen and everything is where you left it. Backups are for safekeeping or moving to another computer.</p>
+      <p class="hint"><kbd>H</kbd> hides this panel. <kbd>Tab</kbd> switches to the next scene. <kbd>Ctrl</kbd>+<kbd>Z</kbd> undoes strokes and fog alike.</p>
+    </section>
+    <section>
       <p class="eyebrow fold">About</p>
       <p class="hint" style="margin-top:0">
         <b style="color:var(--text)">VeilCast VTT</b> — free and open source.<br>
@@ -389,62 +561,17 @@
         <a href="https://game-icons.net" target="_blank" rel="noopener"
         style="color:var(--muted)">game-icons.net</a>.
       </p>
-    </section>
-
-    <section>
-      <p class="eyebrow">Session</p>
-      <div class="grid2">
-        <button id="btnSave">Export backup</button>
-        <label class="filebtn" for="fileSes">Import backup</label>
-        <input id="fileSes" type="file" accept="application/json" hidden>
-      </div>
-      <p class="hint">The library saves itself on this device: close and reopen and everything is where you left it. Backups are for safekeeping or moving to another computer.</p>
-      <p class="hint"><kbd>H</kbd> hides this panel. <kbd>Tab</kbd> switches to the next scene. <kbd>Ctrl</kbd>+<kbd>Z</kbd> undoes strokes and fog alike.</p>
+      <p class="hint" style="margin-top:12px">
+        <a href="https://groupfinder.gg/library/veilcast-vtt" target="_blank" rel="noopener" style="display:inline-block;"><img src="https://groupfinder.gg/images/badges/gf-badge-red.svg" alt="Groupfinder" width="200" height="55" style="width:200px;height:55px;border:0;display:block;"></a>
+      </p>
     </section>
   </div>
 
   <!-- ============ ESCENA ============ -->
-  <div class="tabpane" id="tab-scene">
-    <section>
-      <p class="eyebrow fold">Map scale</p>
-      <label class="field"><span>Square (px)</span><input id="gridPx" type="number" min="4" step="1" value="50"></label>
-      <label class="field"><span>Equals</span><span><input id="unitVal" type="number" min="0.1" step="0.5" value="5" style="width:52px">
-        <input id="unitName" type="text" value="ft" style="width:56px"></span></label>
-      <button id="btnCalibrate" class="wide">Calibrate by dragging <kbd>K</kbd></button>
-      <label class="field"><span>Squares measured</span><input id="calSquares" type="number" min="1" step="1" value="1"></label>
-      <label class="field"><span>Grid origin</span><span>
-        <input id="gridOx" type="number" step="1" value="0" style="width:52px" title="Horizontal offset in pixels">
-        <input id="gridOy" type="number" step="1" value="0" style="width:52px" title="Vertical offset in pixels"></span></label>
-      <label class="field" style="display:block"><span>Distance rule</span>
-        <select id="ruleSel" class="wide">
-          <option value="euclid">Euclidean (true)</option>
-          <option value="cheb" selected>D&amp;D 5e — diagonal = 1</option>
-          <option value="alt">Alternating 5-10-5</option>
-        </select></label>
-      <label class="field"><span>Show grid</span><input id="showGrid" type="checkbox"></label>
-    </section>
-    <section>
-      <p class="eyebrow fold">Fog of war</p>
-      <label class="field" style="display:block"><span>Reveal mode</span>
-        <select id="fogModo" class="wide">
-          <option value="manual">Manual — paint with brush</option>
-          <option value="explora">Exploration — seen stays revealed</option>
-          <option value="dinamica">Dynamic — only what they see now</option>
-        </select></label>
-      <div class="grid2">
-        <button id="fogAll">Cover all</button>
-        <button id="fogNone">Reveal all</button>
-      </div>
-      <button id="fogReset" class="wide" style="margin-top:6px">Reset exploration</button>
-      <label class="field"><span>Opacity for you</span><span id="opLbl" style="font-family:var(--mono);font-size:11px">50%</span></label>
-      <input id="fogOpacity" type="range" min="20" max="100" value="50">
-    </section>
-  </div>
-
   <!-- ============ EFECTOS ============ -->
   <div class="tabpane" id="tab-fx">
     <section>
-      <p class="eyebrow">Animation catalog</p>
+      <p class="eyebrow fold">Animation catalog</p>
       <input id="catBuscar" type="text" placeholder="Search: darkness, wall, web…" style="width:100%">
       <select id="catNivel" class="wide" style="margin-top:6px">
         <option value="">All levels</option>
@@ -539,6 +666,23 @@
       <button id="btnTestGrid" class="wide" style="margin-top:4px">Check grid on table</button>
     </section>
     <section>
+      <p class="eyebrow fold">Map scale</p>
+      <label class="field"><span>Square (px)</span><input id="gridPx" type="number" min="4" step="1" value="50"></label>
+      <label class="field"><span>Equals</span><span><input id="unitVal" type="number" min="0.1" step="0.5" value="5" style="width:52px">
+        <input id="unitName" type="text" value="ft" style="width:56px"></span></label>
+      <button id="btnCalibrate" class="wide">Calibrate by dragging <kbd>K</kbd></button>
+      <label class="field"><span>Grid origin</span><span>
+        <input id="gridOx" type="number" step="1" value="0" style="width:52px" title="Horizontal offset in pixels">
+        <input id="gridOy" type="number" step="1" value="0" style="width:52px" title="Vertical offset in pixels"></span></label>
+      <label class="field" style="display:block"><span>Distance rule</span>
+        <select id="ruleSel" class="wide">
+          <option value="euclid">Euclidean (true)</option>
+          <option value="cheb" selected>D&amp;D 5e — diagonal = 1</option>
+          <option value="alt">Alternating 5-10-5</option>
+        </select></label>
+      <label class="field"><span>Show grid</span><input id="showGrid" type="checkbox"></label>
+    </section>
+    <section>
       <p class="eyebrow fold">Framing</p>
       <div class="grid2">
         <button id="btnFrame">Move framing <kbd>E</kbd></button>
@@ -610,7 +754,7 @@
       </select>
       <span style="display:flex;align-items:center;gap:5px">Fix
         <input id="medDist" type="number" min="0" step="5" placeholder="—" style="width:62px"></span>
-      <span id="wallWrap" style="display:none;align-items:center;gap:5px">Width<input id="wallW" type="number" min="0.5" step="0.5" value="1" style="width:58px"></span>
+      <span id="wallWrap" style="visibility:hidden;display:flex;align-items:center;gap:5px">Width<input id="wallW" type="number" min="0.5" step="0.5" value="1" style="width:58px"></span>
     </span>
     <span class="sepv"></span>
     <span class="cl" role="group" aria-label="Appearance">
@@ -648,12 +792,33 @@
     </span>
   </div>
   <div class="grp" id="grp-fog">
-    <button id="fogHide" class="ghost">Hide</button>
-    <button id="fogShow" class="ghost">Reveal</button>
-    <select id="fogShape"><option value="brush">Brush</option><option value="cells">Squares</option><option value="rect">Rectangle</option><option value="lasso">Lasso</option></select>
-    <span id="brushWrap" style="display:flex;align-items:center;gap:6px">Size<input id="brushSize" type="range" min="10" max="400" value="75"><span id="brushLbl" style="font-family:var(--mono);font-size:11px;min-width:64px">1.5 squares</span></span>
-  </div>
-  <div class="grp" id="grp-oclusion">
+    <span class="cl" role="group" aria-label="Stroke">
+      <button id="fogHide" class="ghost">Hide</button>
+      <button id="fogShow" class="ghost">Reveal</button>
+      <select id="fogShape"><option value="brush">Brush</option><option value="cells">Squares</option><option value="rect">Rectangle</option><option value="lasso">Lasso</option></select>
+      <span id="brushWrap" style="display:flex;align-items:center;gap:6px">Size<input id="brushSize" type="range" min="10" max="400" value="75"><span id="brushLbl" style="font-family:var(--mono);font-size:11px;min-width:64px">1.5 squares</span></span>
+    </span>
+    <span class="sepv"></span>
+    <span class="cl" role="group" aria-label="Reveal mode">
+      <select id="fogModo" title="How fog lifts as tokens move">
+        <option value="manual">Manual — paint with brush</option>
+        <option value="explora">Exploration — seen stays revealed</option>
+        <option value="dinamica">Dynamic — only what they see now</option>
+      </select>
+    </span>
+    <span class="sepv"></span>
+    <span class="cl" role="group" aria-label="Whole map">
+      <button id="fogAll" class="ghost">Cover all</button>
+      <button id="fogNone" class="ghost">Reveal all</button>
+      <button id="fogReset" class="ghost danger">Reset exploration</button>
+    </span>
+    <span class="sepv"></span>
+    <span class="cl" role="group" aria-label="Your screen">
+      <span style="display:flex;align-items:center;gap:5px">Opacity
+        <input id="fogOpacity" type="range" min="20" max="100" value="50" style="width:84px">
+        <span id="opLbl" style="font-family:var(--mono);font-size:11px;min-width:34px">50%</span></span>
+    </span>
+  </div>  <div class="grp" id="grp-oclusion">
     <span class="cl" role="group" aria-label="Draw">
       <select id="wallModo">
         <option value="segmento">Single segment</option>
@@ -671,7 +836,6 @@
     <span class="sepv"></span>
     <span class="cl" role="group" aria-label="This scene">
       <label style="display:flex;align-items:center;gap:5px">Walls only<input id="soloParedes" type="checkbox"></label>
-      <span id="wallCuenta" style="font-family:var(--mono);font-size:11px">0 walls</span>
       <button id="wallVaciar" class="ghost danger">Clear all</button>
     </span>
   </div>
@@ -692,8 +856,8 @@
     </span>
     <span class="sepv"></span>
     <span class="cl" role="group" aria-label="Show on your screen">
-      <label style="display:flex;align-items:center;gap:5px">Vision<input id="verVision" type="checkbox" checked></label>
-      <label style="display:flex;align-items:center;gap:5px">Lights<input id="verLuces" type="checkbox" checked></label>
+      <label style="display:flex;align-items:center;gap:5px">Vision<input id="verVision" type="checkbox"></label>
+      <label style="display:flex;align-items:center;gap:5px">Lights<input id="verLuces" type="checkbox"></label>
     </span>
   </div>
   <div class="grp" id="grp-sel">
@@ -709,6 +873,12 @@
       <button id="btnPin" class="ghost" style="display:none">Pin to token</button>
       <button id="btnDel" class="ghost danger">Delete <kbd>Del</kbd></button>
     </span>
+  </div>
+  <div class="grp" id="grp-calibrate">
+    <span style="display:flex;align-items:center;gap:5px">Squares measured
+      <input id="calSquares" type="number" min="1" step="1" value="1" style="width:56px"></span>
+    <span class="sepv"></span>
+    <span id="calAyuda">Drag across that many squares, corner to corner.</span>
   </div>
   <div class="grp" id="grp-clear">
     <button id="btnClearMeasures" class="ghost">Clear measurements</button>
@@ -738,11 +908,11 @@
   <button id="onboardNunca">Don’t show this again</button>
 </div>
 
-<div id="pista">
-  <button id="pistaCerrar" title="Hide this one for good (press the tool again to bring it back)">×</button>
-  <h4 id="pistaTitulo"></h4>
-  <ul id="pistaCuerpo"></ul>
+<div id="hist">
+  <button id="btnUndo" title="Undo (Ctrl+Z)" aria-label="Undo"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button>
+  <button id="btnRedo" title="Redo (Ctrl+Shift+Z)" aria-label="Redo"><svg viewBox="0 0 24 24"><path d="M15 14l5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg></button>
 </div>
+<div id="pista"></div>
 
 <div id="conc" class="hide" role="dialog" aria-modal="true">
   <div class="card">
@@ -765,6 +935,27 @@
     <div class="acts">
       <button id="multiCancel">Cancel</button>
       <button id="multiApply" class="primary">Apply</button>
+    </div>
+  </div>
+</div>
+
+<div id="dlgAjustes" class="hide" role="dialog" aria-modal="true" aria-labelledby="ajTitulo">
+  <div class="card">
+    <h2 id="ajTitulo">Settings</h2>
+    <p class="eyebrow" style="margin:0 0 8px">Display</p>
+    <label class="field" style="display:block"><span>Theme</span>
+      <select id="temaSel" class="wide"></select></label>
+    <p class="hint" id="temaNota" style="margin-top:8px"></p>
+    <label class="field" style="display:block;margin-top:14px"><span>Interface size</span>
+      <select id="uiSel" class="wide">
+        <option value="0.85">Compact — 85%</option>
+        <option value="1" selected>Normal — 100%</option>
+        <option value="1.15">Large — 115%</option>
+      </select></label>
+    <p class="hint">Scales the panels, toolbars and dialogs. The map itself is never
+      scaled, so the table stays true to size.</p>
+    <div class="acts" style="grid-template-columns:1fr;margin-top:16px">
+      <button id="ajCerrar" class="primary">Close</button>
     </div>
   </div>
 </div>
@@ -870,6 +1061,69 @@ const readout = document.getElementById('readout');
 const $ = id => document.getElementById(id);
 const dprMain = () => Math.min(window.devicePixelRatio||1, 2);
 
+/* ============ paleta ============ */
+/* El lienzo no puede leer variables CSS, y consultarlas en cada trazo sería ruinoso a
+   sesenta fotogramas por segundo en dos ventanas. Se resuelven de una vez aquí, al
+   arrancar y al cambiar de tema, nunca mientras se dibuja. */
+const FICHAS = ['ink','ink-deep','panel','panel-2','panel-3','field','line','text',
+  'text-soft','muted','muted-2','measure','measure-soft','fog','fog-soft','danger',
+  'danger-soft','danger-2','frame','frame-soft','point','ring',
+  /* canales sueltos, para los trazos del lienzo que llevan transparencia */
+  'ink-deep-rgb','measure-rgb','measure-soft-rgb','fog-rgb','danger-rgb','frame-rgb','point-rgb','text-rgb','ink-rgb','line-rgb','ring-rgb'];
+const PAL = {};
+const camello = s => s.replace(/-(\w)/g, (_,c)=>c.toUpperCase());
+function leerPaleta(){
+  const cs = getComputedStyle(document.documentElement);
+  for(const f of FICHAS){
+    const v = cs.getPropertyValue('--'+f).trim();
+    if(v) PAL[camello(f)] = v;
+  }
+}
+leerPaleta();
+
+/* Un tema es un bloque :root[data-tema] que solo redefine fichas. De momento hay uno:
+   el aspecto de siempre. Añadir otro es añadir un bloque y una línea a esta lista, sin
+   tocar código, que es justo lo que buscaba pasar todo por fichas. */
+/* El primero es el de fábrica y es el que vive en :root, sin atributo: así el aspecto
+   por defecto no depende de que cargue ningún bloque extra. */
+const TEMAS = [
+  {id:'ember',     nombre:'Ember',     nota:'Warm amber over neutral greys, with the fog turned cool. The default.'},
+  {id:'slate',     nombre:'Slate',     nota:'Cold blues over near-black. The original look, tuned for a dark room.'},
+  {id:'parchment', nombre:'Parchment', nota:'Ink on cream for a lit room. The table screen stays dark either way.'}
+];
+function aplicarUI(f, guardar){
+  const v = [0.85,1,1.15].includes(f) ? f : 1;
+  S.ui=v;
+  document.documentElement.style.setProperty('--ui', String(v));
+  if(guardar) tocarEstado();
+  resize();
+}
+function aplicarTema(id, guardar){
+  const t = TEMAS.find(x=>x.id===id) || TEMAS[0];
+  /* El primero es el que ya vive en :root, así que no lleva atributo: así el tema por
+     defecto no depende de que un bloque extra llegue a cargarse. */
+  if(t===TEMAS[0]) delete document.documentElement.dataset.tema;
+  else document.documentElement.dataset.tema = t.id;
+  S.tema = t.id;
+  leerPaleta();
+  const nota=$('temaNota'); if(nota) nota.textContent=t.nota||'';
+  pintarMesaTema();
+  if(guardar) tocarEstado();
+  draw();
+}
+/* La ventana de la mesa escribe su hoja una sola vez al abrirse: si el tema cambia
+   después hay que repintarle el fondo, o los jugadores se quedan con el anterior. */
+function pintarMesaTema(){
+  if(!tableOpen() || !T.win.document.body) return;
+  T.win.document.body.style.background = PAL.inkDeep;
+  const tip=T.win.document.getElementById('tip');
+  if(tip) tip.style.color = PAL.muted2;
+}
+
+/* Estos NO son del tema y no deben serlo. Los cinco de la regla son el color que el
+   director elige para cada medida, los de los efectos dicen qué es la cosa —el hielo es
+   azul porque es hielo— y los de los tokens distinguen a un jugador de otro. Repintarlos
+   al cambiar de tema cambiaría lo que significan. */
 const COLORS = ['#5AD2E8','#E0A33C','#E0603C','#8BE07A','#C88BE8'];
 
 const EFFECTS = [
@@ -892,13 +1146,14 @@ const S = {
   snap:{measure:'none', effect:'center', oclusion:'corner', token:'center'},
   medForma:'line', medDist:0,
   wallDraft:null, selParedes:[], wallModo:'segmento', wallNuevo:false, soloParedes:false,
-  tokenSel:null, tokensMesa:'ocultos', verVision:true, verLuces:true,
+  tokenSel:null, tokensMesa:'ocultos', verVision:false, verLuces:false,
   fogMode:'hide', fogShape:'brush', brush:75,
   /* La niebla arranca a medias en tu pantalla: opaca del todo, un mapa recién cargado
      parecía no estar cargando nada. En la mesa se sigue viendo entera. */
   fogOpacity:0.5,
   fxPreset:EFFECTS[0], animSel:null, fxGeo:'circle', fxAlpha:1, fxBlend:'normal', wallW:1,
   sel:null, selMulti:[], selTokens:[], anclando:null, portapapeles:[], redo:[], anchor:null,
+  tema:'ember', ui:1,
   ini:{list:[], turnId:null, selId:null, mode:'dmg', entry:null, undo:[],
        show:true, corner:'tr', scale:1, hpMode:'pj'},
   pointers:new Map(), pinch:null, spaceDown:false, selDown:false, panning:null, drawing:null,
@@ -1221,10 +1476,13 @@ function shapePath(s){
     p.rect(a.x-hx, a.y-hx, hx*2, hx*2);
   }
   else if(g==='square'){
+    /* La niebla sigue siendo de esquina a esquina: ahí se marca una región, no un área
+       de efecto. El rectFree es esa. */
     if(s.rectFree){ p.rect(Math.min(a.x,b.x),Math.min(a.y,b.y),Math.abs(b.x-a.x),Math.abs(b.y-a.y)); return p; }
-    const side=Math.max(Math.abs(b.x-a.x),Math.abs(b.y-a.y));
-    const sx=b.x<a.x?-1:1, sy=b.y<a.y?-1:1;
-    p.rect(Math.min(a.x,a.x+side*sx), Math.min(a.y,a.y+side*sy), side, side);
+    /* Medir un cuadrado nacía en una esquina mientras el área de efecto nacía en el
+       centro, y son el mismo gesto para quien lo usa. Ahora los dos salen del centro. */
+    const semi=Math.max(Math.abs(b.x-a.x),Math.abs(b.y-a.y));
+    p.rect(a.x-semi, a.y-semi, semi*2, semi*2);
   }
   else if(g==='poly'){
     if(s.pts && s.pts.length){
@@ -1272,8 +1530,9 @@ function shapeLabel(s){
   if(g==='wall') return fmt(d)+' × '+(s.w||1)+' squares';
   if(g==='square'){
     if(s.fija!=null) return 'side '+fmt(s.fija);
-    const side=Math.max(Math.abs(s.b.x-s.a.x),Math.abs(s.b.y-s.a.y));
-    return 'side '+fmt(measure({x:0,y:0},{x:side,y:0}));
+    /* Se arrastra el semilado desde el centro: el lado es el doble. */
+    const semi=Math.max(Math.abs(s.b.x-s.a.x),Math.abs(s.b.y-s.a.y));
+    return 'side '+fmt(measure({x:0,y:0},{x:semi*2,y:0}));
   }
   return fmt(d);
 }
@@ -1429,8 +1688,8 @@ function drawParedes(c, view, dpr, o){
       const sel = segSeleccionado(w,i);
       c.beginPath();
       c.moveTo(a.x,a.y); c.lineTo(b.x,b.y);
-      c.strokeStyle = abierto ? 'rgba(139,224,122,.85)'
-        : sel ? '#5AD2E8' : (S.soloParedes ? 'rgba(207,243,250,.95)' : 'rgba(207,243,250,.55)');
+      c.strokeStyle = abierto ? 'rgba('+PAL.frameRgb+',.85)'
+        : sel ? PAL.measure : (S.soloParedes ? 'rgba('+PAL.measureSoftRgb+',.95)' : 'rgba('+PAL.measureSoftRgb+',.55)');
       c.lineWidth = (sel?3.4:2.2)/view.k;
       if(abierto) c.setLineDash([9/view.k,7/view.k]);
       c.stroke();
@@ -1447,13 +1706,13 @@ function drawParedes(c, view, dpr, o){
           const px=a.x+sx*f, py=a.y+sy*f;
           c.moveTo(px,py); c.lineTo(px+nx*largo, py+ny*largo);
         }
-        c.strokeStyle = abierto ? 'rgba(139,224,122,.9)' : 'rgba(224,163,60,.95)';
+        c.strokeStyle = abierto ? 'rgba('+PAL.frameRgb+',.9)' : 'rgba('+PAL.fogRgb+',.95)';
         c.lineWidth = 1.6/view.k;
         c.stroke();
       }
     }
     if(S.tool==='oclusion'){
-      c.fillStyle = paredSeleccionada(w) ? '#5AD2E8' : 'rgba(207,243,250,.8)';
+      c.fillStyle = paredSeleccionada(w) ? PAL.measure : 'rgba('+PAL.measureSoftRgb+',.8)';
       for(const p of w.pts){ c.beginPath(); c.arc(p.x,p.y,3.4/view.k,0,Math.PI*2); c.fill(); }
     }
   }
@@ -1463,9 +1722,9 @@ function drawParedes(c, view, dpr, o){
     c.moveTo(d.pts[0].x, d.pts[0].y);
     for(let i=1;i<d.pts.length;i++) c.lineTo(d.pts[i].x, d.pts[i].y);
     if(S.cursorWorld) c.lineTo(S.cursorWorld.x, S.cursorWorld.y);
-    c.strokeStyle='#8BE07A'; c.lineWidth=2.4/view.k;
+    c.strokeStyle=PAL.frame; c.lineWidth=2.4/view.k;
     c.setLineDash([7/view.k,5/view.k]); c.stroke(); c.setLineDash([]);
-    c.fillStyle='#8BE07A';
+    c.fillStyle=PAL.frame;
     for(const p of d.pts){ c.beginPath(); c.arc(p.x,p.y,3.6/view.k,0,Math.PI*2); c.fill(); }
   }
   c.restore();
@@ -1494,6 +1753,8 @@ function revelarEn(pos, radio){
   const c=s.fogCtx;
   c.save();
   c.globalCompositeOperation='destination-out';
+  /* destination-out: de estas paradas solo cuenta el alfa, el color da igual y por eso
+     no llevan ficha de tema. Meterlas en la paleta no cambiaría nada y confundiría. */
   const g=c.createRadialGradient(pos.x,pos.y,Math.max(1,radio*0.72), pos.x,pos.y,radio);
   g.addColorStop(0,'rgba(0,0,0,1)');
   g.addColorStop(1,'rgba(0,0,0,0)');
@@ -1576,17 +1837,17 @@ function drawTokens(c, view, dpr, modo, helpers){
     c.fillStyle = modo==='punto' ? col : col+'D0';
     c.fill();
     c.lineWidth=(activo?3:2)/view.k;
-    c.strokeStyle = activo ? '#FFFFFF' : '#05070B';
+    c.strokeStyle = activo ? PAL.ring : PAL.inkDeep;
     c.stroke();
     /* Un token cogido lleva la misma marca que una forma cogida: aro discontinuo en el
        color de la selección, para que un grupo mixto se lea de una sola manera. */
     if(marcado){
       c.beginPath(); c.arc(t.x,t.y,r+3/view.k,0,Math.PI*2);
-      c.strokeStyle='#5AD2E8'; c.lineWidth=1.8/view.k;
+      c.strokeStyle=PAL.measure; c.lineWidth=1.8/view.k;
       c.setLineDash([5/view.k,4/view.k]); c.stroke(); c.setLineDash([]);
     }
     if(modo!=='punto'){
-      c.fillStyle='#05070B';
+      c.fillStyle=PAL.inkDeep;
       c.font='700 '+(gp*0.34)+'px "Inter", system-ui, sans-serif';
       c.textAlign='center'; c.textBaseline='middle';
       c.fillText(inicialesDe(j), t.x, t.y);
@@ -1595,11 +1856,11 @@ function drawTokens(c, view, dpr, modo, helpers){
     if(modo==='nombre'){
       c.font='600 '+(gp*0.26)+'px "Inter", system-ui, sans-serif';
       c.textAlign='center';
-      c.fillStyle='rgba(8,10,15,.85)';
+      c.fillStyle='rgba('+PAL.inkRgb+',.85)';
       const an=c.measureText(j.character).width;
       roundRect(c, t.x-an/2-gp*0.08, t.y+r+gp*0.06, an+gp*0.16, gp*0.34, gp*0.06);
       c.fill();
-      c.fillStyle='#E4DFD1';
+      c.fillStyle=PAL.text;
       c.fillText(j.character, t.x, t.y+r+gp*0.30);
       c.textAlign='left';
     }
@@ -1815,7 +2076,7 @@ function recalcularVision(){
   if(modo==='manual') return;
   if(modo==='dinamica'){
     s.fogCtx.globalCompositeOperation='source-over';
-    s.fogCtx.fillStyle='#05070B';
+    s.fogCtx.fillStyle=PAL.inkDeep;
     s.fogCtx.fillRect(0,0,s.w,s.h);
   }
   const segs=segmentosMapa();
@@ -1878,7 +2139,7 @@ function drawVision(c, view, dpr){
 function renderScene(c, view, W, H, dpr, o){
   c.setTransform(dpr,0,0,dpr,0,0);
   c.clearRect(0,0,W,H);
-  c.fillStyle='#05070B'; c.fillRect(0,0,W,H);
+  c.fillStyle=PAL.inkDeep; c.fillRect(0,0,W,H);
   const s=sc();
   if(!s || !s.ready){ if(o.initiative) drawInitiative(c,W,H,dpr); return; }
 
@@ -1940,7 +2201,7 @@ function drawGrid(c,view,dpr,W,H,bright){
     for(let x=ox%g;x<=s.w;x+=g){ c.moveTo(x,0); c.lineTo(x,s.h); }
     for(let y=oy%g;y<=s.h;y+=g){ c.moveTo(0,y); c.lineTo(s.w,y); }
   }
-  c.strokeStyle = bright ? 'rgba(90,210,232,.85)' : 'rgba(228,223,209,.20)';
+  c.strokeStyle = bright ? 'rgba('+PAL.measureRgb+',.85)' : 'rgba('+PAL.textRgb+',.20)';
   c.lineWidth = (bright?1.4:1)/view.k;
   c.stroke();
   c.setTransform(dpr,0,0,dpr,0,0);
@@ -1965,7 +2226,7 @@ function drawShape(c,view,dpr,s,isDraft,o){
       if(!isDraft && !marcado) return;
       c.save();
       c.setTransform(dpr*view.k,0,0,dpr*view.k, dpr*view.x, dpr*view.y);
-      c.strokeStyle = marcado ? '#5AD2E8' : (s.color||'#E0A33C');
+      c.strokeStyle = marcado ? PAL.measure : (s.color||PAL.fog);
       c.lineWidth = (marcado?2.4:1.4)/view.k;
       c.setLineDash([6/view.k,5/view.k]);
       c.stroke(shapePath(s));
@@ -1979,7 +2240,7 @@ function drawShape(c,view,dpr,s,isDraft,o){
   c.save();
   c.setTransform(dpr*view.k,0,0,dpr*view.k, dpr*view.x, dpr*view.y);
   const p=shapePath(s);
-  const col = g==='calibrate' ? '#E0603C' : s.color;
+  const col = g==='calibrate' ? PAL.danger : s.color;
   c.globalAlpha=alpha;
 
   if(FILLED.includes(g)){
@@ -2001,7 +2262,7 @@ function drawShape(c,view,dpr,s,isDraft,o){
      discontinua en el color de la selección, la misma que ya llevaban los animados.
      La forma conserva su color y aun así se ve cogida de un vistazo. */
   if(marcado){
-    c.strokeStyle='#5AD2E8'; c.lineWidth=1.6/view.k;
+    c.strokeStyle=PAL.measure; c.lineWidth=1.6/view.k;
     c.setLineDash([6/view.k,5/view.k]);
     c.stroke(p);
     c.setLineDash([]);
@@ -2027,9 +2288,9 @@ function drawLabels(c,view,dpr,o){
     const p=w2s(sh.b,view);
     c.font='600 13px ui-monospace, Menlo, monospace';
     const wd=c.measureText(t).width, x=p.x+12, y=p.y-12;
-    c.fillStyle='rgba(8,10,15,.85)'; c.strokeStyle='rgba(39,52,74,1)'; c.lineWidth=1;
+    c.fillStyle='rgba('+PAL.inkRgb+',.85)'; c.strokeStyle='rgba('+PAL.lineRgb+',1)'; c.lineWidth=1;
     roundRect(c,x-6,y-15,wd+12,22,4); c.fill(); c.stroke();
-    c.fillStyle = (sh.geo||sh.type)==='calibrate' ? '#E0603C' : sh.color;
+    c.fillStyle = (sh.geo||sh.type)==='calibrate' ? PAL.danger : sh.color;
     c.fillText(t,x,y);
   }
 }
@@ -2040,7 +2301,7 @@ function roundRect(c,x,y,w,h,r){
 function drawHandles(c,view,dpr){
   const s=S.sel; if(!s) return;
   c.setTransform(dpr,0,0,dpr,0,0);
-  for(const [pt,fill] of [[s.a,'#05070B'],[s.b,s.color]]){
+  for(const [pt,fill] of [[s.a,PAL.inkDeep],[s.b,s.color]]){
     if(!pt) continue;
     const p=w2s(pt,view);
     c.beginPath(); c.arc(p.x,p.y,6,0,Math.PI*2);
@@ -2073,8 +2334,8 @@ function puntosBorde(s){
     return [{x:a.x-h,y:a.y-h},{x:a.x+h,y:a.y+h}];
   }
   if(g==='square' && !s.rectFree){
-    const lado=Math.max(Math.abs(b.x-a.x),Math.abs(b.y-a.y));
-    return [a, {x:a.x+lado*(b.x<a.x?-1:1), y:a.y+lado*(b.y<a.y?-1:1)}];
+    const semi=Math.max(Math.abs(b.x-a.x),Math.abs(b.y-a.y));
+    return [{x:a.x-semi,y:a.y-semi},{x:a.x+semi,y:a.y+semi}];
   }
   return [a,b];
 }
@@ -2093,7 +2354,7 @@ function drawSelBox(c,view,dpr){
   const bb=bbox(pts), m=7/view.k;
   c.save();
   c.setTransform(dpr*view.k,0,0,dpr*view.k, dpr*view.x, dpr*view.y);
-  c.strokeStyle='#5AD2E8'; c.lineWidth=1.5/view.k;
+  c.strokeStyle=PAL.measure; c.lineWidth=1.5/view.k;
   c.setLineDash([7/view.k,5/view.k]);
   c.strokeRect(bb.x0-m, bb.y0-m, (bb.x1-bb.x0)+m*2, (bb.y1-bb.y0)+m*2);
   c.setLineDash([]);
@@ -2114,7 +2375,7 @@ function drawAnclajes(c,view,dpr){
   if(!pares.length) return;
   c.save();
   c.setTransform(dpr*view.k,0,0,dpr*view.k, dpr*view.x, dpr*view.y);
-  c.strokeStyle='#FFD86B'; c.lineWidth=1.4/view.k;
+  c.strokeStyle=PAL.point; c.lineWidth=1.4/view.k;
   c.setLineDash([3/view.k,4/view.k]);
   for(const [t,sh] of pares){
     c.beginPath(); c.moveTo(t.x,t.y); c.lineTo(sh.a.x,sh.a.y); c.stroke();
@@ -2126,7 +2387,7 @@ function drawAnclajes(c,view,dpr){
 function drawAnchor(c,view,dpr){
   c.setTransform(dpr,0,0,dpr,0,0);
   const p=w2s(S.anchor,view);
-  c.save(); c.strokeStyle='#FFD86B'; c.lineWidth=1.8; c.setLineDash([4,3]);
+  c.save(); c.strokeStyle=PAL.point; c.lineWidth=1.8; c.setLineDash([4,3]);
   c.beginPath(); c.arc(p.x,p.y,9,0,Math.PI*2); c.stroke(); c.setLineDash([]);
   c.beginPath(); c.moveTo(p.x-13,p.y); c.lineTo(p.x+13,p.y); c.moveTo(p.x,p.y-13); c.lineTo(p.x,p.y+13); c.stroke();
   c.restore();
@@ -2134,7 +2395,7 @@ function drawAnchor(c,view,dpr){
 function drawLasso(c,view,dpr){
   c.setTransform(dpr,0,0,dpr,0,0);
   const pts=S.lasso.map(p=>w2s(p,view));
-  c.save(); c.strokeStyle=S.fogMode==='hide'?'#E0A33C':'#5AD2E8'; c.lineWidth=2; c.setLineDash([6,4]);
+  c.save(); c.strokeStyle=S.fogMode==='hide'?PAL.fog:PAL.measure; c.lineWidth=2; c.setLineDash([6,4]);
   c.beginPath(); c.moveTo(pts[0].x,pts[0].y);
   for(let i=1;i<pts.length;i++) c.lineTo(pts[i].x,pts[i].y);
   if(S.cursor) c.lineTo(S.cursor.x,S.cursor.y);
@@ -2149,14 +2410,14 @@ function drawTableFrame(c,view,dpr){
   const wW=T.W/kT, wH=T.H/kT;
   const x=(s.center.x-wW/2)*view.k+view.x, y=(s.center.y-wH/2)*view.k+view.y;
   c.save();
-  c.strokeStyle = S.tool==='frame' ? '#8BE07A' : 'rgba(139,224,122,.55)';
+  c.strokeStyle = S.tool==='frame' ? PAL.frame : 'rgba('+PAL.frameRgb+',.55)';
   c.lineWidth = S.tool==='frame' ? 2.5 : 1.5;
   c.setLineDash([9,6]); c.strokeRect(x,y,wW*view.k,wH*view.k); c.setLineDash([]);
-  if(S.tool==='frame'){ c.fillStyle='rgba(139,224,122,.08)'; c.fillRect(x,y,wW*view.k,wH*view.k); }
-  c.font='600 11px ui-monospace, Menlo, monospace'; c.fillStyle='#8BE07A'; c.fillText('TABLE',x+8,y+18);
+  if(S.tool==='frame'){ c.fillStyle='rgba('+PAL.frameRgb+',.08)'; c.fillRect(x,y,wW*view.k,wH*view.k); }
+  c.font='600 11px ui-monospace, Menlo, monospace'; c.fillStyle=PAL.frame; c.fillText('TABLE',x+8,y+18);
   c.restore();
 }
-function hpColor(f){ return f>0.5 ? '#8BE07A' : f>0.25 ? '#E0A33C' : '#E0603C'; }
+function hpColor(f){ return f>0.5 ? PAL.frame : f>0.25 ? PAL.fog : PAL.danger; }
 
 function drawInitiative(c,W,H,dpr){
   const I=S.ini;
@@ -2177,10 +2438,10 @@ function drawInitiative(c,W,H,dpr){
   const ti = turnIdx();
 
   c.save();
-  c.fillStyle='rgba(8,10,15,.86)'; c.strokeStyle='rgba(39,52,74,1)'; c.lineWidth=1;
+  c.fillStyle='rgba('+PAL.inkRgb+',.86)'; c.strokeStyle='rgba('+PAL.lineRgb+',1)'; c.lineWidth=1;
   roundRect(c,x,y,w,h,u*0.35); c.fill(); c.stroke();
   c.font='600 '+(u*0.55)+'px ui-monospace, Menlo, monospace';
-  c.fillStyle='#8494AC';
+  c.fillStyle=PAL.muted;
   c.fillText('INITIATIVE', x+pad, y+pad+u*0.7);
 
   I.list.forEach((m,i)=>{
@@ -2190,21 +2451,21 @@ function drawInitiative(c,W,H,dpr){
     c.globalAlpha = down ? 0.45 : 1;
 
     if(cur){
-      c.fillStyle='rgba(90,210,232,.16)';
+      c.fillStyle='rgba('+PAL.measureRgb+',.16)';
       roundRect(c,x+pad*0.5,ry-u*0.15,w-pad,u*1.1,u*0.2); c.fill();
-      c.fillStyle='#5AD2E8'; c.fillRect(x+pad*0.5,ry-u*0.15,u*0.14,u*1.1);
+      c.fillStyle=PAL.measure; c.fillRect(x+pad*0.5,ry-u*0.15,u*0.14,u*1.1);
     }
 
     /* posición en el orden */
     c.font='600 '+(u*0.5)+'px ui-monospace, Menlo, monospace';
-    c.fillStyle = cur ? '#5AD2E8' : '#6C7C94';
+    c.fillStyle = cur ? PAL.measure : PAL.muted2;
     c.textAlign='right';
     c.fillText(String(i+1), x+pad+u*0.85, ry+u*0.64);
     c.textAlign='left';
 
     /* nombre */
     c.font=(cur?'700 ':'500 ')+(u*0.62)+'px "Inter", system-ui, sans-serif';
-    c.fillStyle = cur ? '#E4DFD1' : '#B9C2D0';
+    c.fillStyle = cur ? PAL.text : PAL.textSoft;
     const barW = (I.hpMode==='all' || (I.hpMode==='pj' && m.type==='pj')) && m.hpMax>0 ? u*3.1 : 0;
     const maxName = w - u*1.6 - barW - (m.cond?m.cond.length*u*0.85:0);
     let name = m.name;
@@ -2222,9 +2483,9 @@ function drawInitiative(c,W,H,dpr){
       const bw=u*2.6, bh=u*0.4, bx=x+w-pad-bw, by=ry+u*0.24;
       const total=m.hpMax+(m.temp||0);
       const f=Math.max(0,m.hp)/total, tf=(m.temp||0)/total;
-      c.fillStyle='rgba(255,255,255,.10)'; roundRect(c,bx,by,bw,bh,bh/2); c.fill();
+      c.fillStyle='rgba('+PAL.ringRgb+',.10)'; roundRect(c,bx,by,bw,bh,bh/2); c.fill();
       if(f>0){ c.fillStyle=hpColor(Math.max(0,m.hp)/m.hpMax); roundRect(c,bx,by,bw*f,bh,bh/2); c.fill(); }
-      if(tf>0){ c.fillStyle='rgba(207,243,250,.85)';
+      if(tf>0){ c.fillStyle='rgba('+PAL.measureSoftRgb+',.85)';
         roundRect(c,bx+bw*f,by,bw*tf,bh,bh/2); c.fill(); }
       iconRight = bx-u*0.35;
     }
@@ -2233,7 +2494,7 @@ function drawInitiative(c,W,H,dpr){
     if(m.cond && m.cond.length){
       const size=u*0.7;
       m.cond.slice().reverse().forEach((id,j)=>{
-        const col = id==='concentracion' ? '#FFD86B' : '#E0A33C';
+        const col = id==='concentracion' ? PAL.point : PAL.fog;
         const ic = condIcon(id, col, Math.max(24, Math.round(size*2)));
         if(!ic) return;
         const ix=iconRight-size-(j*(size+u*0.16));
@@ -2250,13 +2511,13 @@ function drawPointer(c,view,dpr){
   c.setTransform(dpr,0,0,dpr,0,0);
   const p=w2s(S.cursorWorld,view);
   c.save();
-  c.strokeStyle='#FFD86B'; c.shadowColor='#FFD86B'; c.shadowBlur=14; c.lineWidth=2;
+  c.strokeStyle=PAL.point; c.shadowColor=PAL.point; c.shadowBlur=14; c.lineWidth=2;
   c.beginPath(); c.arc(p.x,p.y,11,0,Math.PI*2); c.stroke();
   c.beginPath();
   c.moveTo(p.x-20,p.y); c.lineTo(p.x-15,p.y); c.moveTo(p.x+15,p.y); c.lineTo(p.x+20,p.y);
   c.moveTo(p.x,p.y-20); c.lineTo(p.x,p.y-15); c.moveTo(p.x,p.y+15); c.lineTo(p.x,p.y+20);
   c.stroke();
-  c.fillStyle='#FFD86B'; c.beginPath(); c.arc(p.x,p.y,2.5,0,Math.PI*2); c.fill();
+  c.fillStyle=PAL.point; c.beginPath(); c.arc(p.x,p.y,2.5,0,Math.PI*2); c.fill();
   c.restore();
 }
 function drawPings(c,view,dpr){
@@ -2266,7 +2527,7 @@ function drawPings(c,view,dpr){
   for(const g of S.pings){
     const t=(now-g.t)/1100; if(t>1) continue;
     const p=w2s(g,view);
-    c.save(); c.globalAlpha=1-t; c.strokeStyle='#FFD86B'; c.shadowColor='#FFD86B'; c.shadowBlur=16;
+    c.save(); c.globalAlpha=1-t; c.strokeStyle=PAL.point; c.shadowColor=PAL.point; c.shadowBlur=16;
     for(const d of [0,0.28]){ const tt=t-d; if(tt<0) continue;
       c.lineWidth=3*(1-tt); c.beginPath(); c.arc(p.x,p.y,8+tt*60,0,Math.PI*2); c.stroke(); }
     c.restore();
@@ -2276,7 +2537,7 @@ function drawBrushCursor(c,view,dpr){
   if(S.tool!=='fog' || !S.cursor || S.fogShape==='lasso') return;
   c.setTransform(dpr,0,0,dpr,0,0);
   c.save();
-  c.strokeStyle = S.fogMode==='hide' ? 'rgba(224,163,60,.9)' : 'rgba(90,210,232,.9)';
+  c.strokeStyle = S.fogMode==='hide' ? 'rgba('+PAL.fogRgb+',.9)' : 'rgba('+PAL.measureRgb+',.9)';
   c.setLineDash([5,4]); c.lineWidth=1.5;
   if(S.fogShape==='brush'){ c.beginPath(); c.arc(S.cursor.x,S.cursor.y,S.brush*view.k,0,Math.PI*2); c.stroke(); }
   else if(S.fogShape==='cells' && S.cursorWorld){
@@ -2319,10 +2580,16 @@ function zoomAt(cx,cy,f){
 }
 function updateScaleBar(){
   const s=sc();
-  if(!s || s.type!=='map'){ $('scalebar').style.display='none'; return; }
-  $('scalebar').style.display='block';
-  $('sbBar').style.width=Math.max(20,cal().gridPx*S.view.k*2)+'px';
-  $('sbLabel').textContent=fmt(cal().unitVal*2);
+  const hay = s && s.type==='map';
+  $('scalebar').style.visibility = hay ? 'visible' : 'hidden';
+  if(hay){
+    $('sbBar').style.width=Math.max(20,cal().gridPx*S.view.k*2)+'px';
+    $('sbLabel').textContent=fmt(cal().unitVal*2);
+  }
+  $('stZoom').textContent = Math.round(S.view.k*100)+'%';
+  const abierta = tableOpen();
+  $('stMesa').textContent = abierta ? 'table open' : 'table closed';
+  $('stMesa').className = abierta ? 'viva' : '';
 }
 
 
@@ -2439,7 +2706,7 @@ async function guardarEstado(){
   await dbPut('state', {id:'app', camp:CAMP.id, ini:S.ini, activa:sc()?sc().id:null,
     fx:{favoritos:CAT.favoritos, recientes:CAT.recientes, activas:CAT.activas},
     tokensMesa:S.tokensMesa, plegadas:S.plegadas||[], pasosNunca:!!S.pasosNunca,
-    pistasCerradas:S.pistasCerradas||[], snap:S.snap,
+    snap:S.snap, tema:S.tema||'ember', ui:S.ui||1,
     mesa:{dpi:T.dpi, diag:parseFloat($('diagIn').value)||27, cover:T.cover,
           bright:T.bright, contrast:T.contrast, hpMode:S.ini.hpMode,
           diagHecha:!!T.diagHecha, mesaAbierta:!!T.mesaAbierta}});
@@ -2495,7 +2762,7 @@ async function cargarEscena(s){
         s.fogCtx.drawImage(fi,0,0,s.w,s.h);
         if(fi.__url) URL.revokeObjectURL(fi.__url);
       } else {
-        s.fogCtx.fillStyle='#05070B'; s.fogCtx.fillRect(0,0,s.w,s.h);
+        s.fogCtx.fillStyle=PAL.inkDeep; s.fogCtx.fillRect(0,0,s.w,s.h);
       }
       if(!s.center) s.center={x:s.w/2,y:s.h/2};
     }
@@ -2750,6 +3017,7 @@ function push(kind){
                     tokens:clonarTokens(s.tokens)});
   }
   if(S.history.length>24) S.history.shift();
+  syncHistoria();
 }
 function instantanea(){
   const s=sc();
@@ -2775,6 +3043,7 @@ function rehacer(){
   limpiarSeleccion(); limpiarSeleccionParedes();
   tocarEscena(); renderFxList(); recalcularVision(); renderJugadores(); syncCtxBar(); draw();
   toast('Redone.');
+  syncHistoria();
 }
 function undo(){
   const s=sc();
@@ -2810,6 +3079,7 @@ function undo(){
     limpiarSeleccion(); tocarEscena(); renderFxList();
   }
   draw();
+  syncHistoria();
 }
 
 /* ============ niebla ============ */
@@ -2833,7 +3103,7 @@ function fogOp(fn){
   tocarNiebla();
   const c=s.fogCtx;
   c.globalCompositeOperation = S.fogMode==='hide' ? 'source-over' : 'destination-out';
-  c.strokeStyle='#05070B'; c.fillStyle='#05070B';
+  c.strokeStyle=PAL.inkDeep; c.fillStyle=PAL.inkDeep;
   fn(c);
   c.globalCompositeOperation='source-over';
 }
@@ -2996,7 +3266,7 @@ function renderJugadores(){
     const caido = j.hpMax>0 && j.hp<=0;
     row.className='ini'+(caido?' down':'');
     row.title='Edit player';
-    const dot=document.createElement('div'); dot.className='dot'; dot.style.background='#5AD2E8';
+    const dot=document.createElement('div'); dot.className='dot'; dot.style.background=PAL.measure;
     const nm=document.createElement('div'); nm.className='nm';
     nm.textContent = j.character + (j.player ? ' · '+j.player : '');
     const hp=document.createElement('div'); hp.className='hp';
@@ -3305,7 +3575,7 @@ function renderIniList(){
     const pos=document.createElement('div'); pos.className='pos'; pos.textContent=(i+1);
     const iv=document.createElement('div'); iv.className='iv'; iv.textContent=m.init;
     const dot=document.createElement('div'); dot.className='dot';
-    dot.style.background = m.type==='pj' ? '#5AD2E8' : m.type==='aliado' ? '#8BE07A' : '#E0603C';
+    dot.style.background = m.type==='pj' ? PAL.measure : m.type==='aliado' ? PAL.frame : PAL.danger;
 
     const nm=document.createElement('div'); nm.className='nm';
     nm.appendChild(document.createTextNode(m.name));
@@ -3327,7 +3597,7 @@ function renderIniList(){
       const f=Math.max(0,m.hp)/total, tf=(m.temp||0)/total;
       const frac=Math.max(0,Math.min(1,m.hp/m.hpMax));
       const hpi=document.createElement('i'); hpi.style.width=(f*100)+'%';
-      hpi.style.background = frac>0.5?'#8BE07A':frac>0.25?'#E0A33C':'#E0603C';
+      hpi.style.background = frac>0.5?PAL.frame:frac>0.25?PAL.fog:PAL.danger;
       bar.appendChild(hpi);
       if(tf>0){ const tpi=document.createElement('i'); tpi.className='tp';
         tpi.style.left=(f*100)+'%'; tpi.style.width=(tf*100)+'%'; bar.appendChild(tpi); }
@@ -3470,7 +3740,7 @@ function renderMulti(){
     const row=document.createElement('div'); row.className='multi';
     const dot=document.createElement('div'); dot.className='dot';
     dot.style.cssText='width:9px;height:9px;border-radius:2px;flex:none;background:'+
-      (m.type==='pj'?'#5AD2E8':m.type==='aliado'?'#8BE07A':'#E0603C');
+      (m.type==='pj'?PAL.measure:m.type==='aliado'?PAL.frame:PAL.danger);
     const nm=document.createElement('div'); nm.className='nm'; nm.textContent=m.name;
     const st=multiState[m.id]||0;
     const b=document.createElement('button');
@@ -3611,9 +3881,9 @@ async function openTable(){
   if(!w){ toast('The browser blocked the window. Please allow pop-ups for this site.'); return; }
   w.document.open();
   w.document.write('<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Tabletop — player view</title>'+
-    '<style>html,body{margin:0;height:100%;background:#05070B;overflow:hidden;cursor:none}'+
+    '<style>html,body{margin:0;height:100%;background:'+PAL.inkDeep+';overflow:hidden;cursor:none}'+
     'canvas{display:block;width:100%;height:100%}'+
-    '#tip{position:fixed;left:0;right:0;bottom:26px;text-align:center;color:#6C7C94;'+
+    '#tip{position:fixed;left:0;right:0;bottom:26px;text-align:center;color:'+PAL.muted2+';'+
     'font:12px ui-monospace,Menlo,monospace;transition:opacity .5s}</style></head>'+
     '<body><canvas id="c"></canvas><div id="tip">Drag this window to your table monitor and click for full screen</div></body></html>');
   w.document.close();
@@ -3672,10 +3942,10 @@ function drawTable(){
   const ov = escenaOverlay();
   if(T.black){
     c.setTransform(dpr,0,0,dpr,0,0);
-    c.clearRect(0,0,T.W,T.H); c.fillStyle='#05070B'; c.fillRect(0,0,T.W,T.H);
+    c.clearRect(0,0,T.W,T.H); c.fillStyle=PAL.inkDeep; c.fillRect(0,0,T.W,T.H);
   } else if(ov && ov.ready){
     c.setTransform(dpr,0,0,dpr,0,0);
-    c.clearRect(0,0,T.W,T.H); c.fillStyle='#05070B'; c.fillRect(0,0,T.W,T.H);
+    c.clearRect(0,0,T.W,T.H); c.fillStyle=PAL.inkDeep; c.fillRect(0,0,T.W,T.H);
     const k = T.cover ? Math.max(T.W/ov.w, T.H/ov.h) : Math.min(T.W/ov.w, T.H/ov.h);
     const w=ov.w*k, h=ov.h*k;
     c.imageSmoothingQuality='high';
@@ -3697,7 +3967,7 @@ function drawTable(){
   const el=performance.now()-T.fadeT;
   if(el<FADE){
     c.setTransform(dpr,0,0,dpr,0,0);
-    c.globalAlpha=1-el/FADE; c.fillStyle='#05070B'; c.fillRect(0,0,T.W,T.H); c.globalAlpha=1;
+    c.globalAlpha=1-el/FADE; c.fillStyle=PAL.inkDeep; c.fillRect(0,0,T.W,T.H); c.globalAlpha=1;
   }
 }
 function setBlack(v){
@@ -3714,6 +3984,7 @@ function syncTableUI(){
   $('btnTable').textContent = on ? 'Close table view' : 'Open table view';
   $('btnTable').classList.toggle('on',on);
   updateTableInfo();
+  updateScaleBar();   // el indicador de mesa vive aquí
 }
 setInterval(()=>{ if(!tableOpen() && $('btnTable').classList.contains('on')) syncTableUI(); },1000);
 addEventListener('beforeunload',()=>{ if(tableOpen()) T.win.close(); });
@@ -3891,7 +4162,11 @@ cv.addEventListener('pointerdown', e=>{
   if(S.pointers.size>1) return;
 
   const sp=evPos(e);
-  const wantPan = e.button===1 || S.spaceDown || S.tool==='pan';
+  /* Ctrl presta la selección desde CUALQUIER herramienta, la mano incluida. Antes el
+     desplazamiento se decidía antes y se comía el modificador, así que el préstamo
+     funcionaba en diez herramientas y en la undécima no: peor que no tenerlo. */
+  const cogiendo = e.button===0 && (e.ctrlKey || e.metaKey) && !S.spaceDown;
+  const wantPan = !cogiendo && (e.button===1 || S.spaceDown || S.tool==='pan');
   if(wantPan){ S.panning={sx:sp.x,sy:sp.y,vx:S.view.x,vy:S.view.y}; return; }
   const s=sc(); if(!s) return;
   const wp=s2w(sp);
@@ -3913,9 +4188,7 @@ cv.addEventListener('pointerdown', e=>{
      un efecto, coger el token de al lado, moverlo y seguir colocando sin pisar el carril.
      Va por delante de todo lo demás para que signifique siempre lo mismo. Botón izquierdo
      solo: en Mac, Ctrl con el resto es el clic derecho del sistema. */
-  if(e.button===0 && S.tool!=='sel' && (e.ctrlKey || e.metaKey)){
-    seleccionEnPunto(e, sp, wp); return;
-  }
+  if(cogiendo && S.tool!=='sel'){ seleccionEnPunto(e, sp, wp); return; }
 
   if(S.tool==='pointer'){ S.pings.push({x:wp.x,y:wp.y,t:performance.now()}); S.drawing={kind:'pointer'}; draw(); return; }
   if(S.tool==='frame'){ S.drawing={kind:'frame',w0:wp,c0:{...s.center}}; return; }
@@ -3936,6 +4209,13 @@ cv.addEventListener('pointerdown', e=>{
     }
     const objetivo = S.tokenSel || jugadores().find(x=>!tokenDe(x)) || jugadores()[0];
     if(!objetivo){ toast('Add players to the campaign to place their tokens.'); return; }
+    /* Un clic en el vacío colocaba al jugador elegido AUNQUE ya estuviera en el mapa, así
+       que elegirlo en la lista —o con el botón derecho— y tocar el mapa lo teletransportaba
+       sin querer. Puesto ya solo se mueve arrastrándolo. */
+    if(tokenDe(objetivo)){
+      toast(objetivo.character+' is already on this map — drag the token to move them.');
+      return;
+    }
     moverToken(objetivo, snapPoint(wp));
     S.tokenSel=objetivo;
     if(modoNiebla()==='dinamica') recalcularVision();
@@ -3989,11 +4269,11 @@ cv.addEventListener('pointerdown', e=>{
     if(S.fogShape==='brush'){ S.drawing={kind:'fog',last:wp}; fogStroke(wp,wp); }
     else if(S.fogShape==='cells'){ S.drawing={kind:'cells'}; fogCell(wp); }
     else { S.drawing={kind:'fogrect',a:wp};
-      S.draft={geo:'square',rectFree:true,a:wp,b:wp,color:S.fogMode==='hide'?'#E0A33C':'#5AD2E8'}; }
+      S.draft={geo:'square',rectFree:true,a:wp,b:wp,color:S.fogMode==='hide'?PAL.fog:PAL.measure}; }
     draw(); return;
   }
 
-  if(S.tool==='calibrate'){ S.draft={type:'calibrate',geo:'calibrate',a:wp,b:wp,color:'#E0603C'}; S.drawing={kind:'shape'}; draw(); return; }
+  if(S.tool==='calibrate'){ S.draft={type:'calibrate',geo:'calibrate',a:wp,b:wp,color:PAL.danger}; S.drawing={kind:'shape'}; draw(); return; }
 
   if(S.tool==='effect' && S.fxGeo==='poly'){
     S.draft={kind:'effect', geo:'poly', pts:[wp], a:wp, b:wp, color:S.fxPreset.color,
@@ -4158,7 +4438,14 @@ function endPointer(e){
       ? S.draft.pts.length>3 : dist(S.draft.a,S.draft.b)>2/S.view.k;
   if(moved && (S.draft.kind==='effect'||S.persist)){
     push('shapes'); s.shapes.push(S.draft); tocarEscena();
-    if(S.draft.kind==='effect'){ S.sel=S.draft; renderFxList(); }
+    if(S.draft.kind==='effect'){ S.sel=S.draft; S.selMulti=[S.draft]; renderFxList(); }
+    /* Una animación se coloca una vez. Antes seguía cargada y el siguiente clic soltaba
+       otra sin querer; para repetirla está Duplicar en el menú del botón derecho. Al
+       soltarla pasamos a selección, así que lo recién puesto ya se puede mover. */
+    if(S.draft.anim){
+      S.animSel=null; CAT.sel=null; renderCatalogo();
+      setTool('sel'); syncCtxBar();
+    }
   }
   S.draft=null; draw();
 }
@@ -4244,7 +4531,7 @@ function showReadout(sp,t){
   if(!t){ hideReadout(); return; }
   readout.textContent=t; readout.style.display='block';
   readout.style.left=(sp.x+18)+'px'; readout.style.top=(sp.y-34)+'px';
-  readout.style.color = S.tool==='calibrate' ? '#E0603C' : (S.draft?S.draft.color:S.color);
+  readout.style.color = S.tool==='calibrate' ? PAL.danger : (S.draft?S.draft.color:S.color);
 }
 function hideReadout(){ readout.style.display='none'; }
 
@@ -4261,12 +4548,11 @@ function setTool(t){
     hideReadout();
   }
   cerrarMapMenu(); cancelarAnclaje(true);
-  const repetida = t===S.tool;
   S.tool=t;
   /* Fuera del if de arriba a propósito: volver a pulsar la herramienta que ya está
      puesta trae la chuleta de vuelta aunque se hubiera cerrado. Cambiar de herramienta
      no la fuerza: cerrada una vez, cerrada queda. */
-  mostrarPista(t, repetida);
+  mostrarPista(t);
   document.querySelectorAll('#rail button').forEach(b=>b.classList.toggle('on',b.dataset.tool===t));
   $('btnCalibrate').classList.toggle('on',t==='calibrate');
   $('btnFrame').classList.toggle('on',t==='frame');
@@ -4281,7 +4567,12 @@ function cursorDeHerramienta(){
   if(S.anclando){ cv.style.cursor='crosshair'; return; }
   if(S.selDown && t!=='sel'){ cv.style.cursor='default'; return; }
   cv.style.cursor = t==='pan'?'grab' : t==='pointer'?'none' : t==='sel'?'default'
-    : t==='frame'?'move' : t==='fog'?'none' : t==='token'?'pointer' : 'crosshair';
+    : t==='frame'?'move'
+    /* Solo se esconde el cursor del sistema cuando dibujamos uno propio: con pincel y
+       con casillas. En rectángulo y en lazo no se dibujaba ninguno y el puntero
+       desaparecía del todo, que es imposible de usar. */
+    : (t==='fog' && (S.fogShape==='brush' || S.fogShape==='cells')) ? 'none'
+    : t==='token'?'pointer' : 'crosshair';
 }
 /* Cada herramienta lleva su chuleta. Se muestra al elegirla y se puede cerrar; volver a
    pulsar la herramienta que ya está puesta la trae de vuelta. El cierre se recuerda por
@@ -4289,117 +4580,98 @@ function cursorDeHerramienta(){
    herramienta sería justo la ayuda que estorba. */
 const PISTAS = {
   oclusion: {titulo:'Walls', filas:[
-    ['Ctrl + click','Grab an effect or a token without leaving the wall editor'],
-    ['Click','Select a segment'],
-    ['Shift + click','Add or remove from the selection'],
-    ['Double click','Select the whole wall'],
-    ['Alt + click','Split a segment with a new vertex'],
-    ['Drag a vertex','Move it'],
-    ['New wall','Start one anywhere, even over another'],
-    ['Enter / double click','Finish the wall being drawn'],
-    ['Ctrl + Z','Step back one vertex while drawing']
+    ['Click','select segment'], ['Shift','add / remove'], ['Double','whole wall'],
+    ['Alt','split'], ['Ctrl','grab'], ['Enter','finish'], ['Ctrl+Z','back one vertex']
   ]},
   pan: {titulo:'Pan and zoom', filas:[
-    ['Drag','Move the view'],
-    ['Wheel','Zoom in and out'],
-    ['Space','Hold it to pan without leaving the tool you are on'],
-    ['Middle mouse','The same, if you would rather not hold a key'],
-    ['Tab','Jump to the next scene in the library'],
-    ['H','Hide the side panel and get the whole screen']
+    ['Drag','move the view'], ['Wheel','zoom'], ['Space','pan from any tool'],
+    ['Tab','next scene'], ['H','hide the panel']
   ]},
   sel: {titulo:'Select and move', filas:[
-    ['Click','Pick a measurement, an effect or a player token'],
-    ['Shift + click','Add or remove from the selection'],
-    ['Drag','Move everything selected at once, tokens included'],
-    ['Drag a handle','Resize or reshape a single shape'],
-    ['Overlapping','Whatever is on top answers first, and tokens are on top'],
-    ['Ctrl + C, Ctrl + V','Copy effects one square across; tokens are left alone'],
-    ['Right-click','Opens a menu on whatever is under the pointer, or two-finger tap'],
-    ['Del','Delete the selection; a token only leaves this map'],
-    ['Esc','Let it all go']
+    ['Click','pick — tokens win'], ['Shift','add / remove'],
+    ['Drag','move the lot'], ['Right-click','menu'], ['Del','delete'], ['Esc','let go']
   ]},
   measure: {titulo:'Measure', filas:[
-    ['Ctrl + click','Grab something already on the map without leaving this tool'],
-    ['Drag','Draw the shape chosen on the bar'],
-    ['Keep','Leave it off and the measurement goes when you let go'],
-    ['Fix','Set a distance and a single click draws it at that size'],
-    ['O','Anchor the origin, so every shape starts from the same point'],
-    ['R C N Q W D','Line, circle, cone, square, wall, freehand'],
-    ['Esc','Cancel the one you are drawing']
+    ['Drag','draw'], ['Keep','off = vanishes'], ['Fix','distance, one click'],
+    ['O','anchor the origin'], ['R C N Q W D','shapes'], ['Ctrl','grab']
   ]},
   effect: {titulo:'Effects', filas:[
-    ['Ctrl + click','Grab an effect or a token without leaving this tool'],
-    ['Pin to token','A positioning mode: drop an effect on a player and it follows them'],
-    ['Or after the fact','Right-click a placed effect, Pin to player, then click the player'],
-    ['Catalog','Pick an animation in the Effects tab, then drag on the map'],
-    ['Drag','Place it and size it as you go'],
-    ['Free outline','Trace an irregular area by hand'],
-    ['Right-click a tile','Mark it as a favorite'],
-    ['O','Anchor the origin, so effects start from the same point'],
-    ['They stay','Unlike measurements, effects last until you delete them']
+    ['Catalog','pick, then drag'], ['Right-click a tile','favourite'],
+    ['Pin to token','drops onto a player'], ['Ctrl','grab'],
+    ['They stay','until deleted']
   ]},
   fog: {titulo:'Fog of war', filas:[
-    ['Ctrl + click','Grab something on the map without putting the brush down'],
-    ['Hide / Reveal','Which way the stroke works'],
-    ['Brush','Drag to paint; Size sets how wide'],
-    ['Squares','Click or drag over whole grid squares'],
-    ['Rectangle','Drag a box'],
-    ['Lasso','Click the corners, then Enter or double click to close'],
-    ['Dynamic mode','Fog is rebuilt from the tokens, so painting does nothing']
+    ['Hide / Reveal','stroke direction'], ['Drag','paint'],
+    ['Lasso','corners, Enter to close'], ['Dynamic','rebuilt from tokens'],
+    ['Ctrl','grab']
   ]},
   token: {titulo:'Player tokens', filas:[
-    ['Ctrl + click','Works from any tool: grab a token wherever you are'],
-    ['Click','Place the player chosen on the bar'],
-    ['Drag','Move a token already on the map'],
-    ['Select tool','Takes tokens too, and moves them with the effects on them'],
-    ['Vision','Its radius is what exploration and dynamic fog reveal'],
-    ['Hidden on table','Tokens are yours by default; the bar can show them'],
-    ['Remove from map','Takes it off this scene only, never off the campaign']
+    ['Click','place'], ['Drag','move'], ['Vision','what exploring reveals'],
+    ['Select tool','takes tokens too']
   ]},
   pointer: {titulo:'Table pointer', filas:[
-    ['Click','Ping that spot; the mark shows on the table screen too'],
-    ['It fades','About a second later, so it never has to be cleared'],
-    ['Images too','The only tool that works on a full-screen image']
+    ['Click','ping the table'], ['Fades','after a second'], ['Images too','only tool that does']
   ]},
-  calibrate: {titulo:'Calibrate the square', filas:[
-    ['Drag','Across a row of squares on the map, corner to corner'],
-    ['Squares measured','Set that count on the Scene tab before dragging'],
-    ['Why','Everything the table shows is scaled from this one number'],
-    ['After','The tool hands you back to panning on its own']
+  calibrate: {titulo:'Calibrate', filas:[
+    ['Drag','across a row of squares'], ['Squares','set the count on the bar'],
+    ['Table scale','comes from this']
   ]},
   frame: {titulo:'Table framing', filas:[
-    ['Drag','Move what the table screen is showing'],
-    ['Arrows','Nudge it one pixel'],
-    ['Shift + arrow','Nudge it a whole square'],
-    ['Center here','Snap the framing to the middle of your view'],
-    ['Independent','Your own zoom never moves the table']
+    ['Drag','move what the table shows'], ['Arrows','one pixel'], ['Shift+arrow','one square'],
+    ['Your zoom','never moves it']
   ]},
   anchor: {titulo:'Anchored origin', filas:[
-    ['Click','Fix the origin somewhere on the map'],
-    ['Then','Measurements and effects all start from that point'],
-    ['O again','Release it and go back to drawing from the cursor']
+    ['Click','fix the origin'], ['Then','everything starts there'], ['O','release']
   ]}
 };
-function mostrarPista(tool, forzar){
-  const p=PISTAS[tool];
-  const caja=$('pista');
-  if(!p || (!forzar && (S.pistasCerradas||[]).includes(tool))){
-    caja.classList.remove('on'); return;
-  }
-  $('pistaTitulo').textContent=p.titulo;
-  const ul=$('pistaCuerpo'); ul.innerHTML='';
+function mostrarPista(tool){
+  const p=PISTAS[tool], caja=$('pista');
+  caja.innerHTML='';
+  if(!p){ caja.classList.remove('on'); return; }
   for(const [k,d] of p.filas){
-    const li=document.createElement('li');
-    li.innerHTML='<b>'+k+'</b> — '+d;
-    ul.appendChild(li);
+    const s=document.createElement('span'); s.className='fi';
+    const b=document.createElement('b'); b.textContent=k;
+    const t=document.createElement('span'); t.textContent=d;
+    s.append(b,t); caja.appendChild(s);
   }
   caja.classList.add('on');
 }
-$('pistaCerrar').onclick=()=>{
-  if(!S.pistasCerradas) S.pistasCerradas=[];
-  if(!S.pistasCerradas.includes(S.tool)){ S.pistasCerradas.push(S.tool); tocarEstado(); }
-  $('pista').classList.remove('on');
-};
+
+/* Sustituye un <select> por segmentos sin tocar a nadie más: el <select> se queda como
+   fuente de verdad, oculto, así que todo lo que hace .value o escucha 'change' sigue
+   funcionando igual. Solo se aplica donde las etiquetas son de una palabra: «Multi-segment
+   wall» en un segmento reventaría la barra. */
+const SEGS=[];
+function segmentar(id){
+  const sel=$(id); if(!sel || sel.dataset.seg) return;
+  sel.dataset.seg='1';
+  sel.style.display='none';
+  const caja=document.createElement('span');
+  caja.className='segs';
+  caja.setAttribute('role','group');
+  if(sel.title) caja.setAttribute('aria-label', sel.title);
+  sel.parentNode.insertBefore(caja, sel.nextSibling);
+  const par={sel, caja};
+  SEGS.push(par); pintarSegmentos(par);
+}
+function pintarSegmentos({sel, caja}){
+  caja.innerHTML='';
+  for(const o of sel.options){
+    if(o.hidden) continue;
+    const b=document.createElement('button');
+    b.type='button'; b.textContent=o.textContent;
+    b.setAttribute('aria-pressed', String(o.value===sel.value));
+    b.classList.toggle('on', o.value===sel.value);
+    b.onclick=()=>{
+      if(sel.value===o.value) return;
+      sel.value=o.value;
+      sel.dispatchEvent(new Event('change'));
+      pintarTodosSegmentos();
+    };
+    caja.appendChild(b);
+  }
+}
+function pintarTodosSegmentos(){ for(const s of SEGS) pintarSegmentos(s); }
 
 function syncCtxBar(){
   const t=S.tool;
@@ -4408,14 +4680,17 @@ function syncCtxBar(){
     effect: t==='effect',
     fog: t==='fog',
     sel: t==='sel',
+    calibrate: t==='calibrate',
     oclusion: t==='oclusion',
     token: t==='token',
     clear: MEASURE_TOOLS.includes(t)
   };
   for(const k in show) $('grp-'+k).classList.toggle('on',show[k]);
   $('ctxbar').classList.toggle('empty', !Object.values(show).some(Boolean));
-  $('wallWrap').style.display = (t==='measure' && S.medForma==='wall') ? 'flex' : 'none';
-  $('brushWrap').style.display = (S.fogShape==='brush') ? 'flex' : 'none';
+  /* Ocultos pero con su hueco puesto: si aparecen y desaparecen, la barra cambia de
+     ancho, todo se corre de sitio y el siguiente clic cae en otro botón. */
+  $('wallWrap').style.visibility = (t==='measure' && S.medForma==='wall') ? 'visible' : 'hidden';
+  $('brushWrap').style.visibility = (S.fogShape==='brush') ? 'visible' : 'hidden';
   /* Cada selector muestra el ajuste de su herramienta, que no arranca en «Free». */
   /* Un solo control para las cuatro herramientas que colocan algo. Muestra el ajuste de
      la que esté puesta y lo cambia solo a ella: un vértice de muro quiere esquinas y un
@@ -4444,7 +4719,8 @@ function syncCtxBar(){
       + (puertas ? ' · '+puertas+' open' : '')
       + (unSentido ? ' · '+unSentido+' one-way' : '')
       + (S.selParedes.length ? ' · '+S.selParedes.length+' selected' : '');
-  }
+  } else $('wallCuenta').textContent='';
+  pintarTodosSegmentos();
   if(t==='token') renderSelectorTokens();
   /* El botón aparece en cuanto hay un efecto cogido. Con un token cogido ancla directo;
      sin él abre el modo de elegir jugador, que es la vía larga pero siempre disponible.
@@ -4542,7 +4818,8 @@ $('posTodas').onclick = ()=>{
   tocarEstado(); syncCtxBar(); draw();
   toast('Every tool now places on '+$('posSel').selectedOptions[0].textContent.toLowerCase()+'.');
 };
-$('medForma').onchange=e=>{ S.medForma=e.target.value; $('wallWrap').style.display = S.medForma==='wall'?'flex':'none'; };
+for(const id of ['medForma','fxGeo','fogShape']) segmentar(id);
+$('medForma').onchange=e=>{ S.medForma=e.target.value; $('wallWrap').style.visibility = S.medForma==='wall'?'visible':'hidden'; };
 $('medDist').oninput=e=>{ S.medDist=Math.max(0,parseFloat(e.target.value)||0); };
 $('persist').onchange=e=>{ S.persist=e.target.checked; };
 $('wallW').oninput=e=>{ S.wallW=Math.max(0.5,parseFloat(e.target.value)||1); if(S.sel){S.sel.w=S.wallW; draw();} };
@@ -4620,7 +4897,7 @@ $('btnDup').onclick=()=>{ if(!S.sel) return; push('shapes');
 
 $('fogHide').onclick=()=>{ S.fogMode='hide'; setTool('fog'); };
 $('fogShow').onclick=()=>{ S.fogMode='show'; setTool('fog'); };
-$('fogShape').onchange=e=>{ S.fogShape=e.target.value; S.lasso=null; syncCtxBar(); draw(); };
+$('fogShape').onchange=e=>{ S.fogShape=e.target.value; S.lasso=null; cursorDeHerramienta(); syncCtxBar(); draw(); };
 $('brushSize').oninput=e=>{ S.brush=parseFloat(e.target.value);
   $('brushLbl').textContent=(Math.round(S.brush*2/cal().gridPx*10)/10)+' squares'; draw(); };
 $('fogOpacity').oninput=e=>{ S.fogOpacity=parseFloat(e.target.value)/100; $('opLbl').textContent=e.target.value+'%'; draw(); };
@@ -4727,11 +5004,11 @@ $('fogReset').onclick=async ()=>{
       'Reset', true)) return;
   push('fog'); tocarNiebla();
   s.fogCtx.globalCompositeOperation='source-over';
-  s.fogCtx.fillStyle='#05070B'; s.fogCtx.fillRect(0,0,s.w,s.h);
+  s.fogCtx.fillStyle=PAL.inkDeep; s.fogCtx.fillRect(0,0,s.w,s.h);
   draw(); toast('Exploration reset.');
 };
 $('fogAll').onclick=()=>{ const s=sc(); if(!s||s.type!=='map'||!fogPintable()) return; push('fog'); tocarNiebla();
-  s.fogCtx.globalCompositeOperation='source-over'; s.fogCtx.fillStyle='#05070B'; s.fogCtx.fillRect(0,0,s.w,s.h); draw(); };
+  s.fogCtx.globalCompositeOperation='source-over'; s.fogCtx.fillStyle=PAL.inkDeep; s.fogCtx.fillRect(0,0,s.w,s.h); draw(); };
 $('fogNone').onclick=()=>{ const s=sc(); if(!s||s.type!=='map'||!fogPintable()) return; push('fog'); tocarNiebla();
   s.fogCtx.clearRect(0,0,s.w,s.h); draw(); };
 
@@ -4755,6 +5032,42 @@ $('campNueva').onclick=async ()=>{
   renderCampSelector(); await cambiarCampana(c.id);
   toast('Campaign "'+c.name+'" created.');
 };
+$('btnUndo').onclick=()=>undo();
+$('btnRedo').onclick=()=>rehacer();
+/* El historial es por escena y el rehacer también, así que el botón mira lo que de
+   verdad alcanzaría este mapa, no el tamaño bruto de las pilas. */
+function syncHistoria(){
+  const s=sc();
+  if(!$('btnUndo')) return;
+  const hay = S.history.some(e => e.scene==='*' || (s && e.scene===s.id));
+  const rehay = !!s && S.redo.some(r => r.scene===s.id);
+  $('btnUndo').disabled=!hay;
+  $('btnRedo').disabled=!rehay;
+}
+
+$('btnAjustes').onclick=()=>{
+  const s=$('temaSel');
+  s.innerHTML='';
+  for(const t of TEMAS){
+    const o=document.createElement('option');
+    o.value=t.id; o.textContent=t.nombre; s.appendChild(o);
+  }
+  s.value=S.tema||'ember';
+  $('uiSel').value=String(S.ui||1);
+  $('temaNota').textContent=(TEMAS.find(x=>x.id===s.value)||TEMAS[0]).nota||'';
+  $('dlgAjustes').classList.remove('hide');
+  s.focus();
+};
+/* Se aplica al elegir, no al cerrar: el mapa se ve detrás del diálogo y comparar temas
+   es para lo que sirve mirarlo. */
+$('temaSel').onchange=e=>aplicarTema(e.target.value, true);
+$('uiSel').onchange=e=>aplicarUI(parseFloat(e.target.value), true);
+$('ajCerrar').onclick=()=>$('dlgAjustes').classList.add('hide');
+$('dlgAjustes').onclick=e=>{ if(e.target===$('dlgAjustes')) $('dlgAjustes').classList.add('hide'); };
+$('dlgAjustes').addEventListener('keydown',e=>{
+  if(e.key==='Escape'){ $('dlgAjustes').classList.add('hide'); e.stopPropagation(); }
+});
+
 $('campMenu').onclick=e=>{
   e.stopPropagation();
   const m=$('campMenuPanel');
@@ -4853,11 +5166,24 @@ $('btnWipe').onclick=async ()=>{
   if(!await pedirConfirmar('Clear library',
       'Every scene in this campaign will be deleted, along with its fog and effects. This cannot be undone.',
       'Clear library', true)) return;
-  LIB.scenes.forEach(s=>{ if(s.thumbUrl) URL.revokeObjectURL(s.thumbUrl); liberarEscena(s); });
-  LIB.scenes=[]; LIB.idx=-1;
-  if(DB.ok){ await dbClear('scenes'); await dbClear('blobs'); }
+  /* El diálogo dice «en esta campaña» y hasta ahora vaciaba el almacén entero: las
+     escenas de TODAS las campañas se iban con él. Ahora borra las que dice que borra. */
+  const fuera = LIB.scenes.filter(s=>s.camp===CAMP.id);
+  fuera.forEach(s=>{ if(s.thumbUrl) URL.revokeObjectURL(s.thumbUrl); liberarEscena(s); });
+  LIB.scenes = LIB.scenes.filter(s=>s.camp!==CAMP.id);
+  LIB.idx=-1;
+  if(DB.ok){
+    for(const s of fuera){
+      await dbDel('scenes', s.id);
+      /* Solo los blobs de esas escenas. Un dbClear('blobs') se llevaba también los vídeos
+         'jb2a:' ya descargados y obligaba a rebajarse el catálogo entero. */
+      await dbDel('blobs', s.id+':img');
+      await dbDel('blobs', s.id+':fog');
+    }
+  }
   $('empty').style.display='flex'; $('brandInfo').textContent='no scene';
-  renderLibrary(); draw(); toast('Library cleared.');
+  renderLibrary(); draw();
+  toast(fuera.length===1 ? '1 scene deleted.' : fuera.length+' scenes deleted.');
 };
 
 addEventListener('dragover',e=>e.preventDefault());
@@ -5015,7 +5341,12 @@ addEventListener('keydown',e=>{
   if(e.key==='?'){ abrirAtajos(); e.preventDefault(); return; }
   if(k==='escape' && S.ini.entry){ clearEntry(); return; }
   if(k==='escape'){ cerrarMapMenu(); cancelarAnclaje();
-    S.draft=null; S.drawing=null; S.lasso=null; limpiarSeleccion(); S.wallDraft=null;
+    S.draft=null; S.drawing=null; S.lasso=null; limpiarSeleccion();
+    limpiarSeleccionParedes();          // se quedaba puesta y solo la soltaba otro clic
+    /* El efecto elegido en el catálogo no tenía forma de soltarse: una vez marcado,
+       cualquier clic en el mapa lo colocaba. */
+    if(S.animSel){ S.animSel=null; CAT.sel=null; renderCatalogo(); }
+    S.wallDraft=null;
     hideReadout(); syncCtxBar(); draw(); return; }
   if(k==='enter'&&S.lasso){ closeLasso(); return; }
   if(k==='enter'&&S.wallDraft){ cerrarPared(); return; }
@@ -5076,7 +5407,7 @@ function mostrarToast(msg){
 /* ============ diálogos propios ============ */
 /* Los siete diálogos comparten estructura, así que la trampa de foco se pone una vez:
    sin ella el tabulador se escapa a la página de detrás, que sigue ahí y es operable. */
-const DIALOGOS = ['modal','jugador','atajos','conc','multi','dlgTexto','dlgConfirmar'];
+const DIALOGOS = ['modal','jugador','atajos','conc','multi','dlgTexto','dlgConfirmar','dlgAjustes'];
 const FOCUSABLE = 'button,input,select,textarea,a[href],[tabindex]:not([tabindex="-1"])';
 for(const id of DIALOGOS){
   $(id).addEventListener('keydown', e=>{
@@ -5117,9 +5448,9 @@ function pedirConfirmar(titulo, texto, etiquetaOk='Accept', peligro=false){
   $('dcTitulo').textContent=titulo;
   $('dcTexto').textContent=texto;
   $('dcAceptar').textContent=etiquetaOk;
-  $('dcAceptar').style.color = peligro ? '#F6C9BC' : '';
+  $('dcAceptar').style.color = peligro ? PAL.dangerSoft : '';
   $('dcAceptar').style.borderColor = peligro ? 'var(--danger)' : '';
-  $('dcAceptar').style.background = peligro ? 'rgba(224,96,60,.16)' : '';
+  $('dcAceptar').style.background = peligro ? 'rgba('+PAL.dangerRgb+',.16)' : '';
   $('dlgConfirmar').classList.remove('hide');
   return new Promise(res=>{ confResolver=res; });
 }
@@ -5281,6 +5612,10 @@ async function arrancar(){
   if(DB.ok){
     const previo = await dbGet('state','app');
     if(previo && Array.isArray(previo.plegadas)) S.plegadas = previo.plegadas;
+    /* El tema se pone aquí, antes del primer dibujado, junto al plegado y por el mismo
+       motivo: aplicarlo más tarde enseñaría un fotograma con la paleta de fábrica. */
+    if(previo && previo.tema) aplicarTema(previo.tema);
+    if(previo && previo.ui) aplicarUI(previo.ui);
   }
   prepararPlegado();
 
@@ -5307,7 +5642,13 @@ async function arrancar(){
                                lights:r.lights||[], ambiente:r.ambiente||null,
                                fogModo:r.fogModo||'manual',
                                cal:r.cal||{gridPx:50,unitVal:5,unitName:'ft',rule:'cheb'}}));
-    const st = (await dbGet('state','camp:'+CAMP.id)) || (await dbGet('state','app'));
+    /* El registro de la campaña solo guarda {ini, activa}; todo lo demás —favoritos del
+       catálogo, colocación, tema, la pulgada del monitor— vive en el de la aplicación.
+       Esto era un `||`, así que en cuanto existía una campaña —o sea siempre, a partir de
+       la primera— ganaba el suyo y el otro no se leía jamás. Se mezclan: lo de la campaña
+       manda donde lo haya, y el resto viene del global. */
+    const stCamp = await dbGet('state','camp:'+CAMP.id);
+    const st = (estadoApp || stCamp) ? {...(estadoApp||{}), ...(stCamp||{})} : null;
     if(st){
       if(st.ini){
         S.ini={...S.ini, ...st.ini, selId:null, entry:null, undo:[]};
@@ -5316,10 +5657,11 @@ async function arrancar(){
       }
       if(st.tokensMesa){ S.tokensMesa=st.tokensMesa; $('tokensMesa').value=S.tokensMesa; }
       S.pasosNunca=!!st.pasosNunca;
-      if(Array.isArray(st.pistasCerradas)) S.pistasCerradas=st.pistasCerradas;
       /* La colocación no se guardaba: cada recarga volvía a los valores de fábrica y
          no había forma de dejarla como uno la quiere. */
       if(st.snap) S.snap={...S.snap, ...st.snap};
+      if(st.tema) S.tema=st.tema;
+      if(st.ui) S.ui=st.ui;   // ya aplicado arriba; esto solo deja el estado a juego
       if(st.fx){
         CAT.favoritos=st.fx.favoritos||[]; CAT.recientes=st.fx.recientes||[];
         CAT.activas=st.fx.activas!==false; $('animOn').checked=CAT.activas;
